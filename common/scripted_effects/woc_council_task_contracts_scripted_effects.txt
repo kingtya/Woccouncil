@@ -1,0 +1,739 @@
+woc_council_increase_woc_councillor_effect = {
+	save_scope_value_as = {
+		name = woc_councillor_xp_gain
+		value = {
+			value = $VALUE$
+			if = {
+				limit = {
+					exists = scope:task_contract
+				}
+				multiply = governance_task_contract_tier_value
+			}
+		}
+	}
+	if = { # First, let's make sure you are a governor in an Admin realm
+		limit = {
+			is_councillor = yes
+			is_landed = yes
+		}
+		# Double-check if you have the governor trait - If not, let's make sure you get it
+		if = {
+			limit = {
+				NOT = { has_trait = woc_councillor }
+			}
+			add_trait = woc_councillor
+		}
+		# If you have the trait, let's increase your XP for it
+		else_if = {
+			limit = {
+				has_trait = woc_councillor
+			}
+			add_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_impact
+				value = scope:woc_councillor_xp_gain
+			}
+		}
+	}
+}
+
+woc_council_spawn_councillor_contract_effect = {
+	save_scope_as = governor
+	# Select the Contract Tier (somewhat randomized, based on your experience as a governor)
+	random_list = {
+		30 = {
+			save_scope_value_as = {
+				name = governance_task_contract_tier
+				value = define:NTaskContract|LOW_TASK_CONTRACT_TIER
+			}
+		}
+		20 = {
+			save_scope_value_as = {
+				name = governance_task_contract_tier
+				value = define:NTaskContract|MEDIUM_TASK_CONTRACT_TIER
+			}
+
+			modifier = {
+				add = 10
+				has_trait = woc_councillor
+			}
+			modifier = {
+				add = 10
+				has_trait = woc_councillor
+				has_trait_xp = {
+					trait = woc_councillor
+					track = woc_councillor_xp
+					value >= 40
+				}
+			}
+		}
+		10 = {
+			save_scope_value_as = {
+				name = governance_task_contract_tier
+				value = define:NTaskContract|HIGH_TASK_CONTRACT_TIER
+			}
+
+			modifier = {
+				add = 10
+				has_trait = woc_councillor
+			}
+			modifier = {
+				add = 10
+				has_trait = woc_councillor
+				has_trait_xp = {
+					trait = woc_councillor
+					track = woc_councillor_xp
+					value >= 40
+				}
+			}
+			modifier = {
+				add = 20
+				has_trait = woc_councillor
+				has_trait_xp = {
+					trait = woc_councillor
+					track = woc_councillor_xp
+					value >= 80
+				}
+			}
+		}
+	}
+
+	# Select which contract to create
+	random_list = {
+		10 = { # Overdue Taxes
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_overdue_taxes }
+				any_sub_realm_county = {
+					any_county_province = {
+						has_holding = yes
+						NOT = { this = scope:governor.capital_province }
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						has_holding = yes
+						NOT = { this = scope:governor.capital_province }
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding = yes
+						NOT = { this = scope:governor.capital_province }
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_overdue_taxes
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_overdue_taxes
+				years = 10
+			}
+		}
+		10 = { # Hoarding Mayor
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_hoarding_mayor }
+				any_sub_realm_county = {
+					any_county_province = {
+						has_holding_type = city_holding
+						province_owner = {
+							NOT = { this = scope:governor }
+							gold >= 500 # Mayor needs to have a lot of gold
+						}
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						has_holding_type = city_holding
+						province_owner = {
+							NOT = { this = scope:governor }
+							gold >= 500 # Mayor needs to have a lot of gold
+						}
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding_type = city_holding
+						province_owner = {
+							NOT = { this = scope:governor }
+							gold >= 500 # Mayor needs to have a lot of gold
+						}
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_hoarding_mayor
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				task_contract_employer = scope:target_province.province_owner
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_hoarding_mayor
+				years = 10
+			}
+		}
+		10 = { # Bountiful Harvest
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_bountiful_harvest }
+			}
+
+			# Select a suitable location
+			capital_province = {
+				save_scope_as = target_province
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_bountiful_harvest
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_bountiful_harvest
+				years = 10
+			}
+
+			modifier = { # Increased chance if there is fertile terrain types present
+				factor = 1.5
+				any_sub_realm_county = {
+					any_county_province = {
+						OR = {
+							terrain = farmlands
+							terrain = floodplains
+						}
+					}
+				}
+			}
+			modifier = { # Reduced chance if there is only rough terrain present
+				factor = 0.5
+				NOT = {
+					any_sub_realm_county = {
+						any_county_province = {
+							OR = {
+								terrain = farmlands
+								terrain = floodplains
+								terrain = plains
+								terrain = drylands
+								terrain = oasis
+								terrain = forest
+							}
+						}
+					}
+				}
+			}
+		}
+		10 = { # Rampant Bandits
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_rampant_bandits }
+				any_sub_realm_county = {
+					any_county_province = {
+						NOT = { this = county.holder.capital_province }
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						NOT = { this = county.holder.capital_province }
+					}
+				}
+				weight = {
+					base = 1
+					modifier = { # Prioritize counties with low control
+						add = {
+							value = 100
+							subtract = county_control
+						}
+						county_control < 100
+					}
+				}
+				add_county_modifier = {
+					modifier = ep3_governance_rampant_bandits
+					years = 40
+				}
+				random_county_province = {
+					limit = {
+						NOT = { this = county.holder.capital_province }
+					}
+					weight = {
+						base = 1
+						modifier = { # Empty baronies make for better hiding spots
+							add = 15
+							has_holding = no
+						}
+						modifier = { # You can harass cities easier than castles or temples
+							add = 4
+							has_holding_type = city_holding
+						}
+						modifier = { # You can harass temples easier than castles
+							add = 2
+							has_holding_type = church_holding
+						}
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_rampant_bandits
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_rampant_bandits
+				years = 10
+			}
+
+			modifier = { # Significantly reduce the chance if there is no county with reduced control
+				factor = 0.1
+				NOT = {
+					any_sub_realm_county = { county_control <= 90 }
+				}
+			}
+			modifier = { # Increased chance if there are multiple counties with low control
+				factor = 1.5
+				any_sub_realm_county = {
+					percent >= 0.25
+					county_control <= 75
+				}
+			}
+			modifier = { # Increased it more if control is even lower
+				factor = 2
+				any_sub_realm_county = {
+					percent >= 0.5
+					county_control <= 50
+				}
+			}
+		}
+		10 = { # Discontent Soldiers
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_discontent_soldiers }
+				any_maa_regiment = {
+					is_title_maa_regiment = yes
+					is_raised = no
+					count >= 2
+				}
+			}
+
+			# Select a suitable location
+			capital_province = {
+				save_scope_as = target_province
+			}
+
+			create_task_contract = {
+				task_contract_type = discontent_soldiers
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_discontent_soldiers
+				years = 10
+			}
+		}
+		10 = { # Inept Mayor
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_inept_mayor }
+				any_sub_realm_county = {
+					any_county_province = {
+						has_holding_type = city_holding
+						province_owner = {
+							NOT = { this = scope:governor }
+							stewardship <= mediocre_skill_rating
+						}
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						has_holding_type = city_holding
+						province_owner = {
+							NOT = { this = scope:governor }
+							stewardship <= mediocre_skill_rating
+						}
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding_type = city_holding
+						province_owner = {
+							NOT = { this = scope:governor }
+							stewardship <= mediocre_skill_rating
+						}
+					}
+					save_scope_as = target_province
+				}
+				add_county_modifier = {
+					modifier = ep3_mismanaged_administration_modifier
+					years = 10
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_inept_mayor
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				task_contract_employer = scope:target_province.province_owner
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_inept_mayor
+				years = 10
+			}
+		}
+		10 = { # Raiding Peasants
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_raiding_peasants }
+				any_sub_realm_county = {
+					any_neighboring_county = {
+						holder = {
+							top_liege = {
+								NOT = { this = scope:governor.top_liege }
+							}
+						}
+					}
+					any_county_province = {
+						has_holding = yes
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_neighboring_county = {
+						holder = {
+							top_liege = {
+								NOT = { this = scope:governor.top_liege }
+							}
+						}
+					}
+					any_county_province = {
+						has_holding = yes
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding = yes
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_raiding_peasants
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_raiding_peasants
+				years = 10
+			}
+		}
+		10 = { # Wild Predators
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_wild_predators }
+				any_sub_realm_county = {
+					any_county_province = {
+						OR = {
+							has_building_or_higher = hunting_grounds_01
+							has_building_or_higher = royal_forest_01
+							terrain = forest
+							terrain = jungle
+						}
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						OR = {
+							has_building_or_higher = hunting_grounds_01
+							has_building_or_higher = royal_forest_01
+							terrain = forest
+							terrain = jungle
+						}
+					}
+				}
+				add_county_modifier = {
+					modifier = ep3_wild_predators_modifier
+					years = 10
+				}
+				random_county_province = {
+					limit = {
+						OR = {
+							has_building_or_higher = hunting_grounds_01
+							has_building_or_higher = royal_forest_01
+						}
+					}
+					alternative_limit = {
+						OR = {
+							terrain = forest
+							terrain = jungle
+						}
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_wild_predators
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_wild_predators
+				years = 10
+			}
+		}
+		10 = { # Evil Presence
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_evil_presence }
+				scope:governance_task_contract_tier = define:NTaskContract|LOW_TASK_CONTRACT_TIER
+				any_sub_realm_county = {
+					faith.religion = religion:christianity_religion
+					any_county_province = {
+						has_holding = yes
+						province_owner != scope:governor
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					faith.religion = religion:christianity_religion
+					any_county_province = {
+						has_holding = yes
+						province_owner != scope:governor
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding = yes
+						province_owner != scope:governor 
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_evil_presence
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_evil_presence
+				years = 10
+			}
+		}
+		10 = { # Miraculous Healing
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_miraculous_healing }
+			}
+
+			# Select a suitable location
+			capital_province = {
+				save_scope_as = target_province
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_miraculous_healing
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_miraculous_healing
+				years = 10
+			}
+		}
+		10 = { # Mad Prophet
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_mad_prophet }
+				any_sub_realm_county = {
+					any_county_province = {
+						has_holding = yes
+						province_owner != scope:governor
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						has_holding = yes
+						province_owner != scope:governor
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding = yes
+						province_owner != scope:governor
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_mad_prophet
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_mad_prophet
+				years = 10
+			}
+		}
+		10 = { # Titles for Sale
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_titles_sale }
+				faith = {
+					NOR = {
+						has_doctrine = doctrine_theocracy_lay_clergy
+						has_doctrine = doctrine_temporal_head
+					}
+				}
+			}
+
+			# Select a suitable location
+			capital_province = {
+				save_scope_as = target_province
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_titles_sale
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_titles_sale
+				years = 10
+			}
+		}
+		10 = { # Hungry Times
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_hungry_times }
+				any_sub_realm_county = {
+					any_county_province = {
+						has_holding = yes
+						province_owner != scope:governor
+						has_variable = epidemic_cooldown_general
+					}
+				}
+			}
+
+			# Select a suitable location
+			random_sub_realm_county = {
+				limit = {
+					any_county_province = {
+						has_holding = yes
+						province_owner != scope:governor
+						has_variable = epidemic_cooldown_general
+					}
+				}
+				random_county_province = {
+					limit = {
+						has_holding = yes
+						province_owner != scope:governor
+						has_variable = epidemic_cooldown_general
+					}
+					save_scope_as = target_province
+				}
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_hungry_times
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_hungry_times
+				years = 15 #epidemic_cooldown_general lasts 15 years, and we don't want this to trigger twice in a row for the same place
+			}
+		}
+		10 = { # Wartime Measures
+			trigger = {
+				NOT = { has_character_flag = task_contract_cooldown_wartime_measures }
+				liege = { is_at_war = yes }
+				is_at_war = no
+				OR = {
+					vassal_contract_has_flag = admin_theme_frontier
+					vassal_contract_has_flag = admin_theme_military
+				}
+			}
+
+			# Select a suitable location
+			capital_province = {
+				save_scope_as = target_province
+			}
+
+			create_task_contract = {
+				task_contract_type = woc_council_wartime_measures
+				task_contract_tier = scope:governance_task_contract_tier
+				location = scope:target_province
+				save_scope_as = new_governance_issue
+			}
+			add_character_flag = {
+				flag = task_contract_cooldown_wartime_measures
+				years = 10
+			}
+		}
+	}
+
+	play_sound_effect = "event:/DLC/EP3/SFX/Stingers/Byzantine_Flavor/ep3_mx_sting_byzantineflavor_become_governor"
+	
+	if = {
+		limit = { exists = scope:target_province }
+		if = {
+			limit = {
+				NOT = { has_character_flag = admin_governance_frequency_cooldown }
+			}
+			add_character_flag = { flag = admin_governance_frequency_cooldown years = 6 }
+		}
+		send_interface_message = {
+			type = msg_governance_contracts
+			title = msg_governance_contract_appear.t
+			desc = msg_governance_contract_appear.desc
+			right_icon = scope:target_province.county
+		}
+	}
+	if = {
+		limit = {
+			is_ai = yes
+			exists = scope:new_governance_issue
+		}
+		accept_task_contract = scope:new_governance_issue
+	}
+}

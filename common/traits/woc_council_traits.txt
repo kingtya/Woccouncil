@@ -1,0 +1,220 @@
+﻿woc_puppet = {
+	category = fame
+	
+	name = {
+		first_valid = {
+			desc = trait_woc_puppet_name
+		}
+	}
+	
+	icon = {
+		desc = woc_puppet.dds
+	}
+	
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = { 
+					NOT = { exists = this } 
+				}
+				desc = trait_woc_puppet_desc
+			}
+			desc = trait_woc_puppet_character_desc
+		}
+	}
+	
+	incapacitating = yes
+	
+	disables_combat_leadership = yes
+	
+	shown_in_ruler_designer = no
+	
+	tracks = {
+		woc_puppet_scale_power = {#傀儡争权
+			1 = {
+				monthly_prestige_gain_mult = -0.05
+				stress_gain_mult = -0.05
+			}
+			20 = {
+				monthly_prestige_gain_mult = -0.05
+				stress_gain_mult = -0.05
+			}
+			40 = {
+				monthly_prestige_gain_mult = -0.1
+				stress_gain_mult = -0.05
+			}
+			60 = {
+				monthly_prestige_gain_mult = -0.15
+				stress_gain_mult = -0.05
+			}
+			80 = {
+				monthly_prestige_gain_mult = -0.2
+				stress_gain_mult = -0.05
+			}
+			100 = {
+				monthly_prestige_gain_mult = -0.2
+				stress_gain_mult = -0.05
+			}
+		}
+	}
+}
+
+woc_councillor = {
+	category = fame
+	
+	icon = {
+		desc = woc_councillor.dds
+	}
+	
+	name = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 100
+					}
+				}
+				desc = trait_woc_councillor_name_4
+			}
+			triggered_desc = {
+				trigger = { 
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 75
+					}
+				}
+				desc = trait_woc_councillor_name_3
+			}
+			triggered_desc = {
+				trigger = { 
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 50
+					}
+				}
+				desc = trait_woc_councillor_name_2
+			}
+			triggered_desc = {
+				trigger = { 
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 25
+					}
+				}
+				desc = trait_woc_councillor_name_1
+			}
+			desc = trait_woc_councillor_name_0
+		}
+	}
+
+	# Loc
+	desc = {
+		first_valid = {
+			#The trait can never go higher than the first level if it's not assigned to a character
+			triggered_desc = {
+				trigger = { 
+					NOT = { exists = this } 
+				}
+				desc = trait_woc_councillor_desc
+			}
+			triggered_desc = {
+				trigger = {
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 100
+					}
+				}
+				desc = trait_woc_councillor_desc_4
+			}
+			triggered_desc = {
+				trigger = { 
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 75
+					}
+				}
+				desc = trait_woc_councillor_desc_3
+			}
+			triggered_desc = {
+				trigger = { 
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 50
+					}
+				}
+				desc = trait_woc_councillor_desc_2
+			}
+			triggered_desc = {
+				trigger = { 
+					exists = this
+					has_trait_xp = {
+						trait = woc_councillor
+						track = woc_councillor_xp
+						value >= 25
+					}
+				}
+				desc = trait_woc_councillor_desc_1
+			}
+			desc = trait_woc_councillor_desc_0
+		}
+	}
+	
+	shown_in_ruler_designer = no
+	
+	tracks = {
+		woc_councillor_xp = {#内阁经验
+			0 = {
+				monthly_prestige_gain_mult = 0.05
+			}
+			25 = {
+				monthly_lifestyle_xp_gain_mult = 0.05
+				woc_councillor_xp_gain_mult = 0.05
+				monthly_prestige_gain_mult = 0.05
+				fellow_vassal_opinion = 5
+			}
+			50 = {
+				monthly_lifestyle_xp_gain_mult = 0.05
+				woc_councillor_xp_gain_mult = 0.05
+				monthly_prestige_gain_mult = 0.05
+				fellow_vassal_opinion = 5
+			}
+			75 = {
+				monthly_lifestyle_xp_gain_mult = 0.05
+				woc_councillor_xp_gain_mult = 0.05
+				monthly_prestige_gain_mult = 0.05
+				fellow_vassal_opinion = 5
+			}
+			100 = {
+				monthly_lifestyle_xp_gain_mult = 0.05
+				woc_councillor_xp_gain_mult = 0.1
+				monthly_prestige_gain_mult = 0.1
+				fellow_vassal_opinion = 10
+			}
+		}
+		woc_councillor_impact = {#内阁影响力
+			50 = {
+				monthly_prestige_gain_mult = 0.1
+				liege_opinion = -10
+			}
+			100 = {
+				monthly_prestige_gain_mult = 0.1
+				liege_opinion = -15
+			}
+		}
+	}
+}

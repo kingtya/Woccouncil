@@ -1,0 +1,3540 @@
+woc_council_law_value = {
+	value = 0
+	if = {
+		limit = {
+			is_ruler = yes
+			is_landed = yes
+			has_royal_court = yes
+		}
+		if = {
+			limit = {
+				has_realm_law = woc_council_1_law_retrieve
+			}
+			add = 0
+		}
+		if = {
+			limit = {
+				has_realm_law = woc_council_1_law_limited
+			}
+			add = 2
+		}
+		if = {
+			limit = {
+				has_realm_law = woc_council_1_law_expanding
+			}
+			add = 4
+		}
+		if = {
+			limit = {
+				has_realm_law = woc_council_1_law_fully
+			}
+			add = 6
+		}
+	}
+}
+
+woc_council_vote_power = {
+	value = 1
+	if = {
+		limit = {
+			root.liege = {
+				OR = {
+					has_realm_law = woc_council_1_law_retract_titles
+					has_realm_law = woc_council_2_law_declare_war
+					has_realm_law = woc_council_2_law_submission
+					has_realm_law = woc_council_2_law_fully
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_realm_law = woc_council_2_law_fully
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			is_diarch_of_target = root.liege
+		}
+		add = 1
+	}
+}
+
+woc_council_agree_value = {
+	value = woc_council_see_attitude_value
+}
+
+woc_council_see_attitude_value = {
+	value = 0
+	if = {
+		limit = {
+			has_variable = woc_council_agree
+			is_ai = no
+		}
+		add = 5000
+	}
+	if = {
+		limit = {
+			has_variable = woc_council_disagree
+			is_ai = no
+		}
+		add = -5000
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable = proposed_war_target
+			}
+			is_ai = yes
+		}
+		add = woc_council_agree_war_attitude_value
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable = proposed_grant_title_target
+			}
+			is_ai = yes
+		}
+		add = woc_council_agree_grant_title_attitude_value
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable = proposed_revoke_title_target
+			}
+			is_ai = yes
+		}
+		add = woc_council_agree_revoke_title_attitude_value
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable = proposed_enhancement_crown_target
+			}
+			is_ai = yes
+		}
+		add = woc_council_agree_enhancement_crown_attitude_value
+	}
+}
+
+woc_council_pass_value = {
+	value = 4
+	if = {
+		limit = {
+			has_variable = agree_war_proposal
+		}
+		add = var:agree_war_proposal
+	}
+	if = {
+		limit = {
+			has_variable = disagree_war_proposal
+		}
+		subtract = var:disagree_war_proposal
+	}
+	if = {
+		limit = {
+			has_variable = agree_grant_title_proposal
+		}
+		add = var:agree_grant_title_proposal
+	}
+	if = {
+		limit = {
+			has_variable = disagree_grant_title_proposal
+		}
+		subtract = var:disagree_grant_title_proposal
+	}
+	if = {
+		limit = {
+			has_variable = agree_revoke_title_proposal
+		}
+		add = var:agree_revoke_title_proposal
+	}
+	if = {
+		limit = {
+			has_variable = disagree_revoke_title_proposal
+		}
+		subtract = var:disagree_revoke_title_proposal
+	}
+	if = {
+		limit = {
+			has_variable = agree_enhancement_crown_proposal
+		}
+		add = var:agree_enhancement_crown_proposal
+	}
+	if = {
+		limit = {
+			has_variable = disagree_enhancement_crown_proposal
+		}
+		subtract = var:disagree_enhancement_crown_proposal
+	}
+	if = {
+		limit = {
+			has_variable = woc_council_disagree_empty_council_var
+		}
+		subtract = var:woc_council_disagree_empty_council_var
+	}
+}
+
+woc_council_pass_request_value = {
+	value = -4
+	if = {
+		limit = {
+			has_variable = agree_enhancement_council_law
+		}
+		add = var:agree_enhancement_council_law
+	}
+	if = {
+		limit = {
+			has_variable = disagree_enhancement_council_law
+		}
+		subtract = var:disagree_enhancement_council_law
+	}
+	if = {
+		limit = {
+			has_variable = agree_declare_incompetence
+		}
+		add = var:agree_declare_incompetence
+	}
+	if = {
+		limit = {
+			has_variable = disagree_declare_incompetence
+		}
+		subtract = var:disagree_declare_incompetence
+	}
+	if = {
+		limit = {
+			has_variable = agree_council_overthrow_regent
+		}
+		add = var:agree_council_overthrow_regent
+	}
+	if = {
+		limit = {
+			has_variable = disagree_council_overthrow_regent
+		}
+		subtract = var:disagree_council_overthrow_regent
+	}
+	if = {
+		limit = {
+			has_variable = woc_council_disagree_empty_council_var
+		}
+		add = var:woc_council_disagree_empty_council_var
+	}
+}
+
+woc_council_proposal_value = {
+	value = 0
+	if = {
+		limit = {
+			has_variable = agree_woc_council_proposal
+		}
+		add = var:agree_woc_council_proposal
+	}
+	if = {
+		limit = {
+			has_variable = disagree_woc_council_proposal
+		}
+		subtract = var:disagree_woc_council_proposal
+	}
+}
+
+woc_council_agree_war_attitude_value = {
+	value = 0
+	root = {
+		save_temporary_scope_as = woc_council
+	}
+	root.liege = {
+		save_temporary_scope_as = woc_council_liege
+		if = {
+			limit = {
+				has_variable = proposed_war_target
+				NOT = { has_variable = proposed_war_target_instant }
+			}
+			var:proposed_war_target = {
+				save_temporary_scope_as = council_war_target
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = proposed_war_target_instant
+			}
+			var:proposed_war_target_instant = {
+				save_temporary_scope_as = council_war_target
+			}
+		}
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable_list = woc_liege_pulling_councilor_list
+				is_target_in_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = root
+				}
+			}
+		}
+		add = {
+			value = 500
+			desc = woc_liege_pulling_councilor
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:council_war_target
+			exists = scope:woc_council_liege
+			is_ruler = yes
+		}
+		#本乡本土
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				scope:woc_council_liege = {
+					has_truce = scope:council_war_target
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_truce_ruler
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				scope:woc_council_liege.eighty_percent_of_current_military_strength <= scope:council_war_target.current_military_strength
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_attack_major_war
+			}
+		}
+		#荣誉猎犬
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:woc_council_liege = {
+					has_truce = scope:council_war_target
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -25
+				desc = woc_dislike_attack_truce_ruler
+			}
+		}
+		else_if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:woc_council_liege = {
+					NOT = { has_truce = scope:council_war_target }
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 25
+				desc = woc_like_attack_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:woc_council_liege.current_military_strength >= scope:council_war_target.one_and_a_half_times_current_military_strength
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_attack_tiny_war
+			}
+		}
+		#宫廷
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:woc_council_liege = {
+					has_truce = scope:council_war_target
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_truce_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_war_target.dynasty.dynasty_prestige_level >= 4
+				is_ai = yes
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_attack_prestige_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_war_target.dynasty.dynasty_prestige_level >= 6
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_attack_prestige_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_war_target = {
+					is_lowborn = yes
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 100
+				desc = woc_like_attack_lowborn_ruler
+			}
+		}
+		#狂热
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_war_target = {
+					NOT = { has_trait = excommunicated }
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value <= 0
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_same_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_war_target = {
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value = 2
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 50
+				desc = woc_like_attack_different_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_war_target = {
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value = 3
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 100
+				desc = woc_like_attack_different_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:woc_council.faith.religious_head = scope:council_war_target
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_religious_head
+			}
+		}
+		#少数族裔
+		if = {
+			limit = {
+				has_vassal_stance = minority
+				scope:council_war_target.culture = scope:woc_council.culture
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_same_culture_ruler
+			}
+		}
+	}
+	#通用
+	if = {
+		limit = {
+			exists = scope:council_war_target
+			exists = scope:woc_council_liege
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = -30
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = 40
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = 60
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = 80
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_war_target
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_attack_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_friend > 0
+				has_relation_friend = scope:council_war_target
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_attack_friend_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_best_friend > 0
+				has_relation_best_friend = scope:council_war_target
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_best_friend_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_rival > 0
+				has_relation_rival = scope:council_war_target
+			}
+			add = {
+				value = 100
+				desc = woc_like_attack_rival_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_nemesis > 0
+				has_relation_nemesis = scope:council_war_target
+			}
+			add = {
+				value = 500
+				desc = woc_like_attack_nemesis_ruler
+			}
+		}
+		if = {
+			limit = {
+				is_lowborn = no
+				is_close_or_extended_family_of = scope:council_war_target
+				NOT = { root = scope:council_war_target }
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_attack_family_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = 5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = 15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = -60
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = -80
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:woc_council_liege
+			}
+			add = {
+				value = -100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:woc_council_liege
+			}
+			add = {
+				value = -1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+}
+
+woc_council_agree_grant_title_attitude_value = {
+	value = 0
+	root = {
+		save_temporary_scope_as = woc_council
+	}
+	root.liege = {
+		save_temporary_scope_as = woc_council_liege
+		if = {
+			limit = {
+				has_variable = proposed_grant_title_target
+				NOT = { has_variable = proposed_grant_title_target_instant }
+			}
+			var:proposed_grant_title_target = {
+				save_temporary_scope_as = council_grant_title_target
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = proposed_grant_title_target_instant
+			}
+			var:proposed_grant_title_target_instant = {
+				save_temporary_scope_as = council_grant_title_target
+			}
+		}
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable_list = woc_liege_pulling_councilor_list
+				is_target_in_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = root
+				}
+			}
+		}
+		add = {
+			value = 500
+			desc = woc_liege_pulling_councilor
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:council_grant_title_target
+			exists = scope:woc_council_liege
+			is_ruler = yes
+		}
+		#本乡本土
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				OR = {
+					scope:council_grant_title_target = {
+						NOT = {
+							is_vassal_of = scope:woc_council_liege
+						}
+					}
+					scope:council_grant_title_target = {
+						is_independent_ruler = yes
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_grant_title_not_vassal
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				scope:council_grant_title_target.stewardship > 8
+				is_ai = yes
+			}
+			add = {
+				value = scope:council_grant_title_target.stewardship
+				desc = woc_like_grant_title_stewardship
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				scope:council_grant_title_target.stewardship < 8
+				is_ai = yes
+			}
+			add = {
+				value = -50
+				desc = woc_like_grant_title_bad_stewardship
+			}
+		}
+		#荣誉猎犬
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				is_powerful_vassal_of = scope:woc_council_liege
+				scope:council_grant_title_target = {
+					NOT = {
+						is_powerful_vassal_of = scope:woc_council_liege
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_grant_title_not_powerful_vassal
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:council_grant_title_target.martial > 8
+				is_ai = yes
+			}
+			add = {
+				value = scope:council_grant_title_target.martial
+				desc = woc_like_grant_title_martial
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:council_grant_title_target.martial < 8
+				is_ai = yes
+			}
+			add = {
+				value = -50
+				desc = woc_like_grant_title_bad_martial
+			}
+		}
+		#宫廷
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_grant_title_target.dynasty.dynasty_prestige_level >= 4
+				is_ai = yes
+			}
+			add = {
+				value = 50
+				desc = woc_like_grant_title_prestige_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_grant_title_target.dynasty.dynasty_prestige_level >= 6
+				is_ai = yes
+			}
+			add = {
+				value = 100
+				desc = woc_like_grant_title_prestige_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_grant_title_target = {
+					is_lowborn = yes
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_grant_title_lowborn_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_grant_title_target.dynasty.dynasty_prestige_level < 2
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_grant_title_prestige_ruler
+			}
+		}
+		#狂热
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_grant_title_target = {
+					NOT = { has_trait = excommunicated }
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value <= 0
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 25
+				desc = woc_like_grant_title_same_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_grant_title_target = {
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value = 2
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_grant_title_different_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_grant_title_target = {
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value = 3
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_grant_title_different_faith_ruler
+			}
+		}
+		#少数族裔
+		if = {
+			limit = {
+				has_vassal_stance = minority
+				scope:council_grant_title_target.culture = scope:woc_council.culture
+				is_ai = yes
+			}
+			add = {
+				value = 250
+				desc = woc_like_grant_title_same_culture_ruler
+			}
+		}
+	}
+	#通用
+	if = {
+		limit = {
+			exists = scope:council_grant_title_target
+			exists = scope:woc_council_liege
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = 30
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = 40
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = 50
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = -60
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = -80
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_grant_title_target
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = -100
+				desc = woc_like_grant_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_friend > 0
+				has_relation_friend = scope:council_grant_title_target
+			}
+			add = {
+				value = 50
+				desc = woc_like_grant_title_friend_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_best_friend > 0
+				has_relation_best_friend = scope:council_grant_title_target
+			}
+			add = {
+				value = 250
+				desc = woc_like_grant_title_best_friend_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_rival > 0
+				has_relation_rival = scope:council_grant_title_target
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_grant_title_rival_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_nemesis > 0
+				has_relation_nemesis = scope:council_grant_title_target
+			}
+			add = {
+				value = -500
+				desc = woc_dislike_grant_title_nemesis_ruler
+			}
+		}
+		if = {
+			limit = {
+				is_lowborn = no
+				is_close_or_extended_family_of = scope:council_grant_title_target
+				NOT = { root = scope:council_grant_title_target }
+			}
+			add = {
+				value = 500
+				desc = woc_like_grant_title_family_ruler
+			}
+		}
+		if = {
+			limit = {
+				root = scope:council_grant_title_target
+			}
+			add = {
+				value = 1000
+				desc = woc_like_grant_title_me
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = 5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = 15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = -30
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:woc_council_liege
+			}
+			add = {
+				value = -100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:woc_council_liege
+			}
+			add = {
+				value = -1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+}
+
+woc_council_agree_revoke_title_attitude_value = {
+	value = 0
+	root = {
+		save_temporary_scope_as = woc_council
+	}
+	root.liege = {
+		save_temporary_scope_as = woc_council_liege
+		if = {
+			limit = {
+				has_variable = proposed_revoke_title_target
+				NOT = { has_variable = proposed_revoke_title_target_instant }
+			}
+			var:proposed_revoke_title_target = {
+				save_temporary_scope_as = council_revoke_title_target
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = proposed_revoke_title_target_instant
+			}
+			var:proposed_revoke_title_target_instant = {
+				save_temporary_scope_as = council_revoke_title_target
+			}
+		}
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable_list = woc_liege_pulling_councilor_list
+				is_target_in_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = root
+				}
+			}
+		}
+		add = {
+			value = 500
+			desc = woc_liege_pulling_councilor
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:council_revoke_title_target
+			exists = scope:woc_council_liege
+			is_ruler = yes
+		}
+		#本乡本土
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				scope:council_revoke_title_target.stewardship > 8
+				is_ai = yes
+			}
+			subtract = {
+				value = scope:council_revoke_title_target.stewardship
+				desc = woc_dislike_revoke_title_stewardship
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = barons_and_minor_landholders
+				}
+				scope:council_revoke_title_target.stewardship < 8
+				is_ai = yes
+			}
+			add = {
+				value = 50
+				desc = woc_like_revoke_title_bad_stewardship
+			}
+		}
+		#荣誉猎犬
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				is_powerful_vassal_of = scope:woc_council_liege
+				scope:council_revoke_title_target = {
+					is_powerful_vassal_of = scope:woc_council_liege
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_revoke_title_powerful_vassal
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:council_revoke_title_target.martial > 8
+				is_ai = yes
+			}
+			subtract = {
+				value = scope:council_revoke_title_target.martial
+				desc = woc_dislike_revoke_title_martial
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = glory_hound
+				scope:council_revoke_title_target.martial < 8
+				is_ai = yes
+			}
+			add = {
+				value = 50
+				desc = woc_like_revoke_title_bad_martial
+			}
+		}
+		#宫廷
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_revoke_title_target.dynasty.dynasty_prestige_level >= 4
+				is_ai = yes
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_revoke_title_prestige_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_revoke_title_target.dynasty.dynasty_prestige_level >= 6
+				is_ai = yes
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_revoke_title_prestige_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_revoke_title_target = {
+					is_lowborn = yes
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 100
+				desc = woc_like_revoke_title_lowborn_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = courtly
+				scope:council_revoke_title_target.dynasty.dynasty_prestige_level < 2
+				is_ai = yes
+			}
+			add = {
+				value = 100
+				desc = woc_like_revoke_title_prestige_ruler
+			}
+		}
+		#狂热
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_revoke_title_target = {
+					NOT = { has_trait = excommunicated }
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value <= 0
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -25
+				desc = woc_dislike_revoke_title_same_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_revoke_title_target = {
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value = 2
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 100
+				desc = woc_like_revoke_title_different_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_revoke_title_target = {
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value = 3
+						}
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = 500
+				desc = woc_like_revoke_title_different_faith_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_vassal_stance = zealot
+				scope:council_revoke_title_target = {
+					NOT = { has_trait = excommunicated }
+					faith = {
+						faith_hostility_level = {
+							target = root.faith
+							value <= 0
+						}
+					}
+					OR = {
+						has_council_position = councillor_court_chaplain
+						government_has_flag = government_is_theocracy
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -500
+				desc = woc_dislike_revoke_title_theocracy_ruler
+			}
+		}
+		#少数族裔
+		if = {
+			limit = {
+				has_vassal_stance = minority
+				OR = {
+					scope:council_revoke_title_target.culture = scope:woc_council.culture
+					scope:council_revoke_title_target = {
+						has_vassal_stance = minority
+					}
+				}
+				is_ai = yes
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_revoke_title_same_culture_ruler
+			}
+		}
+	}
+	#通用
+	if = {
+		limit = {
+			exists = scope:council_revoke_title_target
+			exists = scope:woc_council_liege
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = -30
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = 40
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = 60
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = 80
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:council_revoke_title_target
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_revoke_title_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_friend > 0
+				has_relation_friend = scope:council_revoke_title_target
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_revoke_title_friend_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_best_friend > 0
+				has_relation_best_friend = scope:council_revoke_title_target
+			}
+			add = {
+				value = -250
+				desc = woc_dislike_revoke_title_best_friend_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_rival > 0
+				has_relation_rival = scope:council_revoke_title_target
+			}
+			add = {
+				value = 100
+				desc = woc_like_revoke_title_rival_ruler
+			}
+		}
+		if = {
+			limit = {
+				num_of_relation_nemesis > 0
+				has_relation_nemesis = scope:council_revoke_title_target
+			}
+			add = {
+				value = 500
+				desc = woc_like_revoke_title_nemesis_ruler
+			}
+		}
+		if = {
+			limit = {
+				is_lowborn = no
+				is_close_or_extended_family_of = scope:council_revoke_title_target
+				NOT = { root = scope:council_revoke_title_target }
+			}
+			add = {
+				value = -500
+				desc = woc_dislike_revoke_title_family_ruler
+			}
+		}
+		if = {
+			limit = {
+				root = scope:council_revoke_title_target
+			}
+			add = {
+				value = -1000
+				desc = woc_dislike_revoke_title_me
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = 5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = 15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = -60
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = -80
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:woc_council_liege
+			}
+			add = {
+				value = -100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:woc_council_liege
+			}
+			add = {
+				value = -1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+}
+
+woc_council_agree_enhancement_crown_attitude_value = {
+	value = 0
+	root = {
+		save_temporary_scope_as = woc_council
+	}
+	root.liege = {
+		save_temporary_scope_as = woc_council_liege
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable_list = woc_liege_pulling_councilor_list
+				is_target_in_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = root
+				}
+			}
+		}
+		add = {
+			value = 500
+			desc = woc_liege_pulling_councilor
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:woc_council_liege
+			is_ruler = yes
+		}
+		#本乡本土
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_0
+						has_realm_law = tribal_authority_0
+					}
+				}
+				has_vassal_stance = barons_and_minor_landholders
+				is_ai = yes
+			}
+			subtract = {
+				value = 10
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_1
+						has_realm_law = tribal_authority_1
+					}
+				}
+				has_vassal_stance = barons_and_minor_landholders
+				is_ai = yes
+			}
+			subtract = {
+				value = 20
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_2
+						has_realm_law = tribal_authority_2
+					}
+				}
+				has_vassal_stance = barons_and_minor_landholders
+				is_ai = yes
+			}
+			subtract = {
+				value = 40
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		#少数族裔
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_0
+						has_realm_law = tribal_authority_0
+					}
+				}
+				has_vassal_stance = minority
+				is_ai = yes
+			}
+			subtract = {
+				value = 10
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_1
+						has_realm_law = tribal_authority_1
+					}
+				}
+				has_vassal_stance = minority
+				is_ai = yes
+			}
+			subtract = {
+				value = 20
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_2
+						has_realm_law = tribal_authority_2
+					}
+				}
+				has_vassal_stance = minority
+				is_ai = yes
+			}
+			subtract = {
+				value = 50
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		#荣誉猎犬/本乡本土
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_0
+						has_realm_law = tribal_authority_0
+					}
+				}
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = glory_hound
+				}
+				is_ai = yes
+			}
+			subtract = {
+				value = 5
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_1
+						has_realm_law = tribal_authority_1
+					}
+				}
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = glory_hound
+				}
+				is_ai = yes
+			}
+			subtract = {
+				value = 15
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_2
+						has_realm_law = tribal_authority_2
+					}
+				}
+				OR = {
+					has_vassal_stance = parochial
+					has_vassal_stance = glory_hound
+				}
+				is_ai = yes
+			}
+			subtract = {
+				value = 40
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		#狂热
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_1
+						has_realm_law = tribal_authority_1
+					}
+				}
+				has_vassal_stance = zealot
+				is_ai = yes
+			}
+			subtract = {
+				value = 10
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_2
+						has_realm_law = tribal_authority_2
+					}
+				}
+				has_vassal_stance = zealot
+				is_ai = yes
+			}
+			subtract = {
+				value = 30
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		#宫廷
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_1
+						has_realm_law = tribal_authority_1
+					}
+				}
+				has_vassal_stance = courtly
+				is_ai = yes
+			}
+			subtract = {
+				value = 5
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+		if = {
+			limit = {
+				scope:woc_council_liege = {
+					OR = {
+						has_realm_law = crown_authority_2
+						has_realm_law = tribal_authority_2
+					}
+				}
+				has_vassal_stance = courtly
+				is_ai = yes
+			}
+			subtract = {
+				value = 15
+				desc = woc_dislike_enhancement_crown
+			}
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:woc_council_liege
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = 5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = 15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = -30
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:woc_council_liege
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:woc_council_liege
+			}
+			add = {
+				value = -100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:woc_council_liege
+			}
+			add = {
+				value = -1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+}
+
+woc_council_pass_enhancement_council_law_ai_value = {
+	value = -4
+	every_councillor = {
+		if = {
+			limit = {
+				woc_agree_enhancement_council_law_attitude_value > 0
+				woc_council_valid_council_position = yes
+			}
+			add = 1
+		}
+		if = {
+			limit = {
+				woc_agree_enhancement_council_law_attitude_value <= 0
+				woc_council_valid_council_position = yes
+			}
+			subtract = 1
+		}
+	}
+	#add = woc_council_disagree_empty_council
+}
+
+woc_council_pass_request_ai_value = {
+	value = 0
+	every_councillor = {
+		if = {
+			limit = {
+				woc_agree_enhancement_council_law_attitude_value > 0
+				woc_council_valid_council_position = yes
+			}
+			add = 1
+		}
+	}
+}
+
+woc_agree_enhancement_council_law_attitude_value = {
+	value = 0
+	root = {
+		save_temporary_scope_as = woc_council
+	}
+	root.liege = {
+		save_temporary_scope_as = woc_council_liege
+	}
+	if = {
+		limit = {
+			root.liege = {
+				has_variable_list = woc_liege_pulling_councilor_list
+				is_target_in_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = root
+				}
+			}
+		}
+		add = {
+			value = -500
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:woc_vote_at_council_request_councillor
+			scope:woc_vote_at_council_request_councillor = {
+				has_variable_list = councilor_supporters_list
+				is_target_in_variable_list = {
+					name = councilor_supporters_list
+					target = root
+				}
+			}
+		}
+		add = {
+			value = 500
+		}
+	}
+	if = {
+		limit = {
+			exists = scope:woc_council
+			scope:woc_council.ai_greed > 0
+		}
+		add = {
+			value = scope:woc_council.ai_greed
+			multiply = 0.25
+		}
+	}
+	if = {
+		limit = {
+			scope:woc_council_liege = {
+				NOT = { has_variable = council_overthrow_regent_proposal_request_on_going }
+			}
+			exists = scope:woc_council_liege
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = -5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = -15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = -25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = 30
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = 40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = 50
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:woc_council_liege
+			}
+			add = {
+				value = -25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:woc_council_liege
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:woc_council_liege
+			}
+			add = {
+				value = 100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:woc_council_liege
+			}
+			add = {
+				value = 1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+	if = {
+		limit = {
+			scope:woc_council_liege = {
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+			exists = scope:woc_council_liege.diarch
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = -5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = -15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = -25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = 30
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = 40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:woc_council_liege.diarch
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = 50
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:woc_council_liege.diarch
+			}
+			add = {
+				value = -25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:woc_council_liege.diarch
+			}
+			add = {
+				value = -100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:woc_council_liege.diarch
+			}
+			add = {
+				value = 100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:woc_council_liege.diarch
+			}
+			add = {
+				value = 1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+	if = {
+		limit = {
+			scope:woc_council_liege = {
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+			exists = scope:secondary_recipient
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { 0 20 }
+				}
+			}
+			add = {
+				value = 5
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { 21 40 }
+				}
+			}
+			add = {
+				value = 10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { 41 60 }
+				}
+			}
+			add = {
+				value = 15
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { 61 80 }
+				}
+			}
+			add = {
+				value = 20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { 81 100 }
+				}
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { -20 -1 }
+				}
+			}
+			add = {
+				value = -10
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { -40 -21 }
+				}
+			}
+			add = {
+				value = -20
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { -60 -41 }
+				}
+			}
+			add = {
+				value = -30
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { -80 -61 }
+				}
+			}
+			add = {
+				value = -40
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				opinion = {
+					target = scope:secondary_recipient
+					value = { -100 -81 }
+				}
+			}
+			add = {
+				value = -50
+				desc = woc_dislike_opinion_ruler
+			}
+		}
+		if = {
+			limit = {
+				has_relation_friend = scope:secondary_recipient
+			}
+			add = {
+				value = 25
+				desc = woc_dislike_attack_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_best_friend = scope:secondary_recipient
+			}
+			add = {
+				value = 100
+				desc = woc_dislike_attack_best_friend_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_rival = scope:secondary_recipient
+			}
+			add = {
+				value = -100
+				desc = woc_like_attack_rival_liege
+			}
+		}
+		if = {
+			limit = {
+				has_relation_nemesis = scope:secondary_recipient
+			}
+			add = {
+				value = -1000
+				desc = woc_like_attack_nemesis_liege
+			}
+		}
+	}
+}
+
+woc_council_disagree_empty_council = {
+	value = 0
+	if = {
+		limit = {
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_court_chaplain
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_chancellor
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_steward
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_marshal
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_spymaster
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			has_realm_law = woc_council_1_law_retract_titles
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_woc_advisor
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			has_realm_law = woc_council_2_law_fully
+			NOT = {
+				any_councillor = {
+					has_council_position = councillor_woc_advisor_second
+				}
+			}
+		}
+		add = 1
+	}
+	if = {
+		limit = {
+			has_realm_law = woc_council_1_law_retract_titles
+			NOT = {
+				has_realm_law = woc_council_2_law_fully
+			}
+		}
+		multiply = 2
+	}
+	if = {
+		limit = {
+			has_realm_law = woc_council_2_law_fully
+		}
+		multiply = 3
+	}
+}
+
+woc_liege_pulling_promise_piety_cost_value = {
+	value = 0
+	# Gate by liege tier.
+	if = {
+		limit = { scope:actor.highest_held_title_tier <= tier_kingdom }
+		add = 250
+	}
+	else_if = {
+		limit = { scope:actor.highest_held_title_tier = tier_empire }
+		add = 350
+	}
+	if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_minimum }
+		multiply = 0.1
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_low }
+		multiply = 0.25
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_medium }
+		multiply = 0.5
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_high }
+		multiply = 0.75
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_maximum }
+		multiply = 1
+	}
+	multiply = scope:actor.piety_level
+}
+
+woc_liege_pulling_promise_prestige_cost_value = {
+	value = 0
+	# Gate by liege tier.
+	if = {
+		limit = { scope:actor.highest_held_title_tier <= tier_kingdom }
+		add = 350
+	}
+	else_if = {
+		limit = { scope:actor.highest_held_title_tier = tier_empire }
+		add = 500
+	}
+	if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_minimum }
+		multiply = 0.1
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_low }
+		multiply = 0.25
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_medium }
+		multiply = 0.5
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_high }
+		multiply = 0.75
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_maximum }
+		multiply = 1
+	}
+	multiply = scope:actor.prestige_level
+}
+
+woc_liege_pulling_promise_gold_cost_value = {
+	value = major_gold_value
+	if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_minimum }
+		multiply = 0.1
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_low }
+		multiply = 0.25
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_medium }
+		multiply = 0.5
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_high }
+		multiply = 0.75
+	}
+	else_if = {
+		limit = { has_game_rule = woc_council_pulling_promise_prestige_cost_maximum }
+		multiply = 1
+	}
+}
+
+woc_reject_magna_carta_prestige_cost_value = {
+	value = 0
+	# Gate by liege tier.
+	if = {
+		limit = { highest_held_title_tier <= tier_kingdom }
+		add = 350
+	}
+	else_if = {
+		limit = { highest_held_title_tier = tier_empire }
+		add = 500
+	}
+	multiply = prestige_level
+	multiply = -1
+}
+
+woc_reject_magna_carta_piety_cost_value = {
+	value = 0
+	if = {
+		limit = { highest_held_title_tier <= tier_kingdom }
+		add = 250
+	}
+	else_if = {
+		limit = { highest_held_title_tier = tier_empire }
+		add = 350
+	}
+	multiply = piety_level
+	multiply = -1
+}
+
+woc_council_reward_add_prestige_value = {
+	value = 0
+	# Gate by liege tier.
+	if = {
+		limit = { highest_held_title_tier <= tier_kingdom }
+		add = 450
+	}
+	else_if = {
+		limit = { highest_held_title_tier = tier_empire }
+		add = 650
+	}
+}
+
+woc_council_all_guest_value = {
+	value = 0
+	every_attending_character = {
+		add = 1
+	}
+}
+
+woc_expand_vassals_right_agree_value = {
+	value = 0
+	every_attending_character = {
+		limit = {
+			OR = {
+				AND = {
+					is_ai = no
+					has_activity_intent = woc_council_expand_vassals_right_intent
+				}
+				AND = {
+					is_ai = yes
+					woc_expand_vassals_right_ai_agree_value >= 25
+				}
+			}
+		}
+		add = 1
+	}
+	divide = {
+		value = woc_council_all_guest_value
+		min = 1
+	}
+}
+
+woc_expand_vassals_right_ai_agree_value = {
+	value = 0
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value < -25
+			}
+		}
+		add = 25
+	}
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value < -50
+			}
+		}
+		add = 35
+	}
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value > 25
+			}
+		}
+		add = -15
+	}
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value > 50
+			}
+		}
+		add = -15
+	}
+}
+
+woc_council_support_liege_intent_value = {
+	value = 0
+	every_attending_character = {
+		limit = {
+			OR = {
+				AND = {
+					is_ai = no
+					has_activity_intent = woc_council_support_liege_intent
+				}
+				AND = {
+					is_ai = yes
+					woc_council_support_liege_intent_ai_agree_value >= woc_council_devotion_intent_ai_agree_value
+					woc_council_support_liege_intent_ai_agree_value >= woc_council_fouse_realm_intent_ai_agree_value
+					woc_council_support_liege_intent_ai_agree_value >= woc_council_fouse_military_intent_ai_agree_value
+				}
+			}
+		}
+		add = 1
+	}
+}
+
+woc_council_support_liege_intent_ai_agree_value = {
+	value = 25
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value < -25
+			}
+		}
+		add = -25
+	}
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value < -50
+			}
+		}
+		add = -25
+	}
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value > 25
+			}
+		}
+		add = 25
+	}
+	if = {
+		limit = {
+			exists = root.liege
+			opinion = {
+				target = liege
+				value > 50
+			}
+		}
+		add = 50
+	}
+}
+
+woc_council_stress_impact_gain = {
+	value = 20
+	if = {
+		limit = {
+			involved_activity = {
+				has_activity_option = {
+					category = woc_council_option_reception
+					option = woc_council_reception_minor
+				}
+			}
+		}
+		multiply = 2
+	}
+	if = {
+		limit = {
+			involved_activity = {
+				has_activity_option = {
+					category = woc_council_option_reception
+					option = woc_council_reception_large
+				}
+			}
+		}
+		multiply = 0.5
+	}
+}
+
+woc_council_join_war_councillor_reward_value = {
+	value = 0
+	if = {
+		limit = {
+			scope:war = {
+				war_contribution = {
+					target = scope:woc_council_join_war_councillor
+					value >= 2500 
+				}
+			}
+		}
+		add = 10
+	}
+	if = {
+		limit = {
+			scope:war = {
+				war_contribution = {
+					target = scope:woc_council_join_war_councillor
+					value >= 5000 
+				}
+			}
+		}
+		add = 10
+	}
+	if = {
+		limit = {
+			scope:war = {
+				war_contribution = {
+					target = scope:woc_council_join_war_councillor
+					value >= 10000 
+				}
+			}
+		}
+		add = 10
+	}
+	if = {
+		limit = {
+			scope:war = {
+				war_contribution = {
+					target = scope:woc_council_join_war_councillor
+					value >= 15000 
+				}
+			}
+		}
+		add = 10
+	}
+	if = {
+		limit = {
+			scope:war = {
+				war_contribution = {
+					target = scope:woc_council_join_war_councillor
+					value >= 20000 
+				}
+			}
+		}
+		add = 10
+	}
+}
+
+woc_council_chancellor_scale = {
+	value = 0
+	if = {
+		limit = {
+			exists = liege.cp:councillor_chancellor
+		}
+		add = liege.cp:councillor_chancellor.diplomacy
+		multiply = {
+			add = 10
+			divide = 100
+		}
+		floor = yes
+		min = 1
+	}
+}
+
+woc_council_steward_scale = {
+	value = 0
+	if = {
+		limit = {
+			exists = liege.cp:councillor_steward
+		}
+		add = liege.cp:councillor_steward.stewardship
+		multiply = {
+			add = 10
+			divide = 100
+		}
+		floor = yes
+		min = 1
+	}
+}
+
+woc_council_marshal_scale = {
+	value = 0
+	if = {
+		limit = {
+			exists = liege.cp:councillor_marshal
+		}
+		add = liege.cp:councillor_marshal.martial
+		multiply = {
+			add = 10
+			divide = 100
+		}
+		floor = yes
+		min = 1
+	}
+}
+
+woc_council_spymaster_scale = {
+	value = 0
+	if = {
+		limit = {
+			exists = liege.cp:councillor_spymaster
+		}
+		add = liege.cp:councillor_spymaster.intrigue
+		multiply = {
+			add = 10
+			divide = 100
+		}
+		floor = yes
+		min = 1
+	}
+}
+
+woc_council_court_chaplain_scale = {
+	value = 0
+	if = {
+		limit = {
+			exists = liege.cp:councillor_court_chaplain
+		}
+		add = liege.cp:councillor_court_chaplain.learning
+		multiply = {
+			add = 10
+			divide = 100
+		}
+		floor = yes
+		min = 1
+	}
+}

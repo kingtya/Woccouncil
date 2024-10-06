@@ -1,0 +1,26 @@
+woc_council_magna_carta_war_lost = {
+	categories = { negative war martial war_ended }
+	icon = "war_ended_negative.dds"
+	description = {
+		first_valid = {
+			desc = woc_council_magna_carta_war_lost_desc
+		}
+	}
+	participants = { winner loser }
+	duration = {
+		years = 20
+	}
+}
+
+woc_council_signing_magna_carta = {
+	categories = { positive diplomacy }
+	icon = "diplomacy.dds"
+	description = {
+		first_valid = {
+			desc = woc_council_signing_magna_carta_desc
+		}
+	}
+	duration = {
+		years = 20
+	}
+}

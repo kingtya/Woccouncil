@@ -1,0 +1,73 @@
+woc_council_request = {
+	
+	categories = {
+		woc_council
+	}
+	
+	default = woc_council_request_accept
+
+	woc_council_request_accept = {
+	}
+
+	woc_council_request_prohibit = {
+	}
+}
+
+woc_council_diffidatio = {
+	
+	categories = {
+		woc_council
+	}
+	
+	default = woc_council_diffidatio_accept
+
+	woc_council_diffidatio_accept = {
+	}
+
+	woc_council_diffidatio_prohibit = {
+	}
+
+}
+
+woc_council_law_game_start = {
+	
+	categories = {
+		woc_council
+	}
+	
+	default = woc_council_law_game_start_default
+
+	woc_council_law_game_start_retrieve = {
+	}
+
+	woc_council_law_game_start_default = {
+	}
+	
+	woc_council_law_game_start_fully = {
+	}
+}
+
+woc_council_pulling_promise_prestige_cost = {
+	
+	categories = {
+		woc_council
+	}
+	
+	default = woc_council_pulling_promise_prestige_cost_medium
+
+	woc_council_pulling_promise_prestige_cost_minimum = {
+	}
+
+	woc_council_pulling_promise_prestige_cost_low = {
+	}
+	
+	woc_council_pulling_promise_prestige_cost_medium = {
+	}
+	
+	woc_council_pulling_promise_prestige_cost_high = {
+	}
+	
+	woc_council_pulling_promise_prestige_cost_maximum = {
+	}
+
+}

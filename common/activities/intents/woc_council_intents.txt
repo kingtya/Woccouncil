@@ -1,0 +1,127 @@
+﻿### Witch Ritual Intent 
+
+woc_council_official_matters_intent = {
+	icon = intent_study_hard
+	
+	auto_complete = yes
+
+	ai_will_do = {
+		value = 25
+	}
+
+	scripted_animation = {
+		animation = idle
+	}
+}
+
+woc_council_support_liege_intent = {
+	icon = befriend_intent
+	
+	auto_complete = yes
+
+	ai_will_do = {
+		value = 25
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value < -25
+				}
+			}
+			add = 25
+		}
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value < -50
+				}
+			}
+			add = 35
+		}
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value > 25
+				}
+			}
+			add = -15
+		}
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value > 50
+				}
+			}
+			add = -15
+		}
+	}
+
+	scripted_animation = {
+		animation = idle
+	}
+}
+
+woc_council_expand_vassals_right_intent = {
+	icon = intent_impress
+	
+	is_shown = {
+		is_alive = yes
+		is_imprisoned = no
+		NOT = { scope:special_option ?= flag:woc_council_normal }
+	}
+
+	ai_will_do = {
+		value = 50
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value < -25
+				}
+			}
+			add = 25
+		}
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value < -50
+				}
+			}
+			add = 25
+		}
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value > 25
+				}
+			}
+			add = -15
+		}
+		if = {
+			limit = {
+				exists = root.liege
+				opinion = {
+					target = liege
+					value > 50
+				}
+			}
+			add = -15
+		}
+	}
+
+	scripted_animation = {
+		animation = personality_rational
+	}
+}

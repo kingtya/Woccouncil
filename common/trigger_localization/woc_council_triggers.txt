@@ -1,0 +1,79 @@
+woc_valid_war_recipient = {
+	global = WOC_VALID_WAR_RECIPIENT
+	first = WOC_VALID_WAR_RECIPIENT
+	third = WOC_VALID_WAR_RECIPIENT
+}
+
+is_in_war_proposal = {
+	global = IS_IN_WAR_PROPOSAL
+	first = IS_IN_WAR_PROPOSAL
+	third = IS_IN_WAR_PROPOSAL
+}
+
+is_max_proposal = {
+	global = IS_MAX_PROPOSAL
+	first = IS_MAX_PROPOSAL
+	third = IS_MAX_PROPOSAL
+}
+
+is_in_law_cooldown = {
+	global_not = IS_IN_LAW_COOLDOWN
+	first_not = IS_IN_LAW_COOLDOWN
+	third_not = IS_IN_LAW_COOLDOWN
+}
+
+cant_proposal = {
+	global_not = CANT_PROPOSAL
+	first_not = CANT_PROPOSAL
+	third_not = CANT_PROPOSAL
+}
+
+has_woc_council_1_law_cooldown = {
+	first_not = WOC_COUNCIL_1_LAW_IS_ON_COOLDOWN
+}
+
+has_woc_council_2_law_cooldown = {
+	first_not = WOC_COUNCIL_2_LAW_IS_ON_COOLDOWN
+}
+
+is_not_convened_recently = {
+	global = IS_NOT_CONVENED_RECENTLY
+	first = IS_NOT_CONVENED_RECENTLY
+	third = IS_NOT_CONVENED_RECENTLY
+}
+
+woc_cp_pulling_cp.tt.secondary_recipient_is_already_in_list = {
+	global = woc_cp_pulling_cp.tt.secondary_recipient_is_already_in_list
+	first = woc_cp_pulling_cp.tt.secondary_recipient_is_already_in_list
+	third = woc_cp_pulling_cp.tt.secondary_recipient_is_already_in_list
+}
+
+woc_remove_woc_puppet_valid_tt = {
+	global_not = WOC_REMOVE_WOC_PUPPET_VALID_TT
+	first_not = WOC_REMOVE_WOC_PUPPET_VALID_TT
+	third_not = WOC_REMOVE_WOC_PUPPET_VALID_TT
+}
+
+is_woc_council_law_3 = {
+	global_not = IS_NOT_WOC_COUNCIL_LAW_3
+	first_not = IS_NOT_WOC_COUNCIL_LAW_3
+	third_not = IS_NOT_WOC_COUNCIL_LAW_3
+}
+
+already_scheming_woc_council_missions = {
+	global_not = ALREADY_SCHEMING_WOC_COUNCIL_MISSIONS
+	first_not = ALREADY_SCHEMING_WOC_COUNCIL_MISSIONS
+	third_not = ALREADY_SCHEMING_WOC_COUNCIL_MISSIONS
+}
+
+woc_request_for_grant_land_limit_trigger = {
+	global_not = WOC_REQUEST_FOR_GRANT_LAND_LIMIT_TRIGGER
+	first_not = WOC_REQUEST_FOR_GRANT_LAND_LIMIT_TRIGGER
+	third_not = WOC_REQUEST_FOR_GRANT_LAND_LIMIT_TRIGGER
+}
+
+woc_has_council_magna_carta = {
+	global = WOC_HAS_COUNCIL_MAGNA_CARTA
+	first = WOC_HAS_COUNCIL_MAGNA_CARTA
+	third = WOC_HAS_COUNCIL_MAGNA_CARTA
+}

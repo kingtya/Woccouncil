@@ -1,0 +1,601 @@
+woc_remove_woc_puppet = {
+	desc = woc_remove_woc_puppet_desc
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = woc_council
+
+	is_shown = {
+		has_trait = woc_puppet
+	}
+
+	is_valid_showing_failures_only = {
+		custom_description = {
+			text = woc_remove_woc_puppet_valid_tt
+			has_trait_xp = {
+				trait = woc_puppet
+				track = woc_puppet_scale_power
+				value < 10
+			}
+		}
+		is_adult = yes
+	}
+	
+	effect = {
+		remove_trait = woc_puppet
+	}
+	
+	ai_check_interval = 12
+
+	# Handled via interaction.
+	ai_potential = { always = yes }
+
+	ai_will_do = { base = 100 }
+}
+
+woc_signing_the_magna_carta = {
+	desc = woc_signing_the_magna_carta_desc
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/woc_signing_the_magna_carta.dds"
+	}
+	decision_group_type = woc_council
+
+	is_shown = {
+		is_independent_ruler = yes
+		has_royal_court = yes
+		government_has_flag = government_is_feudal
+		NOT = {
+			has_character_modifier = woc_council_magna_carta
+		}
+		NOT = {
+			government_has_flag = government_is_tribal
+		}
+		NOT = {
+			has_variable = woc_council_reject_magna_carta
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		is_available_adult = yes
+		is_civil_war = no
+		custom_description = {
+			text = "is_woc_council_law_3"
+			woc_council_law_value >= 3
+		}
+	}
+	
+	effect = {
+		save_scope_as = woc_council_magna_carta_liege
+		add_character_modifier = woc_council_magna_carta
+		remove_variable = woc_council_reject_magna_carta
+		if = {
+			limit = {
+				exists = dynasty
+				dynasty = {
+					NOT = { has_dynasty_modifier = woc_council_magna_carta_dynasty }
+				}
+			}
+			create_artifact = {
+				name = woc_council_magna_carta_artifact_name
+				description = woc_council_magna_carta_artifact_desc
+				type = book
+				template = woc_council_magna_carta_artifact_template
+				visuals = scroll
+				quality = 100
+				wealth = 100
+				modifier = woc_council_magna_carta_artifact_modifier
+				#max_durability = 40
+				decaying = no
+				save_scope_as = woc_council_magna_carta_artifact
+			}
+			scope:woc_council_magna_carta_artifact = {
+				set_owner = {
+					target = root
+				}
+			}
+			create_character_memory = {
+				type = woc_council_signing_magna_carta
+			}
+		}
+		if = {
+			limit = {
+				exists = dynasty
+				dynasty = {
+					NOT = { has_dynasty_modifier = woc_council_magna_carta_dynasty }
+				}
+			}
+			dynasty = {
+				add_dynasty_modifier = {
+					modifier = woc_council_magna_carta_dynasty
+				}
+			}
+		}
+		add_tyranny = -10
+	}
+	ai_check_interval = 0
+	ai_will_do = { base = 0 }
+}
+
+woc_abolish_the_magna_carta = {
+	desc = woc_abolish_the_magna_carta_desc
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_realm.dds"
+	}
+	decision_group_type = woc_council
+
+	is_shown = {
+		is_independent_ruler = yes
+		has_royal_court = yes
+		has_character_modifier = woc_council_magna_carta
+	}
+
+	is_valid_showing_failures_only = {
+		is_available_adult = yes
+	}
+	
+	widget = {
+		gui = "decision_view_widget_petition_liege"
+		controller = decision_option_list_controller
+		decision_has_second_step = yes
+		decision_custom_widget_container = "custom_widgets_container_step_two"
+		decision_to_second_step_button = "CHOOSE_WOC_ABOLISH_THE_MAGNA_CARTA_BUTTON"
+
+		item = {
+			value = woc_abolish_the_magna_carta_1
+			is_valid = {
+				prestige > woc_reject_magna_carta_prestige_cost_value
+			}
+			current_description = woc_abolish_the_magna_carta_1_desc
+			localization = woc_abolish_the_magna_carta_1_loc
+			icon = "gfx/interface/icons/message_feed/tier_up.dds"
+			ai_chance = {
+				value = 0 
+				if = {
+					limit = {
+						exists = faith.religious_head
+						faith.religious_head = {
+							opinion = {
+								target = root
+								value < medium_positive_opinion
+							}
+						}
+					}
+					add = 100
+				}
+			}
+		}
+		item = {
+			value = woc_abolish_the_magna_carta_2
+			is_valid = {
+				exists = faith.religious_head
+				faith.religious_head = {
+					opinion = {
+						target = root
+						value >= medium_positive_opinion
+					}
+				}
+			}
+			current_description = woc_abolish_the_magna_carta_2_desc
+			localization = woc_abolish_the_magna_carta_2_loc
+			icon = "gfx/interface/icons/message_feed/bishop.dds"
+			ai_chance = { value = 100 }
+		}
+	}
+	
+	effect = {
+		remove_character_modifier = woc_council_magna_carta
+		custom_tooltip = woc_abolish_the_magna_carta_tt
+		set_variable = {
+			name = woc_council_reject_magna_carta
+			years = 10
+		}
+		add_tyranny = 30
+		save_scope_as = woc_abolish_the_magna_carta_liege
+		if = {
+			limit = { scope:woc_abolish_the_magna_carta_1 = yes }
+			add_prestige = woc_reject_magna_carta_prestige_cost_value
+			every_vassal = {
+				limit = {
+					is_ai = no
+				}
+				trigger_event = woc_council_show.1003
+			}
+		}
+		else_if = {
+			limit = { scope:woc_abolish_the_magna_carta_2 = yes }
+			add_piety = woc_reject_magna_carta_piety_cost_value
+			if = {
+				limit = { exists = faith.religious_head }
+				faith.religious_head = {
+					save_scope_as = woc_abolish_the_magna_carta_religious_head
+				}
+			}
+			every_vassal = {
+				limit = {
+					is_ai = no
+				}
+				trigger_event = woc_council_show.1004
+			}
+		}
+	}
+	ai_check_interval = 3
+	ai_will_do = { base = 100 }
+}
+
+woc_grant_title_auto = {
+	desc = woc_grant_title_auto_desc
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_recruitment.dds"
+	}
+	decision_group_type = woc_council
+	
+	is_shown = {
+		has_royal_court = yes
+		woc_council_law_value >= 2
+	}
+
+	is_valid_showing_failures_only = {
+		is_available_adult = yes
+	}
+	
+	widget = {
+		gui = "decision_view_widget_petition_liege"
+		controller = decision_option_list_controller
+		decision_has_second_step = yes
+		decision_custom_widget_container = "custom_widgets_container_step_two"
+		decision_to_second_step_button = "CHOOSE_WOC_GRANT_TITLE_AUTO_BUTTON"
+
+		item = {
+			value = woc_grant_title_auto_1
+			is_valid = {
+				exists = cp:councillor_chancellor
+			}
+			current_description = woc_grant_title_auto_1_desc
+			localization = woc_grant_title_auto_1_loc
+			icon = "gfx/interface/icons/message_feed/council.dds"
+			ai_chance = { value = 0 }
+		}
+		item = {
+			value = woc_grant_title_auto_2
+			is_valid = {
+				any_vassal = {
+					is_powerful_vassal = yes
+				}
+			}
+			current_description = woc_grant_title_auto_2_desc
+			localization = woc_grant_title_auto_2_loc
+			icon = "gfx/interface/icons/message_feed/faction.dds"
+			ai_chance = { value = 0 }
+		}
+	}
+	
+	effect = {
+		save_scope_as = woc_grant_title_auto_liege
+		if = {
+			limit = { scope:woc_grant_title_auto_1 = yes }
+			every_held_title = {
+				limit = {
+					tier = tier_county
+					NOT = { title_province = root.capital_province }
+					NOT = { has_variable = woc_grant_title_auto_ban_title }
+				}
+				add_to_list = all_counties_list
+			}
+			every_held_title = {
+				limit = {
+					tier = tier_duchy
+					NOT = { this = root.capital_province.duchy }
+					NOT = { has_variable = woc_grant_title_auto_ban_title }
+				}
+				add_to_list = all_duchies_list
+			}
+			while = {
+				limit = {
+					any_in_list = {
+						list = all_duchies_list
+						count >= 1
+					}
+				}
+				random_in_list = {
+					list = all_duchies_list
+					save_scope_as = woc_random_duchies
+					scope:woc_grant_title_auto_liege = {
+						random_councillor = {
+							limit = { woc_council_valid_council_position = yes }
+							weight = {
+								base = 10
+								modifier = {
+									add = 10
+									is_powerful_vassal = yes
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 20
+									}
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 40
+									}
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 60
+									}
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 80
+									}
+								}
+								modifier = {
+									factor = 1000
+									any_held_title = {
+										is_de_jure_liege_or_above_target = scope:woc_random_duchies
+									}
+								}
+								modifier = {
+									factor = 0.2
+									is_lowborn = yes
+								}
+							}
+							save_scope_as = woc_councillor
+						}
+					}
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change
+						add_claim_on_loss = no
+					}		
+					change_title_holder = {
+						holder = scope:woc_councillor
+						change = scope:change
+					}
+					resolve_title_and_vassal_change = scope:change
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change_2
+						add_claim_on_loss = no
+					}
+					scope:woc_councillor = {
+						change_liege = {
+							liege = ROOT
+							change = scope:change_2
+						}
+					}
+					resolve_title_and_vassal_change = scope:change_2
+					remove_from_list = all_duchies_list
+				}
+			}
+			while = {
+				limit = {
+					any_in_list = {
+						list = all_counties_list
+						count >= 1
+					}
+				}
+				random_in_list = {
+					list = all_counties_list
+					save_scope_as = woc_random_counties
+					scope:woc_grant_title_auto_liege = {
+						random_councillor = {
+							limit = { woc_council_valid_council_position = yes }
+							weight = {
+								base = 10
+								modifier = {
+									add = 10
+									is_powerful_vassal = yes
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 20
+									}
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 40
+									}
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 60
+									}
+								}
+								modifier = {
+									add = 10
+									has_trait_xp = {
+										trait = woc_councillor
+										track = woc_councillor_impact
+										value >= 80
+									}
+								}
+								modifier = {
+									factor = 1000
+									any_held_title = {
+										is_de_jure_liege_or_above_target = scope:woc_random_counties
+									}
+								}
+								modifier = {
+									factor = 0.2
+									is_lowborn = yes
+								}
+							}
+							save_scope_as = woc_councillor
+						}
+					}
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change
+						add_claim_on_loss = no
+					}		
+					change_title_holder = {
+						holder = scope:woc_councillor
+						change = scope:change
+					}
+					resolve_title_and_vassal_change = scope:change
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change_2
+						add_claim_on_loss = no
+					}
+					scope:woc_councillor = {
+						change_liege = {
+							liege = ROOT
+							change = scope:change_2
+						}
+					}
+					resolve_title_and_vassal_change = scope:change_2
+					remove_from_list = all_counties_list
+				}
+			}
+		}
+		else_if = {
+			limit = { scope:woc_grant_title_auto_2 = yes }
+			every_held_title = {
+				limit = {
+					tier = tier_county
+					NOT = { title_province = root.capital_province }
+					NOT = { has_variable = woc_grant_title_auto_ban_title }
+				}
+				add_to_list = all_counties_list
+			}
+			every_held_title = {
+				limit = {
+					tier = tier_duchy
+					NOT = { this = root.capital_province.duchy }
+					NOT = { has_variable = woc_grant_title_auto_ban_title }
+				}
+				add_to_list = all_duchies_list
+			}
+			while = {
+				limit = {
+					any_in_list = {
+						list = all_duchies_list
+						count >= 1
+					}
+				}
+				random_in_list = {
+					list = all_duchies_list
+					save_scope_as = woc_random_duchies
+					scope:woc_grant_title_auto_liege = {
+						random_powerful_vassal = {
+							weight = {
+								base = 1
+								modifier = {
+									factor = 0.2
+									is_lowborn = yes
+								}
+								modifier = {
+									factor = 1000
+									any_held_title = {
+										is_de_jure_liege_or_above_target = scope:woc_random_duchies
+									}
+								}
+							}
+							save_scope_as = woc_powerful_vassal
+						}
+					}
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change
+						add_claim_on_loss = no
+					}		
+					change_title_holder = {
+						holder = scope:woc_powerful_vassal
+						change = scope:change
+					}
+					resolve_title_and_vassal_change = scope:change
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change_2
+						add_claim_on_loss = no
+					}
+					scope:woc_powerful_vassal = {
+						change_liege = {
+							liege = ROOT
+							change = scope:change_2
+						}
+					}
+					resolve_title_and_vassal_change = scope:change_2
+					remove_from_list = all_duchies_list
+				}
+			}
+			while = {
+				limit = {
+					any_in_list = {
+						list = all_counties_list
+						count >= 1
+					}
+				}
+				random_in_list = {
+					list = all_counties_list
+					save_scope_as = woc_random_counties
+					scope:woc_grant_title_auto_liege = {
+						random_powerful_vassal = {
+							weight = {
+								base = 1
+								modifier = {
+									factor = 0.2
+									is_lowborn = yes
+								}
+								modifier = {
+									factor = 1000
+									any_held_title = {
+										is_de_jure_liege_or_above_target = scope:woc_random_counties
+									}
+								}
+							}
+							save_scope_as = woc_powerful_vassal
+						}
+					}
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change
+						add_claim_on_loss = no
+					}		
+					change_title_holder = {
+						holder = scope:woc_powerful_vassal
+						change = scope:change
+					}
+					resolve_title_and_vassal_change = scope:change
+					create_title_and_vassal_change = {
+						type = granted
+						save_scope_as = change_2
+						add_claim_on_loss = no
+					}
+					scope:woc_powerful_vassal = {
+						change_liege = {
+							liege = ROOT
+							change = scope:change_2
+						}
+					}
+					resolve_title_and_vassal_change = scope:change_2
+					remove_from_list = all_counties_list
+				}
+			}
+		}
+	}
+	ai_check_interval = 0
+	ai_will_do = { base = 0 }
+}

@@ -1,0 +1,5 @@
+woc_council_revoke_title_vassal_opinion = {
+	opinion = -25
+	years = 10
+	revoke_title_reason = yes
+}

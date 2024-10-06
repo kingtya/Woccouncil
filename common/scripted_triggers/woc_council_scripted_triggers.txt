@@ -1,0 +1,47 @@
+woc_council_valid_council_position = {
+	OR = {
+		has_council_position = councillor_spouse
+		has_council_position = councillor_court_chaplain
+		has_council_position = councillor_chancellor
+		has_council_position = councillor_steward
+		has_council_position = councillor_marshal
+		has_council_position = councillor_spymaster
+		has_council_position = councillor_woc_advisor
+		has_council_position = councillor_woc_advisor_second
+	}
+}
+
+woc_council_magna_carta_trigger = {
+	custom_description = {
+		text = woc_has_council_magna_carta
+		$CHARACTER$ = {
+			has_character_modifier = woc_council_magna_carta
+		}
+	}
+}
+
+woc_council_valid_councillor_contract_trigger = {
+	NOT = { government_allows = administrative }
+	is_landed = yes
+	is_alive = yes
+	is_adult = yes
+	is_incapable = no
+}
+
+woc_council_valid_councillor_contract_basic_trigger = {
+	task_contract_taker = {
+		is_councillor = yes
+		woc_council_valid_council_position = yes
+		custom_tooltip = {
+			text = woc_council_task_contract_location_not_in_realm
+			liege = {
+				has_royal_court = yes
+			}
+			any_sub_realm_county = {
+				any_county_province = { 
+					this = root.task_contract_location
+				}
+			}
+		}
+	}
+}

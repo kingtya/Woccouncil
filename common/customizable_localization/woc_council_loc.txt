@@ -1,0 +1,87 @@
+woc_council_missions = {
+	type = character
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 1
+		}
+		localization_key = woc_council_suggestion_diplo_1
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 2
+		}
+		localization_key = woc_council_suggestion_diplo_2
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 3
+		}
+		localization_key = woc_council_suggestion_diplo_3
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 4
+		}
+		localization_key = woc_council_suggestion_martial_1
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 5
+		}
+		localization_key = woc_council_suggestion_martial_2
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 6
+		}
+		localization_key = woc_council_suggestion_martial_3
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 7
+		}
+		localization_key = woc_council_suggestion_steward_1
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 8
+		}
+		localization_key = woc_council_suggestion_steward_2
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 9
+		}
+		localization_key = woc_council_suggestion_steward_3
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 10
+		}
+		localization_key = woc_council_suggestion_learn_1
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 11
+		}
+		localization_key = woc_council_suggestion_learn_2
+	}
+	text = {
+		trigger = {
+			has_variable = woc_council_suggestion
+			var:woc_council_suggestion = 12
+		}
+		localization_key = woc_council_suggestion_learn_3
+	}
+}

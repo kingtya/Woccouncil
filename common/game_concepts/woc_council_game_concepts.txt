@@ -1,0 +1,15 @@
+﻿woc_royal_council = {
+	texture = "gfx/interface/icons/message_feed/council.dds"
+}
+woc_council_request = {
+	texture = "gfx/interface/icons/message_feed/chancellor_job.dds"
+}
+woc_royal_council_vote = {
+	texture = "gfx/interface/icons/message_feed/a_catch_all_councillor_icon.dds"
+}
+woc_council_diffidatio = {
+	texture = "gfx/interface/icons/character_interactions/independence.dds"
+}
+woc_council_faction = {
+	texture = "gfx/interface/icons/message_feed/vassal.dds"
+}

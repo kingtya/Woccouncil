@@ -1,0 +1,557 @@
+woc_has_nomadic_or_tribal = {
+	scope = character
+	is_shown = {
+		government_has_flag = government_is_tribal
+	}
+}
+
+woc_not_has_nomadic_or_tribal = {
+	scope = character
+	is_shown = {
+		NOT = {
+			government_has_flag = government_is_tribal
+		}
+	}
+}
+
+woc_councillor_regent = {
+	scope = character
+	is_shown = {
+		woc_council_valid_council_position = no
+	}
+}
+
+woc_councillor_spouse = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_spouse
+	}
+}
+
+woc_councillor_court_chaplain = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_court_chaplain
+	}
+}
+
+woc_councillor_chancellor = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_chancellor
+	}
+}
+
+woc_councillor_steward = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_steward
+	}
+}
+
+woc_councillor_marshal = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_marshal
+	}
+}
+
+woc_councillor_spymaster = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_spymaster
+	}
+}
+
+woc_councillor_woc_advisor = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_woc_advisor
+	}
+}
+
+woc_councillor_woc_advisor_valid = {
+	scope = character
+	is_shown = {
+		root.woc_council_law_value >= 3
+		NOT = { 
+			any_councillor = {
+				has_council_position = councillor_woc_advisor
+			}
+		}
+	}
+}
+
+woc_councillor_woc_advisor_second = {
+	scope = character
+	is_shown = {
+		has_council_position = councillor_woc_advisor_second
+	}
+}
+
+woc_councillor_woc_advisor_second_valid = {
+	scope = character
+	is_shown = {
+		root.woc_council_law_value >= 6
+		NOT = { 
+			any_councillor = {
+				has_council_position = councillor_woc_advisor_second
+			}
+		}
+	}
+}
+
+#######内阁倾向
+woc_council_agree = {  
+	scope = character
+	is_shown = {
+		woc_council_agree_value > 0
+	}
+}
+woc_council_disagree = {  
+	scope = character
+	is_shown = {
+		woc_council_agree_value <= 0
+	}
+}
+
+woc_council_war_attitude_gui = {  
+	scope = character
+	effect = {
+		root = {
+			save_temporary_scope_as = woc_council_liege
+			if = {
+				limit = {
+					has_variable_list = valid_war_proposal_list
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_variable = proposed_revoke_title_target
+				remove_variable = proposed_grant_title_target
+				remove_variable = proposed_war_target
+				remove_variable = proposed_enhancement_crown_target
+				set_variable = {
+					name = proposed_war_target
+					value = scope:council_war_target_1
+				}
+			}
+		}
+	}
+}
+
+woc_council_war_vote_going_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable_list = valid_war_proposal_list
+					is_target_in_variable_list = {
+						name = valid_war_proposal_list
+						target = scope:council_war_target_1
+					}
+					NOT = {
+						has_variable = proposed_war_target_instant
+					}
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				woc_vote_at_council_going = {
+					TYPE = war
+				}
+			}
+		}
+	}
+}
+
+woc_council_war_vote_retract_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable_list = valid_war_proposal_list
+					is_target_in_variable_list = {
+						name = valid_war_proposal_list
+						target = scope:council_war_target_1
+					}
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_list_variable = {
+					name = valid_war_proposal_list
+					target = scope:council_war_target_1
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				scope:council_war_target_1 = {
+					remove_list_variable = {
+						name = valid_war_proposal_flag_list
+						target = root
+					}
+				}
+				remove_interaction_cooldown_against = {
+					interaction = woc_vote_for_war_interaction
+					target = scope:council_war_target_1
+				}
+			}
+		}
+	}
+}
+
+woc_council_grant_title_attitude_gui = {  
+	scope = character
+	effect = {
+		root = {
+			save_temporary_scope_as = woc_council_liege
+			if = {
+				limit = {
+					has_variable_list = valid_grant_title_proposal_list
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_variable = proposed_revoke_title_target
+				remove_variable = proposed_grant_title_target
+				remove_variable = proposed_war_target
+				remove_variable = proposed_enhancement_crown_target
+				set_variable = {
+					name = proposed_grant_title_target
+					value = scope:council_grant_title_target_1
+				}
+			}
+		}
+	}
+}
+
+woc_council_grant_title_vote_going_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable_list = valid_grant_title_proposal_list
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_list
+						target = scope:council_grant_title_target_1
+					}
+					NOT = {
+						has_variable = proposed_grant_title_target_instant
+					}
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				woc_vote_at_council_going = {
+					TYPE = grant_title
+				}
+			}
+		}
+	}
+}
+
+woc_council_grant_title_vote_retract_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable_list = valid_grant_title_proposal_list
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_list
+						target = scope:council_war_target_1
+					}
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_list_variable = {
+					name = valid_grant_title_proposal_list
+					target = scope:council_war_target_1
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				scope:council_war_target_1 = {
+					remove_list_variable = {
+						name = valid_grant_title_proposal_flag_list
+						target = root
+					}
+				}
+				remove_interaction_cooldown_against = {
+					interaction = woc_vote_for_grant_title_interaction
+					target = scope:council_war_target_1
+				}
+			}
+		}
+	}
+}
+
+woc_council_revoke_title_attitude_gui = {  
+	scope = character
+	effect = {
+		root = {
+			save_temporary_scope_as = woc_council_liege
+			if = {
+				limit = {
+					has_variable_list = valid_revoke_title_proposal_list
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_variable = proposed_revoke_title_target
+				remove_variable = proposed_grant_title_target
+				remove_variable = proposed_war_target
+				remove_variable = proposed_enhancement_crown_target
+				set_variable = {
+					name = proposed_revoke_title_target
+					value = scope:council_revoke_title_target_1
+				}
+			}
+		}
+	}
+}
+
+woc_council_revoke_title_vote_going_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable_list = valid_revoke_title_proposal_list
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_list
+						target = scope:council_revoke_title_target_1
+					}
+					NOT = {
+						has_variable = proposed_revoke_title_target_instant
+					}
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				woc_vote_at_council_going = {
+					TYPE = revoke_title
+				}
+			}
+		}
+	}
+}
+
+woc_council_revoke_title_vote_retract_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable_list = valid_revoke_title_proposal_list
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_list
+						target = scope:council_war_target_1
+					}
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_list
+					target = scope:council_war_target_1
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				scope:council_war_target_1 = {
+					remove_list_variable = {
+						name = valid_revoke_title_proposal_flag_list
+						target = root
+					}
+				}
+				remove_interaction_cooldown_against = {
+					interaction = woc_vote_for_revoke_title_interaction
+					target = scope:council_war_target_1
+				}
+			}
+		}
+	}
+}
+
+woc_valid_enhancement_crown_proposal = {
+	scope = character
+	is_shown = {
+		has_variable = valid_enhancement_crown_proposal_law
+		NOT = {
+			has_variable = valid_enhancement_crown_proposal_instant_law
+		}
+	}
+}
+
+woc_council_enhancement_crown_attitude_gui = {  
+	scope = character
+	effect = {
+		root = {
+			save_temporary_scope_as = woc_council_liege
+			if = {
+				limit = {
+					has_variable = valid_enhancement_crown_proposal_law
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_variable = proposed_revoke_title_target
+				remove_variable = proposed_grant_title_target
+				remove_variable = proposed_war_target
+				remove_variable = proposed_enhancement_crown_target
+				set_variable = proposed_enhancement_crown_target
+			}
+		}
+	}
+}
+
+woc_council_enhancement_crown_vote_going_gui = {
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable = valid_enhancement_crown_proposal_law
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				woc_vote_at_council_going = {
+					TYPE = enhancement_crown
+				}
+			}
+		}
+	}
+}
+
+woc_council_enhancement_crown_vote_retract_gui = {  
+	scope = character
+	effect = {
+		root = {
+			if = {
+				limit = {
+					has_variable = valid_enhancement_crown_proposal_law
+					NAND = {
+						exists = involved_activity
+						involved_activity = {
+							has_activity_type = activity_woc_council
+						}
+					}
+				}
+				remove_variable = valid_enhancement_crown_proposal_law
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				remove_interaction_cooldown_against = {
+					interaction = woc_vote_for_enhancement_crown_interaction
+					target = root
+				}
+			}
+		}
+	}
+}
+
+woc_councillor_list_agree_gui = {
+	scope = character
+	effect = {
+		root = { clear_variable_list = woc_councillor_list_agree }
+		root = {
+			save_temporary_scope_as = woc_council_disagree_agree_liege
+			every_councillor = {
+				limit = {
+					woc_council_valid_council_position = yes
+					NOT = { is_diarch_of_target = scope:woc_council_disagree_agree_liege }
+					woc_council_agree_value > 0
+				}
+				root = {
+					add_to_variable_list = {
+						name = woc_councillor_list_agree
+						target = prev
+					}
+				}					
+			}
+		}
+	}
+}
+
+woc_councillor_list_disagree_gui = {
+	scope = character
+	effect = {
+		root = { clear_variable_list = woc_councillor_list_disagree }
+		root = {
+			save_temporary_scope_as = woc_council_disagree_agree_liege
+			every_councillor = {
+				limit = {
+					woc_council_valid_council_position = yes
+					NOT = { is_diarch_of_target = scope:woc_council_disagree_agree_liege }
+					woc_council_agree_value <= 0
+				}
+				root = {
+					add_to_variable_list = {
+						name = woc_councillor_list_disagree
+						target = prev
+					}
+				}					
+			}
+		}
+	}
+}

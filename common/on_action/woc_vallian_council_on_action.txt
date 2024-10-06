@@ -1,0 +1,939 @@
+on_game_start_after_lobby = {
+	on_actions = {
+		woc_council_on_game_start
+	}
+}
+
+woc_council_on_game_start = {
+	effect = {
+		if = {
+			limit = {
+				has_game_rule = woc_council_law_game_start_default
+			}
+			every_ruler = {
+				if = {
+					limit = {
+						OR = {
+							government_has_flag = government_is_tribal
+							government_has_flag = government_is_republic
+						}
+						has_royal_court = yes
+						is_landed = yes
+					}
+					add_realm_law_skip_effects = woc_council_1_law_fully
+					add_realm_law_skip_effects = woc_proposal_right_3
+				}
+				else_if = {
+					limit = {
+						government_has_flag = government_is_administrative
+						has_royal_court = yes
+						is_landed = yes
+					}
+					add_realm_law_skip_effects = woc_council_1_law_retrieve
+				}
+				else_if = {
+					limit = {
+						has_royal_court = yes
+						is_landed = yes
+					}
+					add_realm_law_skip_effects = woc_council_1_law_limited
+					add_realm_law_skip_effects = woc_proposal_right_1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_game_rule = woc_council_law_game_start_retrieve
+			}
+			every_ruler = {
+				if = {
+					limit = {
+						has_royal_court = yes
+						is_landed = yes
+					}
+					add_realm_law_skip_effects = woc_council_1_law_retrieve
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_game_rule = woc_council_law_game_start_fully
+			}
+			every_ruler = {
+				if = {
+					limit = {
+						has_royal_court = yes
+						is_landed = yes
+					}
+					add_realm_law_skip_effects = woc_council_1_law_fully
+					add_realm_law_skip_effects = woc_proposal_right_3
+				}
+			}
+		}
+	}
+}
+
+on_vassal_gained = {
+	on_actions = {
+		woc_council_vassal_gained
+	}
+}
+
+woc_council_vassal_gained = {
+	effect = {
+		if = {
+			limit = {
+				is_target_in_variable_list = {
+					name = valid_war_proposal_ongoing_list
+					target = scope:vassal
+				}
+			}
+			remove_list_variable = {
+				name = valid_war_proposal_ongoing_list
+				target = scope:vassal
+			}
+		}
+		if = {
+			limit = {
+				is_target_in_variable_list = {
+					name = valid_war_proposal_list
+					target = scope:vassal
+				}
+			}
+			remove_list_variable = {
+				name = valid_war_proposal_list
+				target = scope:vassal
+			}
+		}
+	}
+}
+
+on_death = {
+	on_actions = {
+		woc_council_on_death
+	}
+}
+
+woc_council_on_death = {
+	effect = {
+		save_scope_as = woc_council_death_target
+		if = {
+			limit = {
+				has_variable_list = valid_war_proposal_flag_list
+			}
+			every_in_list = {
+				variable = valid_war_proposal_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_list
+						target = scope:woc_council_death_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_war_proposal_list
+					target = scope:woc_council_death_target
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_grant_title_proposal_flag_list
+			}
+			every_in_list = {
+				variable = valid_grant_title_proposal_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_list
+						target = scope:woc_council_death_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_grant_title_proposal_list
+					target = scope:woc_council_death_target
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_revoke_title_proposal_flag_list
+			}
+			every_in_list = {
+				variable = valid_revoke_title_proposal_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_list
+						target = scope:woc_council_death_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_list
+					target = scope:woc_council_death_target
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_war_proposal_instant_flag_list
+			}
+			every_in_list = {
+				variable = valid_war_proposal_instant_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_ongoing_list
+						target = scope:woc_council_death_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_war_proposal_ongoing_list
+					target = scope:woc_council_death_target
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_grant_title_proposal_instant_flag_list
+			}
+			every_in_list = {
+				variable = valid_grant_title_proposal_instant_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_ongoing_list
+						target = scope:woc_council_death_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_grant_title_proposal_ongoing_list
+					target = scope:woc_council_death_target
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_revoke_title_proposal_instant_flag_list
+			}
+			every_in_list = {
+				variable = valid_revoke_title_proposal_instant_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_ongoing_list
+						target = scope:woc_council_death_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_ongoing_list
+					target = scope:woc_council_death_target
+				}
+			}
+		}
+	}
+}
+
+on_title_lost = {
+	on_actions = {
+		woc_council_on_title_lost
+		woc_council_missions_on_title_lost
+	}
+}
+
+woc_council_on_title_lost = {
+	effect = {
+		save_scope_as = woc_council_title_lost_target
+		if = {
+			limit = {
+				has_variable_list = valid_war_proposal_instant_flag_list
+				NOR = {
+					is_independent_ruler = yes
+					is_landed = yes
+				}
+			}
+			every_in_list = {
+				variable = valid_war_proposal_instant_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_ongoing_list
+						target = scope:woc_council_title_lost_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_war_proposal_ongoing_list
+					target = scope:woc_council_title_lost_target
+				}
+				root = {
+					remove_list_variable = {
+						name = valid_war_proposal_instant_flag_list
+						target = prev
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_war_proposal_flag_list
+				NOR = {
+					is_independent_ruler = yes
+					is_landed = yes
+				}
+			}
+			every_in_list = {
+				variable = valid_war_proposal_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_list
+						target = scope:woc_council_title_lost_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_war_proposal_list
+					target = scope:woc_council_title_lost_target
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				root = {
+					remove_list_variable = {
+						name = valid_war_proposal_flag_list
+						target = prev
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_revoke_title_proposal_instant_flag_list
+				NOR = {
+					is_independent_ruler = yes
+					is_landed = yes
+				}
+			}
+			every_in_list = {
+				variable = valid_revoke_title_proposal_instant_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_ongoing_list
+						target = scope:woc_council_title_lost_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_ongoing_list
+					target = scope:woc_council_title_lost_target
+				}
+				root = {
+					remove_list_variable = {
+						name = valid_revoke_title_proposal_instant_flag_list
+						target = prev
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_variable_list = valid_revoke_title_proposal_flag_list
+				NOR = {
+					is_independent_ruler = yes
+					is_landed = yes
+				}
+			}
+			every_in_list = {
+				variable = valid_revoke_title_proposal_flag_list
+				limit = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_list
+						target = scope:woc_council_title_lost_target
+					}
+				}
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_list
+					target = scope:woc_council_title_lost_target
+				}
+				change_variable = {
+					name = woc_total_proposal
+					add = -1
+				}
+				root = {
+					remove_list_variable = {
+						name = valid_revoke_title_proposal_flag_list
+						target = prev
+					}
+				}
+			}
+		}
+	}
+}
+
+woc_council_missions_on_title_lost = {
+	effect = {
+		if = {
+			limit = { 
+				scope:title.tier >= tier_county
+				scope:transfer_type = flag:revoked
+				OR = {
+					AND = {
+						NOT = {
+							faith = scope:new_holder.faith
+						}
+						faith = {
+							faith_hostility_level = {
+								target = scope:new_holder.faith
+								value > faith_astray_level
+							}
+						}
+						NOR = {
+							AND = {
+								scope:new_holder.faith.religion = religion:islam_religion
+								faith = {
+									has_doctrine = tenet_islamic_syncretism
+								}
+							}
+							AND = {
+								scope:new_holder.faith.religion = religion:judaism_religion
+								faith = {
+									has_doctrine = tenet_jewish_syncretism
+								}
+							}
+							AND = {
+								scope:new_holder.faith.religion = religion:christianity_religion
+								faith = {
+									has_doctrine = tenet_christian_syncretism
+								}
+							}
+							AND = {
+								scope:new_holder.faith = {
+									has_doctrine_parameter = unreformed
+								}
+								faith = {
+									has_doctrine = tenet_unreformed_syncretism
+								}
+							}
+						}
+					}
+					AND = {
+						NOT = {
+							culture = scope:new_holder.culture
+						}
+						culture = {
+							cultural_acceptance = { target = scope:new_holder.culture value < 30 }
+						}
+					}
+				}
+			}
+			scope:new_holder = {
+				if = {
+					limit = {
+						has_variable = woc_council_suggestion
+						var:woc_council_suggestion = 2
+					}
+					trigger_event = woc_council_suggestion.0002
+				}
+			}
+		}
+	}
+}
+
+on_title_gain = {
+	on_actions = {
+		woc_council_on_title_gain
+	}
+}
+
+woc_council_on_title_gain = {
+	effect = {
+		save_scope_as = woc_council_new_holder
+		if = {
+			limit = {
+				exists = scope:previous_holder
+				scope:previous_holder = {
+					AND = {
+						has_variable_list = valid_grant_title_recipient
+						is_target_in_variable_list = {
+							name = valid_grant_title_recipient
+							target = scope:woc_council_new_holder
+						}
+					}
+				}
+				scope:transfer_type = flag:granted
+			}
+			if = {
+				limit = {
+					scope:title = {
+						tier = tier_county
+					}
+				}
+				scope:previous_holder = {
+					add_prestige = 50
+				}
+			}
+			else_if = {
+				limit = {
+					scope:title = {
+						tier = tier_duchy
+					}
+				}
+				scope:previous_holder = {
+					add_prestige = 100
+				}
+			}
+			else_if = {
+				limit = {
+					scope:title = {
+						tier = tier_kingdom
+					}
+				}
+				scope:previous_holder = {
+					add_prestige = 200
+				}
+			}
+		}
+	}
+}
+
+yearly_playable_pulse = {
+	on_actions = {
+		delay = { days = 90 }
+		woc_council_woc_puppet_yearly
+		woc_council_missions_yearly
+		woc_council_spawn_councillor_contract_yearly
+	}
+}
+
+woc_council_woc_puppet_yearly = {
+	trigger = {
+		has_trait = woc_puppet
+	}
+	effect = {
+		if = {
+			limit = { 
+				has_trait = woc_puppet 
+				has_royal_court = yes
+			}
+			add_trait_xp = {
+				trait = woc_puppet
+				value = 2
+			}
+		}
+		else_if = {
+			limit = { 
+				has_trait = woc_puppet 
+				has_royal_court = no
+			}
+			add_trait_xp = {
+				trait = woc_puppet
+				value = -5
+			}
+		}
+	}
+}
+
+woc_council_missions_yearly = {
+	trigger = {
+		has_character_modifier = woc_council_add_max_schemes
+	}
+	effect = {
+		if = {
+			limit = { 
+				has_character_modifier = woc_council_add_max_schemes
+				NOT = {
+					any_scheme = {
+						scheme_type = woc_council_missions
+					}
+				}
+			}
+			remove_character_modifier = woc_council_add_max_schemes
+		}
+	}
+}
+
+woc_council_spawn_councillor_contract_yearly = {
+	effect = {
+		if = {
+			limit = {
+				is_governor = no
+				is_councillor = yes
+				woc_council_valid_council_position = yes
+				is_landed = yes
+				liege = {
+					has_royal_court = yes
+				}
+				trigger_if = {
+					limit = { is_ai = yes }
+					is_available = yes
+				}
+			}
+			random = {
+				chance = {
+					value = 70
+					if = {
+						limit = { has_character_flag = admin_governance_frequency_cooldown }
+						subtract = 50
+					}
+				}
+				woc_council_spawn_councillor_contract_effect = yes
+			}
+		}
+	}
+}
+
+on_war_started = {
+	on_actions = {
+		woc_council_war_started
+		woc_council_missions_war_started
+	}
+}
+
+woc_council_war_started = {
+	effect = {
+		if = {
+			limit = {
+				scope:war = {
+					using_cb = liberty_faction_war
+				}
+				scope:defender = {
+					NOT = {
+						has_realm_law = woc_council_2_law_fully
+					}
+				}
+			}
+			scope:defender = {
+				send_interface_message = {
+					type = event_generic_neutral
+					title = woc_start_war_decrease_council_law_msg_tt
+					left_icon = scope:defender					
+					right_icon = scope:attacker
+					custom_tooltip = woc_start_war_decrease_council_law_msg_ct
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:war = {
+					using_cb = liberty_faction_war
+				}
+				scope:defender = {
+					has_variable = woc_council_reject_magna_carta
+				}
+			}
+			scope:defender = {
+				send_interface_message = {
+					type = event_generic_neutral
+					title = woc_start_war_reject_magna_carta_msg_tt
+					left_icon = scope:defender					
+					right_icon = scope:attacker
+					custom_tooltip = woc_start_war_reject_magna_carta_msg_ct
+				}
+			}
+		}
+	}
+}
+
+woc_council_missions_war_started = {
+	effect = {
+		if = {
+			limit = {
+				scope:attacker = {
+					has_variable = woc_council_suggestion
+					var:woc_council_suggestion = 3
+				}
+			}
+			scope:attacker = {
+				trigger_event = woc_council_suggestion.0002
+			}
+		}
+	}
+}
+
+on_war_won_attacker = {
+	on_actions = {
+		woc_council_war_won_attacker
+		woc_council_missions_war_won_attacker
+	}
+}
+
+woc_council_war_won_attacker = {
+	effect = {
+		if = {
+			limit = {
+				scope:war = {
+					using_cb = liberty_faction_war
+				}
+				scope:winner = scope:attacker
+				scope:defender = {
+					has_royal_court = yes
+					NOT = {
+						has_realm_law = woc_council_2_law_fully
+					}
+				}
+			}
+			scope:defender = {
+				send_interface_message = {
+					type = event_generic_neutral
+					title = woc_lose_war_decrease_council_law_msg_tt
+					left_icon = scope:defender					
+					right_icon = scope:attacker
+					custom_tooltip = woc_lose_war_decrease_council_law_msg_ct
+					woc_decrease_council_law_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:war = {
+					using_cb = liberty_faction_war
+				}
+				scope:winner = scope:attacker
+				scope:defender = {
+					has_variable = woc_council_reject_magna_carta
+					has_royal_court = yes
+				}
+			}
+			scope:defender = {
+				trigger_event = woc_council_show.1005
+			}
+		}
+		if = {
+			limit = {
+				scope:winner = scope:attacker
+				scope:attacker = {
+					has_royal_court = yes
+				}
+			}
+			scope:war = {
+				every_war_participant = {
+					if = {
+						limit = {
+							is_landed = yes
+							highest_held_title_tier >= tier_county
+							OR = {
+								AND = {
+									is_councillor_of = scope:attacker
+									woc_council_valid_council_position = yes
+									NOT = {
+										has_council_position = councillor_court_chaplain
+									}
+								}
+								trigger_if = {
+									limit = {
+										scope:attacker = { has_active_diarchy = yes }
+									}
+									is_diarch_of_target = scope:attacker
+								}
+							}
+						}
+						send_interface_message = {
+							type = event_generic_neutral
+							title = woc_council_join_war_councillor_reward_msg_tt
+							left_icon = scope:defender					
+							right_icon = scope:attacker
+							custom_tooltip = woc_council_join_war_councillor_reward_msg_ct
+							save_scope_as = woc_council_join_war_councillor
+							if = {
+								limit = {
+									NOT = { has_trait = woc_councillor }
+								}
+								add_trait = woc_councillor
+							}
+							add_trait_xp = {
+								trait = woc_councillor
+								track = woc_councillor_impact
+								value = woc_council_join_war_councillor_reward_value
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+woc_council_missions_war_won_attacker = {
+	effect = {
+		if = {
+			limit = {
+				scope:war = {
+					OR = {
+						using_cb = minor_religious_war
+						using_cb = religious_war
+						using_cb = major_religious_war
+						using_cb = undirected_great_holy_war
+						using_cb = directed_great_holy_war
+					}
+				}
+				scope:winner = scope:attacker
+				scope:attacker = {
+					has_variable = woc_council_suggestion
+					var:woc_council_suggestion = 11
+				}
+			}
+			scope:attacker = {
+				trigger_event = woc_council_suggestion.0001
+			}
+		}
+	}
+}
+
+on_war_won_defender = {
+	on_actions = {
+		woc_council_war_won_defender
+	}
+}
+
+woc_council_war_won_defender = {
+	effect = {
+		if = {
+			limit = {
+				scope:winner = scope:defender
+				scope:defender = {
+					has_royal_court = yes
+				}
+			}
+			scope:war = {
+				every_war_participant = {
+					if = {
+						limit = {
+							is_landed = yes
+							highest_held_title_tier >= tier_county
+							OR = {
+								AND = {
+									is_councillor_of = scope:defender
+									woc_council_valid_council_position = yes
+									NOT = {
+										has_council_position = councillor_court_chaplain
+									}
+								}
+								trigger_if = {
+									limit = {
+										scope:defender = { has_active_diarchy = yes }
+									}
+									is_diarch_of_target = scope:defender
+								}
+							}
+						}
+						send_interface_message = {
+							type = event_generic_neutral
+							title = woc_council_join_war_councillor_reward_msg_tt
+							left_icon = scope:defender					
+							right_icon = scope:attacker
+							custom_tooltip = woc_council_join_war_councillor_reward_msg_ct
+							save_scope_as = woc_council_join_war_councillor
+							if = {
+								limit = {
+									NOT = { has_trait = woc_councillor }
+								}
+								add_trait = woc_councillor
+							}
+							add_trait_xp = {
+								trait = woc_councillor
+								track = woc_councillor_impact
+								value = woc_council_join_war_councillor_reward_value
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+on_building_completed = {
+	on_actions = {
+		woc_council_missions_on_building_completed
+	}
+}
+
+woc_council_missions_on_building_completed = {
+	effect = {
+		root = {
+			if = {
+				limit = {
+					county.holder = {
+						has_variable = woc_council_suggestion
+						var:woc_council_suggestion = 9
+					}
+				}
+				county.holder = {
+					trigger_event = woc_council_suggestion.0001
+				}
+			}
+		}
+	}
+}
+
+on_rank_up = {
+	on_actions = {
+		woc_council_on_rank_up
+	}
+}
+
+woc_council_on_rank_up = {
+	effect = {
+		if = {
+			limit = {
+				has_game_rule = woc_council_law_game_start_default
+			}
+			if = {
+				limit = {
+					OR = {
+						government_has_flag = government_is_tribal
+						government_has_flag = government_is_republic
+					}
+					has_royal_court = yes
+					is_landed = yes
+				}
+				add_realm_law_skip_effects = woc_council_1_law_fully
+				add_realm_law_skip_effects = woc_proposal_right_3
+			}
+			else_if = {
+				limit = {
+					government_has_flag = government_is_administrative
+					has_royal_court = yes
+					is_landed = yes
+				}
+				add_realm_law_skip_effects = woc_council_1_law_retrieve
+			}
+			else_if = {
+				limit = {
+					has_royal_court = yes
+					is_landed = yes
+				}
+				add_realm_law_skip_effects = woc_council_1_law_limited
+				add_realm_law_skip_effects = woc_proposal_right_1
+			}
+		}
+		else_if = {
+			limit = {
+				has_game_rule = woc_council_law_game_start_retrieve
+			}
+			if = {
+				limit = {
+					has_royal_court = yes
+					is_landed = yes
+				}
+				add_realm_law_skip_effects = woc_council_1_law_retrieve
+			}
+		}
+		else_if = {
+			limit = {
+				has_game_rule = woc_council_law_game_start_fully
+			}
+			if = {
+				limit = {
+					has_royal_court = yes
+					is_landed = yes
+				}
+				add_realm_law_skip_effects = woc_council_1_law_fully
+				add_realm_law_skip_effects = woc_proposal_right_3
+			}
+		}
+	}
+}

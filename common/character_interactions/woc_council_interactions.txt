@@ -1,0 +1,4267 @@
+﻿woc_vote_for_war_interaction = {
+	category = interaction_category_diplomacy
+	icon = declare_war_interaction
+	cooldown_against_recipient = { years = 3 }
+
+	desc = woc_vote_for_war_interaction_desc
+	
+	is_shown = {
+		NOT = {
+			scope:recipient = scope:actor
+		}
+		scope:recipient = {
+			is_landed = yes
+			is_independent_ruler = yes
+		}
+		scope:actor = {
+			NOT = {
+				is_at_war_with = scope:recipient
+			}
+			#限制法律
+			woc_council_law_value >= 4
+			NAND = {
+				has_variable_list = valid_war_recipient
+				is_target_in_variable_list = {
+					name = valid_war_recipient
+					target = scope:recipient
+				}
+			}
+		}
+	}
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			custom_description = {
+				text = "is_in_war_proposal"
+				NOR = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_ongoing_list
+						target = scope:recipient
+					}
+					is_target_in_variable_list = {
+						name = valid_war_proposal_list
+						target = scope:recipient
+					}
+					has_variable = proposed_war_target_instant
+				}
+			}
+			custom_description = {
+				text = "is_max_proposal"
+				OR = {
+					NOT = { has_variable = woc_total_proposal }
+					AND = {
+						has_variable = woc_total_proposal
+						var:woc_total_proposal < 10
+					}
+				}
+			}
+		}
+	}
+	send_option = {	
+		flag = woc_instant_proposal					
+		localization = WOC_INSTANT_PROPOSAL							
+	}
+	send_options_exclusive = no
+	on_accept = {
+		if = {
+			limit = { scope:woc_instant_proposal = yes }
+			scope:actor = {
+				custom_tooltip = woc_vote_for_war_instant_interaction_notification
+				woc_vote_at_council_instant = {
+					TYPE = war
+				}
+			}
+		}
+		else_if = {
+			scope:actor = {
+				custom_tooltip = woc_vote_for_war_interaction_notification
+				woc_vote_at_council = {
+					TYPE = war
+				}
+			}
+		}
+	}
+	auto_accept = yes
+}
+
+woc_vote_for_grant_title_interaction = {
+	category = interaction_category_diplomacy
+	icon = grant_titles_interaction
+	cooldown_against_recipient = { years = 3 }
+
+	desc = woc_vote_for_grant_title_interaction_desc
+	
+	is_shown = {
+		NOT = { scope:actor = scope:recipient }
+		scope:recipient = {
+			OR = {
+				target_is_liege_or_above = scope:actor
+				is_pool_guest_of = scope:actor
+				AND = {
+					scope:actor.faith.religious_head = scope:recipient
+					is_independent_ruler = yes
+				}
+			}
+		}
+		scope:actor = {
+			#限制法律
+			woc_council_law_value >= 2
+			NAND = {
+				has_variable_list = valid_grant_title_recipient
+				is_target_in_variable_list = {
+					name = valid_grant_title_recipient
+					target = scope:recipient
+				}
+			}
+		}
+	}
+	is_valid_showing_failures_only = {
+		scope:recipient = {
+			custom_tooltip = {
+				text = can_be_granted_titles_interaction_tt
+				OR = {
+					can_be_granted_titles_by = { RULER = scope:actor }
+					can_be_granted_theocratic_titles_by = { RULER = scope:actor }
+				}
+			}
+		}
+		NOT = { scope:actor = { is_at_war_with = scope:recipient } }
+		NOT = { scope:recipient = { has_trait = devoted } } # Monks are disinherited, and should not have land granted to them
+		custom_description = {
+			text = is_not_theocratic_court_chaplain
+			subject = scope:recipient
+			NAND = {
+				scope:actor.faith = {
+					has_doctrine = doctrine_theocracy_temporal
+				}
+				scope:recipient = {
+					faith = {
+						has_doctrine = doctrine_theocracy_temporal
+					}
+					has_council_position = councillor_court_chaplain
+				}
+				NOT = { scope:actor.faith.religious_head = scope:recipient }
+			}
+		}
+		scope:actor = {
+			any_held_title = {
+				count > 1
+			}
+		}
+		scope:recipient = { is_busy_in_events_localised = yes }
+		trigger_if = {
+			limit = {
+				scope:recipient = {
+					is_ruler = no
+				}
+			}
+			scope:recipient = {
+				is_imprisoned = no
+			}
+		}
+		# DON'T TAKE OTHER PLAYERS' ACCLAIMED KNIGHTS
+		custom_description = {
+			text = grant_title_stealing_acclaimed_knight
+			subject = scope:recipient
+			NOR = {
+				AND = {
+					scope:recipient = {
+						is_acclaimed = yes
+					}
+					scope:recipient.liege ?= {
+						is_ai = no
+						NOT = { this = scope:actor }
+					}
+				}
+				AND = {
+					scope:recipient = {
+						is_acclaimed = yes
+					}
+					scope:actor = {
+						is_ai = yes
+					}
+				}
+			}
+		}
+		#内阁限制
+		scope:actor = {
+			custom_description = {
+				text = "is_in_war_proposal"
+				NOR = {
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_ongoing_list
+						target = scope:recipient
+					}
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_list
+						target = scope:recipient
+					}
+					has_variable = proposed_grant_title_target_instant
+				}
+			}
+			custom_description = {
+				text = "is_max_proposal"
+				OR = {
+					NOT = { has_variable = woc_total_proposal }
+					AND = {
+						has_variable = woc_total_proposal
+						var:woc_total_proposal < 10
+					}
+				}
+			}
+		}
+	}
+	send_option = {	
+		flag = woc_instant_proposal					
+		localization = WOC_INSTANT_PROPOSAL							
+	}
+	send_options_exclusive = no
+	on_accept = {
+		if = {
+			limit = { scope:woc_instant_proposal = yes }
+			scope:actor = {
+				custom_tooltip = woc_vote_for_grant_title_instant_interaction_notification
+				woc_vote_at_council_instant = {
+					TYPE = grant_title
+				}
+			}
+		}
+		else_if = {
+			scope:actor = {
+				custom_tooltip = woc_vote_for_grant_title_interaction_notification
+				woc_vote_at_council = {
+					TYPE = grant_title
+				}
+			}
+		}
+	}
+	auto_accept = yes
+}
+
+woc_vote_for_revoke_title_interaction = {
+	category = interaction_category_diplomacy
+	icon = revoke_title
+	cooldown_against_recipient = { years = 3 }
+
+	desc = woc_vote_for_revoke_title_interaction_desc
+	
+	is_shown = {
+		scope:recipient = {
+			is_landed = yes
+			# should be shown but be disabled for indirect vassals
+			target_is_liege_or_above = scope:actor
+			# is_vassal_of = scope:actor
+		}
+		scope:actor = {
+			#限制法律
+			woc_council_law_value >= 1
+			NAND = {
+				has_variable_list = valid_revoke_title_recipient
+				is_target_in_variable_list = {
+					name = valid_revoke_title_recipient
+					target = scope:recipient
+				}
+			}
+		}
+	}
+	is_valid_showing_failures_only = {
+		title_revocation_standard_valid_showing_failures_only_trigger = yes
+		# Plus make sure there's a legal right to revoke.
+		scope:actor = {
+			trigger_if = {
+				limit = { government_has_flag = government_is_tribal }
+				custom_description = {
+					text = "has_law_allowing_title_revocation_tribal"
+					has_realm_law_flag = title_revocation_allowed
+				}
+			}
+			trigger_if = {
+				limit = {
+					NOT = { government_has_flag = government_is_tribal }
+				}
+				custom_description = {
+					text = "has_law_allowing_title_revocation_crown"
+					has_realm_law_flag = title_revocation_allowed
+				}
+			}
+		}
+		trigger_if = {
+			limit = {
+				scope:recipient = {
+					vassal_contract_has_flag = vassal_contract_cannot_revoke_titles
+				}
+			}
+			custom_description = {
+				text = vassal_contract_forbids_revocation
+				scope:recipient = {
+					NOT = { vassal_contract_has_flag = vassal_contract_cannot_revoke_titles }
+				}
+			}
+		}
+		# And uhh... the sensible check.
+		scope:recipient = {
+			is_vassal_of = scope:actor
+			is_busy_in_events_localised = yes
+			NOT = { has_strong_hook = scope:actor }
+		}
+		custom_tooltip = {
+			text = cannot_take_overt_hostile_actions_against_diarch.tt
+			NOT = { scope:recipient ?= scope:actor.diarch }
+		}
+		#内阁限制
+		scope:actor = {
+			custom_description = {
+				text = "is_in_war_proposal"
+				NOR = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_ongoing_list
+						target = scope:recipient
+					}
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_list
+						target = scope:recipient
+					}
+					has_variable = proposed_revoke_title_target_instant
+				}
+			}
+			custom_description = {
+				text = "is_max_proposal"
+				OR = {
+					NOT = { has_variable = woc_total_proposal }
+					AND = {
+						has_variable = woc_total_proposal
+						var:woc_total_proposal < 10
+					}
+				}
+			}
+		}
+	}
+	send_option = {	
+		flag = woc_instant_proposal					
+		localization = WOC_INSTANT_PROPOSAL							
+	}
+	send_options_exclusive = no
+	on_accept = {
+		if = {
+			limit = { scope:woc_instant_proposal = yes }
+			scope:actor = {
+				custom_tooltip = woc_vote_for_revoke_title_instant_interaction_notification
+				woc_vote_at_council_instant = {
+					TYPE = revoke_title
+				}
+			}
+		}
+		else_if = {
+			scope:actor = {
+				custom_tooltip = woc_vote_for_revoke_title_interaction_notification
+				woc_vote_at_council = {
+					TYPE = revoke_title
+				}
+			}
+		}
+	}
+	auto_accept = yes
+}
+
+woc_vote_for_enhancement_crown_interaction = {
+	category = interaction_category_diplomacy
+	icon = icon_shift_privileges
+	cooldown_against_recipient = { years = 10 }
+
+	desc = woc_vote_for_enhancement_crown_interaction_desc
+	
+	is_shown = {
+		scope:recipient = scope:actor
+		scope:actor = {
+			#限制法律
+			woc_council_law_value >= 3
+			NOR = {
+				has_realm_law = crown_authority_3
+				has_realm_law = tribal_authority_3
+				has_realm_law = imperial_bureaucracy_3
+			}
+		}
+	}
+	is_valid_showing_failures_only = {
+		#内阁限制
+		scope:actor = {
+			custom_description = {
+				text = "is_in_war_proposal"
+				NOT = {
+					has_variable = valid_enhancement_crown_proposal_law
+				}
+			}
+			custom_description = {
+				text = "is_max_proposal"
+				OR = {
+					NOT = { has_variable = woc_total_proposal }
+					AND = {
+						has_variable = woc_total_proposal
+						var:woc_total_proposal < 10
+					}
+				}
+			}
+			custom_description = {
+				text = "is_in_law_cooldown"
+				NOR = {
+					AND = {
+						has_variable = crown_authority_cooldown
+						has_realm_law_flag = uses_crown_authority
+					}
+					AND = {
+						has_variable = tribal_authority_cooldown
+						has_realm_law_flag = uses_tribal_authority
+					}
+					AND = {
+						has_variable = imperial_bureaucracy_cooldown
+						has_realm_law_flag = uses_imperial_bureaucracy
+					}
+				}
+			}
+		}
+	}
+	on_accept = {
+		scope:actor = {
+			custom_tooltip = woc_vote_for_enhancement_crown_interaction_notification
+			woc_vote_at_council = {
+				TYPE = enhancement_crown
+			}
+		}
+	}
+	auto_accept = yes
+}
+
+#领主拉拢
+woc_liege_pulling_councilor_interaction = {
+	category = interaction_category_diplomacy
+	icon = council
+	desc = woc_pulling_councilor_interaction_desc
+
+	
+
+	is_shown = {
+		scope:actor = {
+			woc_council_law_value >= 1
+			NAND = {
+				has_variable_list = woc_liege_pulling_councilor_list
+				is_target_in_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = scope:recipient
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:recipient }
+			scope:recipient = {
+				OR = {
+					is_diarch_of_target = scope:actor
+					is_councillor_of = scope:actor
+				}
+			}
+		}
+	}
+
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			NOT = { has_trait = incapable }
+			NOT = { has_trait = woc_puppet }
+			is_imprisoned = no
+			is_adult = yes
+		}
+		trigger_if = {
+			# AI won't exploit and need this exception, as they don't actually open the windows, so they'll be blocked from taking the interaction otherwise.
+			limit = {
+				scope:actor = { is_ai = no }
+			}
+			custom_tooltip = {
+				text = interactions_general.tt.must_select_one_option
+				OR = {
+					scope:woc_liege_pulling_promise_hook_weak = yes
+					scope:woc_liege_pulling_promise_hook_strong = yes
+					scope:woc_liege_pulling_promise_gold = yes
+					scope:woc_liege_pulling_promise_piety = yes
+					scope:woc_liege_pulling_promise_prestige = yes
+				}
+			}
+		}
+	}
+
+	can_send = {
+		scope:recipient = {
+			OR = {
+				is_diarch_of_target = scope:actor
+				is_councillor_of = scope:actor
+			}
+		}
+	}
+	# Promise hook.
+	send_option = {
+		is_valid = {
+			# Can't offer a hook if they've already got any type of hook on you.
+			NOT = {
+				scope:recipient ?= { has_hook = scope:actor }
+			}
+		}
+		flag = woc_liege_pulling_promise_hook_weak
+		localization = PROMISE_HOOK_WEAK
+	}
+	# Promise strong hook.
+	send_option = {
+		is_valid = {
+			# Can't offer a strong hook if they've already got a strong hook on you.
+			NOT = {
+				scope:recipient ?= { has_strong_hook = scope:actor }
+			}
+		}
+		flag = woc_liege_pulling_promise_hook_strong
+		localization = PROMISE_HOOK_STRONG
+	}
+	send_option = {
+		flag = woc_liege_pulling_promise_gold
+		localization = WOC_LIEGE_PULLING_PROMISE_GOLD
+	}
+	send_option = {
+		flag = woc_liege_pulling_promise_piety
+		localization = WOC_LIEGE_PULLING_PROMISE_PIETY
+	}
+	send_option = {
+		flag = woc_liege_pulling_promise_prestige
+		localization = WOC_LIEGE_PULLING_PROMISE_PRESTIGE
+	}
+	
+	on_accept = {
+		if = {
+			limit = { exists = scope:recipient }
+			scope:actor = {
+				custom_tooltip = woc_liege_pulling_councilor.tt
+				send_interface_toast = {
+					title = woc_liege_pulling_councilor_agree.tt
+					left_icon = scope:recipient
+				}
+				add_to_variable_list = {
+					name = woc_liege_pulling_councilor_list
+					target = scope:recipient
+				}
+				### Weak hooks.
+				if = {
+					limit = { scope:woc_liege_pulling_promise_hook_weak = yes }
+					scope:recipient = {
+						add_hook = {
+							type = favor_hook
+							target = scope:actor
+						}
+					}
+				}
+				### Strong hooks.
+				else_if = {
+					limit = { scope:woc_liege_pulling_promise_hook_strong = yes }
+					scope:recipient = {
+						add_hook = {
+							type = liege_favour_strong_hook
+							target = scope:actor
+						}
+					}
+				}
+				else_if = {
+					limit = { scope:woc_liege_pulling_promise_gold = yes }
+					pay_short_term_gold = {
+						target = scope:recipient
+						gold = woc_liege_pulling_promise_gold_cost_value
+					}
+					stress_impact = {
+						greedy = major_stress_impact_gain
+					}
+				}
+				else_if = {
+					limit = { scope:woc_liege_pulling_promise_piety = yes }
+					add_piety = {
+						value = woc_liege_pulling_promise_piety_cost_value
+						multiply = -1
+					}
+					scope:recipient = {
+						add_piety = {
+							value = woc_liege_pulling_promise_piety_cost_value
+							multiply = 0.5
+						}
+					}
+					stress_impact = {
+						cynical = medium_stress_impact_loss
+						zealous = major_stress_impact_gain
+					}
+				}
+				else_if = {
+					limit = { scope:woc_liege_pulling_promise_prestige = yes }
+					add_prestige = {
+						value = woc_liege_pulling_promise_prestige_cost_value
+						multiply = -1
+					}
+					scope:recipient = {
+						add_prestige = {
+							value = woc_liege_pulling_promise_prestige_cost_value
+							multiply = 0.5
+						}
+					}
+					stress_impact = {
+						humble = medium_stress_impact_loss
+						arrogant = major_stress_impact_gain
+					}
+				}
+				trigger_event = {
+					id = woc_council.0004
+					years = 10
+				}
+			}
+		}
+	}
+
+	# Disguise the interaction from players.
+	ai_min_reply_days = 0
+	ai_max_reply_days = 0
+
+	ai_accept = {
+		base = -50
+
+		# Opinion.
+		## Of scope:actor.
+		opinion_modifier = {
+			who = scope:recipient
+			opinion_target = scope:actor
+			multiplier = 0.5
+		}
+		# Personality.
+		## Values.
+		ai_value_modifier = {
+			who = scope:recipient
+			ai_greed = 0.25
+			ai_boldness = -1
+		}
+		modifier = { #Rivalry modifier.
+			add = -100
+			desc = offer_vassalization_interaction_aibehavior_rival_tt
+			scope:recipient = {
+				has_relation_rival = scope:actor
+				NOT = { has_relation_nemesis = scope:actor }
+			}
+		}
+		modifier = { #Nemesis modifier.
+			add = -1000
+			desc = offer_vassalization_interaction_aibehavior_nemesis_tt
+			scope:recipient = {
+				has_relation_nemesis = scope:actor
+			}
+		}
+		## Traits.
+		### +++ Disloyal.
+		modifier = {
+			add = -50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.disloyal
+			scope:recipient = { has_trait = disloyal }
+		}
+		### +++ Ambitious.
+		modifier = {
+			add = -50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.ambitious
+			scope:recipient = { has_trait = ambitious }
+		}
+		### ++ Arbitrary.
+		modifier = {
+			add = -30
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.arbitrary
+			scope:recipient = { has_trait = arbitrary }
+		}
+		### + Fickle.
+		modifier = {
+			add = -10
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.fickle
+			scope:recipient = { has_trait = fickle }
+		}
+		### - Stubborn.
+		modifier = {
+			add = -10
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.stubborn
+			scope:recipient = { has_trait = stubborn }
+		}
+		### -- Just.
+		modifier = {
+			add = 30
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.just
+			scope:recipient = { has_trait = just }
+		}
+		### --- Content.
+		modifier = {
+			add = 50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.content
+			scope:recipient = { has_trait = content }
+		}
+		### --- Loyal.
+		modifier = {
+			add = 50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.loyal
+			scope:recipient = { has_trait = loyal }
+		}
+		# Various.
+		# Promises.
+		## Weak hook.
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = honest }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = deceitful }
+					multiply = 2
+				}
+			}
+			desc = diarch_coup_liege_interaction.tt.wants_hook
+			scope:woc_liege_pulling_promise_hook_weak = yes
+		}
+		## Strong hook.
+		modifier = {
+			add = {
+				value = 50
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = honest }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = deceitful }
+					multiply = 2
+				}
+			}
+			desc = diarch_coup_liege_interaction.tt.wants_strong_hook
+			scope:woc_liege_pulling_promise_hook_strong = yes
+		}
+		## Gold.
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = generous }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = greedy }
+					multiply = 2
+				}
+			}
+			desc = diarch_coup_liege_interaction.tt.wants_gold
+			scope:woc_liege_pulling_promise_gold = yes
+		}
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = cynical }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = zealous }
+					multiply = 2
+				}
+			}
+			desc = woc_liege_pulling_promise_piety.tt
+			scope:woc_liege_pulling_promise_piety = yes
+		}
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = humble }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = arrogant }
+					multiply = 2
+				}
+			}
+			desc = woc_liege_pulling_promise_prestige.tt
+			scope:woc_liege_pulling_promise_prestige = yes
+		}
+	}
+}
+
+#内阁拉拢
+woc_councilor_pulling_councilor_interaction = {
+	category = interaction_category_diplomacy
+	icon = council
+	desc = woc_councilor_pulling_councilor_interaction_desc
+	
+	
+	
+	is_shown = {
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:actor.liege = { has_royal_court = yes }
+		scope:recipient = {
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:recipient.liege ?= scope:actor.liege
+	}
+
+	is_valid_showing_failures_only = {
+		scope:actor = {
+			NOT = { has_trait = incapable }
+			NOT = { has_trait = woc_puppet }
+			is_imprisoned = no
+			is_adult = yes
+		}
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		# They can't already be in the list.
+		custom_tooltip = {
+			text = woc_cp_pulling_cp.tt.secondary_recipient_is_already_in_list
+			NOT = {
+				scope:actor = {
+					any_in_list = {
+						variable = councilor_supporters_list
+						this = scope:recipient
+					}
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:recipient }
+			# Must be available.
+			## So no kids.
+			scope:recipient = { is_adult = yes }
+			## & no one in prison.
+			scope:recipient = { is_imprisoned = no }
+		}
+		custom_tooltip = {
+			text = interactions_general.tt.must_select_one_option
+			OR = {
+				scope:woc_cp_pulling_cp_promise_nothing = yes
+				scope:woc_cp_pulling_cp_promise_hook_weak = yes
+				scope:woc_cp_pulling_cp_promise_hook_strong = yes
+				scope:woc_cp_pulling_cp_promise_gold = yes
+				scope:woc_cp_pulling_cp_promise_piety = yes
+				scope:woc_cp_pulling_cp_promise_prestige = yes
+			}
+		}
+	}
+
+	can_send = {
+		scope:recipient = { 
+			is_councillor_of = scope:actor.liege
+			woc_council_valid_council_position = yes
+		}
+	}
+	
+	# Promise bugger all.
+	send_option = {
+		flag = woc_cp_pulling_cp_promise_nothing
+		localization = PROMISE_NOTHING
+	}
+	# Promise hook.
+	send_option = {
+		is_valid = {
+			# Can't offer a hook if they've already got any type of hook on you.
+			NOT = {
+				scope:actor.liege ?= { has_hook = scope:actor }
+			}
+		}
+		flag = woc_cp_pulling_cp_promise_hook_weak
+		localization = PROMISE_HOOK_WEAK
+	}
+	# Promise strong hook.
+	send_option = {
+		is_valid = {
+			# Can't offer a strong hook if they've already got a strong hook on you.
+			NOT = {
+				scope:actor.liege ?= { has_strong_hook = scope:actor }
+			}
+		}
+		flag = woc_cp_pulling_cp_promise_hook_strong
+		localization = PROMISE_HOOK_STRONG
+	}
+	send_option = {
+		flag = woc_cp_pulling_cp_promise_gold
+		localization = WOC_LIEGE_PULLING_PROMISE_GOLD
+	}
+	send_option = {
+		flag = woc_cp_pulling_cp_promise_piety
+		localization = WOC_LIEGE_PULLING_PROMISE_PIETY
+	}
+	send_option = {
+		flag = woc_cp_pulling_cp_promise_prestige
+		localization = WOC_LIEGE_PULLING_PROMISE_PRESTIGE
+	}
+	
+	on_accept = {
+		if = {
+			limit = { 
+				exists = scope:recipient 
+			}
+			scope:actor = {
+				# scope:recipient joins your conspiracy. 
+				custom_tooltip = woc_cp_pulling_cp.tt.secondary_recipient.pulling
+				## Send a notification just for a bit of extra feedback.
+				send_interface_toast = {
+					title = woc_cp_pulling_cp_agree.tt
+					left_icon = scope:recipient
+				}
+				
+				# Right, actually record them.
+				## Including in the variable.
+				add_to_variable_list = {
+					name = councilor_supporters_list
+					target = scope:recipient
+				}
+				### Weak hooks.
+				if = {
+					limit = { scope:woc_cp_pulling_cp_promise_hook_weak = yes }
+					scope:recipient = {
+						add_hook = {
+							type = favor_hook
+							target = scope:actor
+						}
+					}
+				}
+				### Strong hooks.
+				else_if = {
+					limit = { scope:woc_cp_pulling_cp_promise_hook_strong = yes }
+					scope:recipient = {
+						add_hook = {
+							type = liege_favour_strong_hook
+							target = scope:actor
+						}
+					}
+				}
+				else_if = {
+					limit = { scope:woc_cp_pulling_cp_promise_gold = yes }
+					pay_short_term_gold = {
+						target = scope:recipient
+						gold = woc_liege_pulling_promise_gold_cost_value
+					}
+					stress_impact = {
+						greedy = major_stress_impact_gain
+					}
+				}
+				else_if = {
+					limit = { scope:woc_cp_pulling_cp_promise_piety = yes }
+					add_piety = {
+						value = woc_liege_pulling_promise_piety_cost_value
+						multiply = -1
+					}
+					scope:recipient = {
+						add_piety = {
+							value = woc_liege_pulling_promise_piety_cost_value
+							multiply = 0.5
+						}
+					}
+					stress_impact = {
+						cynical = medium_stress_impact_loss
+						zealous = major_stress_impact_gain
+					}
+				}
+				else_if = {
+					limit = { scope:woc_cp_pulling_cp_promise_prestige = yes }
+					add_prestige = {
+						value = woc_liege_pulling_promise_prestige_cost_value
+						multiply = -1
+					}
+					scope:recipient = {
+						add_prestige = {
+							value = woc_liege_pulling_promise_prestige_cost_value
+							multiply = 0.5
+						}
+					}
+					stress_impact = {
+						humble = medium_stress_impact_loss
+						arrogant = major_stress_impact_gain
+					}
+				}
+				trigger_event = {
+					id = woc_council.0005
+					years = 10
+				}
+			}
+		}
+	}
+	
+	ai_accept = {
+		base = -50
+
+		# Opinion.
+		## Of scope:actor.
+		opinion_modifier = {
+			who = scope:recipient
+			opinion_target = scope:actor
+			multiplier = 1
+		}
+		## Of scope:actor.liege.
+		opinion_modifier = {
+			who = scope:recipient
+			opinion_target = scope:actor.liege
+			multiplier = -0.5
+		}
+		# Personality.
+		## Values.
+		ai_value_modifier = {
+			who = scope:recipient
+			ai_greed = 0.25
+			ai_boldness = 0.25
+		}
+		modifier = { #Rivalry modifier.
+			add = -100
+			desc = offer_vassalization_interaction_aibehavior_rival_tt
+			scope:recipient = {
+				has_relation_rival = scope:actor
+				NOT = { has_relation_nemesis = scope:actor }
+			}
+		}
+		modifier = { #Nemesis modifier.
+			add = -1000
+			desc = offer_vassalization_interaction_aibehavior_nemesis_tt
+			scope:recipient = {
+				has_relation_nemesis = scope:actor
+			}
+		}
+		## Traits.
+		### +++ Disloyal.
+		modifier = {
+			add = 50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.disloyal
+			scope:recipient = { has_trait = disloyal }
+		}
+		### +++ Ambitious.
+		modifier = {
+			add = 50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.ambitious
+			scope:recipient = { has_trait = ambitious }
+		}
+		### ++ Arbitrary.
+		modifier = {
+			add = 30
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.arbitrary
+			scope:recipient = { has_trait = arbitrary }
+		}
+		### + Fickle.
+		modifier = {
+			add = 10
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.fickle
+			scope:recipient = { has_trait = fickle }
+		}
+		### - Stubborn.
+		modifier = {
+			add = 10
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.stubborn
+			scope:recipient = { has_trait = stubborn }
+		}
+		### -- Just.
+		modifier = {
+			add = -30
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.just
+			scope:recipient = { has_trait = just }
+		}
+		### --- Content.
+		modifier = {
+			add = -50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.content
+			scope:recipient = { has_trait = content }
+		}
+		### --- Loyal.
+		modifier = {
+			add = -50
+			desc = diarch_coup_liege_interaction.tt.liege_has_loyalty_hook.tt.has_trait.loyal
+			scope:recipient = { has_trait = loyal }
+		}
+		modifier = {
+			add = -100
+			desc = woc_cp_pulling_cp.tt.secondary_recipient_is_already_in_liege_list
+			scope:actor.liege = {
+				any_in_list = {
+					variable = woc_liege_pulling_councilor_list
+					this = scope:recipient
+				}
+			}
+		}
+		# Promises.
+		## Weak hook.
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = honest }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = deceitful }
+					multiply = 2
+				}
+			}
+			desc = diarch_coup_liege_interaction.tt.wants_hook
+			scope:woc_cp_pulling_cp_promise_hook_weak = yes
+		}
+		## Strong hook.
+		modifier = {
+			add = {
+				value = 75
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = honest }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = deceitful }
+					multiply = 2
+				}
+			}
+			desc = diarch_coup_liege_interaction.tt.wants_strong_hook
+			scope:woc_cp_pulling_cp_promise_hook_strong = yes
+		}
+		## Gold.
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = generous }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = greedy }
+					multiply = 2
+				}
+			}
+			desc = diarch_coup_liege_interaction.tt.wants_gold
+			scope:woc_cp_pulling_cp_promise_gold = yes
+		}
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = cynical }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = zealous }
+					multiply = 2
+				}
+			}
+			desc = woc_liege_pulling_promise_piety.tt
+			scope:woc_cp_pulling_cp_promise_piety = yes
+		}
+		modifier = {
+			add = {
+				value = 25
+				# Multiply this...
+				## ... down for folks who wouldn't care...
+				if = {
+					limit = { has_trait = humble }
+					multiply = 0.5
+				}
+				## ... & and up for those who would.
+				if = {
+					limit = { has_trait = arrogant }
+					multiply = 2
+				}
+			}
+			desc = woc_liege_pulling_promise_prestige.tt
+			scope:woc_cp_pulling_cp_promise_prestige = yes
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = peer_vassals
+		max = 9
+	}
+	
+	ai_targets = {
+		ai_recipients = realm_characters
+		max = 9
+	}
+	
+	ai_target_quick_trigger = {
+		adult = yes
+	}
+	ai_frequency = 60
+	
+	ai_potential = {
+		OR = {
+			ai_greed >= low_positive_ai_value
+			intrigue >= 5
+			liege.tyranny >= 15 
+			has_trait = disloyal
+		}
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+	}
+	
+	ai_will_do = {
+		base = 100
+
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_friend = scope:actor.liege
+					has_relation_lover = scope:actor.liege
+					has_relation_best_friend = scope:actor.liege
+					has_relation_soulmate = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+	}
+}
+
+#要求
+#提升内阁权
+
+woc_enhancement_council_law_interaction = {
+	category = interaction_category_vassal
+	icon = icon_vassal
+	desc = woc_enhancement_council_law_interaction_desc
+	
+	
+	
+	is_shown = {
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:actor.liege = { 
+			has_royal_court = yes 
+			woc_council_law_value < 6
+			NOR = {
+				has_variable = enhancement_council_law_proposal_request_on_going
+				has_variable = declare_incompetence_proposal_request_on_going
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+
+	is_valid_showing_failures_only = {
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		custom_tooltip = {
+			text = woc_enhancement_council_law_cooldown
+			scope:recipient = {
+				NOT = {
+					has_variable = woc_enhancement_council_law_cooldown
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:actor }
+			# Must be available.
+			## So no kids.
+			scope:actor = { is_adult = yes }
+			## & no one in prison.
+			scope:actor = { is_imprisoned = no }
+		}
+	}
+
+	can_send = {
+		scope:actor.liege = { has_royal_court = yes }
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	auto_accept = yes
+	
+	on_accept = {
+		scope:actor = {
+			custom_tooltip = woc_enhancement_council_law_interaction_notification
+			woc_vote_at_council_request = {
+				TYPE = enhancement_council_law
+			}
+		}
+		scope:recipient = {
+			set_variable = {
+				name = woc_enhancement_council_law_cooldown
+				years = 5
+			}
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 60
+	
+	ai_potential = {
+		OR = {
+			ai_greed >= low_positive_ai_value
+			intrigue >= 5
+			liege.tyranny >= 15 
+			has_trait = disloyal
+		}
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+	}
+	
+	ai_will_do = {
+		base = 100
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = -0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_friend = scope:actor.liege
+					has_relation_lover = scope:actor.liege
+					has_relation_best_friend = scope:actor.liege
+					has_relation_soulmate = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor.liege.woc_council_pass_enhancement_council_law_ai_value < 1
+		}
+	}
+}
+
+#宣布无能
+woc_declare_incompetence_interaction = {
+	category = interaction_category_vassal
+	icon = icon_vassal
+	desc = woc_declare_incompetence_interaction_interaction_desc
+	
+	
+	
+	is_shown = {
+		has_game_rule = woc_council_request_accept
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:actor.liege = { 
+			has_royal_court = yes 
+			woc_council_law_value >= 6
+			NOT = { has_trait = woc_puppet }
+			NOR = {
+				has_variable = enhancement_council_law_proposal_request_on_going
+				has_variable = declare_incompetence_proposal_request_on_going
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+
+	is_valid_showing_failures_only = {
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		custom_tooltip = {
+			text = woc_declare_incompetence_cooldown
+			scope:recipient = {
+				NOT = {
+					has_variable = woc_declare_incompetence_cooldown
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:actor }
+			# Must be available.
+			## So no kids.
+			scope:actor = { is_adult = yes }
+			## & no one in prison.
+			scope:actor = { is_imprisoned = no }
+		}
+	}
+
+	can_send = {
+		scope:actor.liege = { has_royal_court = yes }
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	auto_accept = yes
+	
+	on_accept = {
+		scope:actor = {
+			custom_tooltip = woc_declare_incompetence_interaction_notification
+			woc_vote_at_council_request = {
+				TYPE = declare_incompetence
+			}
+		}
+		scope:recipient = {
+			set_variable = {
+				name = woc_declare_incompetence_cooldown
+				years = 10
+			}
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 60
+	
+	ai_potential = {
+		OR = {
+			ai_greed >= low_positive_ai_value
+			intrigue >= 5
+			liege.tyranny >= 15 
+			has_trait = disloyal
+		}
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+	}
+	
+	ai_will_do = {
+		base = 100
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = -0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_friend = scope:actor.liege
+					has_relation_lover = scope:actor.liege
+					has_relation_best_friend = scope:actor.liege
+					has_relation_soulmate = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor.liege.woc_council_pass_enhancement_council_law_ai_value < 1
+		}
+	}
+}
+
+#降低特质经验
+woc_decrease_woc_puppet_xp = {
+	category = interaction_category_diplomacy
+	icon = scroll_scales
+	desc = woc_decrease_woc_puppet_xp_desc
+	
+	
+	
+	is_shown = {
+		scope:recipient = scope:actor
+		scope:actor = { 
+			has_trait = woc_puppet
+			has_trait_xp = {
+				trait = woc_puppet
+				track = woc_puppet_scale_power
+				value > 0
+			}
+		}
+	}
+	
+	is_valid_showing_failures_only = {
+		trigger_if = {
+			limit = { exists = scope:actor }
+			# Must be available.
+			## So no kids.
+			scope:actor = { is_adult = yes }
+			## & no one in prison.
+			scope:actor = { is_imprisoned = no }
+			scope:actor.prestige_level >= 2
+		}
+	}
+	
+	auto_accept = yes
+	
+	on_accept = {
+		scope:actor = {
+			add_prestige_level = -1
+			add_trait_xp = {
+				trait = woc_puppet
+				value = -10
+			}
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = self
+	}
+	
+	ai_frequency = 24
+	
+	ai_potential = {
+		is_adult = yes
+		highest_held_title_tier >= tier_county
+	}
+	
+	ai_will_do = {
+		base = 100
+	}
+}
+
+#投票更换摄政
+woc_council_overthrow_regent_interaction = {
+	category = interaction_category_vassal
+	icon = icon_declare_me_regent
+	desc = woc_council_overthrow_regent_interaction_desc
+	
+	
+	
+	populate_recipient_list = {
+		scope:actor.liege = {
+			every_councillor = {
+				limit = {
+					woc_council_valid_council_position = yes
+					NOT = { this = scope:actor }
+				}
+				add_to_list = characters
+			}
+		}
+	}
+	redirect = {
+		# Turn the old scope:recipient into the target.
+		if = {
+			limit = {
+				NOR = {
+					scope:recipient = scope:actor
+					scope:recipient = scope:actor.liege
+				}
+			}
+			scope:recipient = { save_scope_as = secondary_recipient }
+		}
+		# Always make sure we're targeting your liege as the recipient for UX consistency.
+		scope:actor.liege = { save_scope_as = recipient }
+	}
+	
+	is_shown = {
+		has_game_rule = woc_council_request_accept
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:recipient
+			OR = {
+				AND = {
+					is_councillor_of = scope:recipient
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:recipient = { has_active_diarchy = yes }
+					}
+					NOT = { is_diarch_of_target = scope:recipient }
+				}
+			}
+		}
+		scope:recipient = { 
+			has_royal_court = yes 
+			OR = {
+				woc_council_law_value >= 6
+				has_trait = woc_puppet
+			}
+			NOR = {
+				has_variable = enhancement_council_law_proposal_request_on_going
+				has_variable = declare_incompetence_proposal_request_on_going
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+		}
+		scope:recipient ?= scope:actor.liege
+		scope:secondary_recipient.liege ?= scope:actor.liege
+		scope:secondary_recipient = {
+			is_councillor_of = scope:recipient
+			woc_council_valid_council_position = yes
+		}
+	}
+	
+	is_valid_showing_failures_only = {
+		
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		custom_tooltip = {
+			text = woc_council_overthrow_regent_cooldown
+			scope:recipient = {
+				NOT = {
+					has_variable = woc_council_overthrow_regent_cooldown
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:secondary_recipient }
+			scope:secondary_recipient = {
+				is_imprisoned = no 
+				is_adult = yes
+				NOT = { has_trait = incapable }
+				NOT = { has_trait = woc_puppet }
+			}
+		}
+	}
+	
+	can_send = {
+		scope:actor.liege = { has_royal_court = yes }
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	auto_accept = yes
+	
+	on_accept = {
+		scope:actor = {
+			custom_tooltip = woc_council_overthrow_regent_interaction_notification
+			woc_vote_at_council_request = {
+				TYPE = council_overthrow_regent
+			}
+		}
+		scope:recipient = {
+			set_variable = {
+				name = woc_council_overthrow_regent_cooldown
+				years = 10
+			}
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 60
+	
+	ai_potential = {
+		OR = {
+			ai_greed >= low_positive_ai_value
+			intrigue >= 5
+			liege.tyranny >= 15 
+			has_trait = disloyal
+		}
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+	}
+	
+	ai_will_do = {
+		base = 100
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = -0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:secondary_recipient
+			multiplier = 0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_friend = scope:actor.liege
+					has_relation_lover = scope:actor.liege
+					has_relation_best_friend = scope:actor.liege
+					has_relation_soulmate = scope:actor.liege
+					has_relation_rival = scope:secondary_recipient
+					has_relation_nemesis = scope:secondary_recipient
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor.liege.woc_council_pass_enhancement_council_law_ai_value < 1
+		}
+	}
+}
+
+#逮捕有罪领主
+woc_arrest_guilty_liege_interaction = {
+	category = interaction_category_vassal
+	icon = prison
+	desc = woc_arrest_guilty_liege_interaction_desc
+	
+	can_send_despite_rejection = yes
+	ai_intermediary_maybe = no
+	ai_maybe = yes
+	on_decline_summary = woc_imprison_decline_summary
+	
+	is_shown = {
+		has_game_rule = woc_council_request_accept
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:actor.liege = { 
+			has_royal_court = yes 
+			OR = {
+				woc_council_law_value >= 6
+				has_trait = woc_puppet
+			}
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+
+	is_valid_showing_failures_only = {
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		custom_tooltip = {
+			text = woc_arrest_guilty_liege_cooldown
+			scope:recipient = {
+				NOT = {
+					has_variable = woc_arrest_guilty_liege_cooldown
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:actor }
+			# Must be available.
+			## So no kids.
+			scope:actor = { is_adult = yes }
+			## & no one in prison.
+			scope:actor = {
+				is_imprisoned = no 
+				has_imprisonment_reason = scope:recipient
+				NOT = {
+					is_at_war_with = scope:recipient
+				}
+				has_trait_xp = {
+					trait = woc_councillor
+					track = woc_councillor_impact
+					value >= 50
+				}
+			}
+			scope:recipient = { is_imprisoned = no }
+		}
+	}
+	
+	send_option = {
+		is_valid = {
+			scope:actor = {
+				has_usable_hook = scope:recipient
+			}
+		}
+		flag = hook	
+		localization = GENERIC_SPEND_A_HOOK
+	}
+	should_use_extra_icon = {
+		scope:actor = { has_usable_hook = scope:recipient }
+	}
+	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
+
+	send_options_exclusive = no
+
+	can_send = {
+		scope:actor.liege = { has_royal_court = yes }
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	on_send = {
+		scope:recipient = {
+			set_variable = {
+				name = woc_arrest_guilty_liege_cooldown
+				years = 10
+			}
+		}
+	}
+	
+	auto_accept = {
+		scope:recipient = { 
+			has_trait = woc_puppet
+		}
+	}
+	
+	on_accept = {
+		scope:recipient = { save_scope_as = imprisonment_target }
+		scope:actor = { save_scope_as = imprisoner }
+		scope:actor = {
+			imprison = {
+				target = scope:recipient
+				type = dungeon
+			}
+			scope:recipient = {
+				if = {
+					limit = {
+						any_close_or_extended_family_member = {
+							NOT = { scope:actor = this }
+						}
+					}
+					custom_tooltip = IMPRISONMENT_RELATIVES_EFFECT_DUNGEON
+					hidden_effect = {
+						every_close_or_extended_family_member = {
+							limit = {
+								NOT = { scope:actor = this }
+							}
+							add_opinion = {
+								modifier = imprisoned_family_member_dungeon
+								target = scope:actor
+							}
+						}
+					}
+				}
+			}
+		}
+		scope:recipient = {
+			if = {
+				limit = {
+					has_opinion_modifier = {
+						modifier = imprisoned_me_past
+						target = scope:actor
+					}
+				}
+				hidden_effect = {
+					remove_opinion = {
+						target = scope:actor
+						modifier = imprisoned_me
+					}
+				}
+			}
+			add_opinion = {
+				target = scope:actor
+				modifier = imprisoned_me
+			}
+		}
+		scope:actor = {
+			add_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_impact
+				value = -50
+			}
+			stress_impact = {
+				compassionate = minor_stress_impact_gain
+				forgiving = minor_stress_impact_gain
+			}
+		}
+	}
+	
+	on_decline = {
+		scope:actor = {
+			add_opinion = {
+				target = scope:recipient
+				modifier = rebellious_vassal_opinion
+			}
+		}
+		scope:recipient = {
+			show_as_tooltip = {
+				add_tyranny = 20
+			}
+		}
+	}
+	
+	ai_accept = {
+		base = -50 # Try to make it 0 for most interactions
+
+		modifier = {
+			add = {
+				value = scope:actor.intrigue
+				multiply = 1
+			}
+			desc = IMPRISON_INTRIGUE_ACTOR
+		}
+		modifier = {
+			add = {
+				value = scope:recipient.intrigue
+				multiply = -2
+			}
+			desc = IMPRISON_INTRIGUE_RECIPIENT
+		}
+		opinion_modifier = { # Opinion Factor
+			who = scope:recipient
+			opinion_target = scope:actor
+			multiplier = 0.5
+			desc = AI_OPINION_REASON
+		}
+		modifier = {
+			add = 15
+			scope:hook = yes
+			desc = SCHEME_HOOK_USED
+		}
+		ai_value_modifier = {
+			who = scope:recipient
+			ai_boldness = {
+				if = {
+					limit = {
+						scope:recipient = { NOT = { ai_boldness = 0 } }
+					}
+					value = -0.5
+				}
+			}
+			ai_honor = {
+				if = {
+					limit = {
+						scope:recipient = { #If AI is honorable and the law compels to obey the liege, AI will be more likely to obey.
+							ai_honor > 0
+						}
+						scope:actor = {
+							has_imprisonment_reason = scope:recipient
+							has_realm_law_flag = vassal_refusal_is_treason
+						}
+					}
+					value = 0.75
+				}
+			}
+		}
+		modifier = {
+			add = 50
+			scope:actor = {
+				has_perk = prison_feudal_complex_perk
+			}
+			desc = AI_PRISON_FEUDAL_COMPLEX_PERK
+		}
+		modifier = { #Courtiers.
+			desc = AI_REFUSAL_COURTIER
+			scope:recipient = { is_ruler = no }
+			add = 50
+		}
+		modifier = { # Your young children can't really stop you
+			desc = AI_REFUSAL_YOUNG_CHILD
+			scope:recipient = {
+				is_child_of = scope:actor
+				is_courtier_of = scope:actor
+				is_adult = no
+			}
+			add = 200
+		}
+		modifier = { #They're a claimant against you
+			desc = AI_CLAIMANT_PENALTY
+			scope:actor = {
+				OR = {
+					any_targeting_faction = {
+						faction_is_type = claimant_faction
+						faction_is_at_war = yes
+						exists = special_character
+						special_character = scope:recipient
+					}
+					AND = {
+						exists = var:claimant_faction_sent_demand
+						var:claimant_faction_sent_demand = scope:recipient
+					}
+				}
+			}
+			add = -70
+		}
+		modifier = {
+			add = intimidated_halved_reason_value
+			scope:recipient = {
+				target_is_liege_or_above = scope:actor
+				has_dread_level_towards = {
+					target = scope:actor
+					level = 1
+				}
+			}
+			desc = INTIMIDATED_REASON
+		}
+		modifier = {
+			add = cowed_halved_reason_value
+			scope:recipient = {
+				target_is_liege_or_above = scope:actor
+				has_dread_level_towards = {
+					target = scope:actor
+					level = 2
+				}
+			}
+			desc = COWED_REASON
+		}
+		
+		modifier = {
+			add = intimidated_external_reason_value
+			scope:recipient = {
+				NOT = { target_is_liege_or_above = scope:actor }
+				has_dread_level_towards = {
+					target = scope:actor
+					level = 1
+				}
+			}
+			desc = INTIMIDATED_REASON
+		}
+		modifier = {
+			add = cowed_external_reason_value
+			scope:recipient = {
+				NOT = { target_is_liege_or_above = scope:actor }
+				has_dread_level_towards = {
+					target = scope:actor
+					level = 2
+				}
+			}
+			desc = COWED_REASON
+		}
+		modifier = { #Comparative military strength.
+			desc = offer_vassalization_interaction_aibehavior_power_tt
+			trigger = {
+				scope:actor = { is_ruler = yes }
+				scope:recipient = { is_ruler = yes }
+			}
+			add = {
+				value = 1
+				subtract = {
+					value = scope:recipient.current_military_strength
+					divide = { value = scope:actor.current_military_strength min = 1 }
+				}
+				multiply = 100
+				min = -1000
+				# This max needs to match the loc in offer_vassalization_interaction_aibehavior_power_tt
+				max = 20
+			}
+		}
+		modifier = { #Rivalry modifier.
+			desc = offer_vassalization_interaction_aibehavior_rival_tt
+			trigger = {
+				scope:recipient = {
+					has_relation_rival = scope:actor
+					NOT = { has_relation_nemesis = scope:actor }
+				}
+			}
+			add = -50
+		}
+		modifier = { #Nemesis modifier.
+			desc = offer_vassalization_interaction_aibehavior_nemesis_tt
+			trigger = {
+				scope:recipient = {
+					has_relation_nemesis = scope:actor
+				}
+			}
+			add = -100
+		}
+		modifier = {
+			add = 10
+			scope:actor = {
+				has_royal_court = yes
+				is_liege_or_above_of = scope:recipient
+				court_grandeur_current_level >= 7
+				court_grandeur_current_level < 9
+			}
+			desc = GRANDEUR_REASON
+		}
+		modifier = {
+			add = 20
+			scope:actor = {
+				has_royal_court = yes
+				is_liege_or_above_of = scope:recipient
+				court_grandeur_current_level >= 9
+			}
+			desc = GRANDEUR_REASON
+		}
+		modifier = { # Legalistic tradition
+			desc = tradition_legalistic_name
+			scope:actor = {
+				has_imprisonment_reason = scope:recipient
+				culture = { has_cultural_parameter = vassals_more_likely_accept_punishments }
+			}
+			add = legalistic_vassal_punishment_acceptance
+		}
+		modifier = { # AI Mongols, tyranny wars just delay the inevitable fun!
+			scope:actor = {
+				is_ai = yes
+				OR = {
+					has_trait = greatest_of_khans
+					has_character_modifier = the_great_khan_modifier
+				}
+			}
+			scope:recipient = {
+				is_ai = yes
+			}
+			add = 500
+		}
+		# Thug accolade increases imprison chance because they scary
+		modifier = {
+			scope:actor = {
+				any_active_accolade = {
+					has_accolade_parameter = accolade_imprisonment_chance
+				}
+			}
+			desc = THUG_REASON
+			add = accolade_imprisonment_chance_value
+		}
+		modifier = {
+			scope:actor = {
+				any_active_accolade = {
+					has_accolade_parameter = accolade_imprisonment_chance_high
+				}
+			}
+			desc = THUG_REASON_HIGH
+			add = accolade_imprisonment_chance_value_high
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 60
+	
+	ai_potential = {
+		OR = {
+			ai_greed >= low_positive_ai_value
+			intrigue >= 5
+			liege.tyranny >= 15 
+			has_trait = disloyal
+		}
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+		NOT = { has_realm_law_flag = cannot_imprison }
+		is_imprisoned = no
+	}
+	
+	ai_will_do = {
+		base = 50
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = -0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_friend = scope:actor.liege
+					has_relation_lover = scope:actor.liege
+					has_relation_best_friend = scope:actor.liege
+					has_relation_soulmate = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+	}
+}
+
+woc_request_for_grant_land_interaction = {
+	category = interaction_category_vassal
+	icon = revoke_title
+	desc = woc_request_for_grant_land_interaction_desc
+	special_interaction = revoke_title_interaction
+	interface = revoke_title
+	target_type = title
+	target_filter = recipient_domain_titles
+	ai_maybe = yes
+	can_send_despite_rejection = yes
+	popup_on_receive = yes
+	pause_on_receive = yes
+
+	
+	
+	cooldown_against_recipient = { years = 3 }
+	
+	is_shown = {
+		has_game_rule = woc_council_request_accept
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+					NOT = {
+						has_council_position = councillor_court_chaplain
+					}
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:actor.liege = { 
+			has_royal_court = yes 
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+
+	is_valid_showing_failures_only = {
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		custom_tooltip = {
+			text = woc_request_for_grant_land_cooldown
+			scope:recipient = {
+				NOT = {
+					has_variable = woc_request_for_grant_land_cooldown
+				}
+			}
+		}
+		trigger_if = {
+			limit = { exists = scope:actor }
+			# Must be available.
+			## So no kids.
+			scope:actor = { is_adult = yes }
+			## & no one in prison.
+			scope:actor = {
+				is_imprisoned = no 
+				NOT = {
+					is_at_war_with = scope:recipient
+				}
+				has_trait_xp = {
+					trait = woc_councillor
+					track = woc_councillor_impact
+					value >= 25
+				}
+			}
+		}
+	}
+	
+	can_be_picked_title = {
+		scope:target = {
+			title_revocation_standard_can_pick_title_trigger = yes
+			# Plus, must have scope:actor as a claimant.
+			custom_description = {
+				text = "woc_request_for_grant_land_limit_trigger"
+				OR = {
+					scope:actor = { has_claim_on = scope:target }
+					scope:recipient = { domain_size > domain_limit }
+				}
+			}
+			custom_tooltip = {
+				text = woc_request_for_grant_land_tier_county
+				tier = tier_county
+			}
+			custom_tooltip = {
+				text = woc_request_for_grant_land_capital_county
+				NOT = { scope:target = scope:recipient.capital_county }
+			}
+		}
+	}
+	
+	send_options_exclusive = no
+	send_option = {
+		is_valid = {
+			scope:actor = { has_usable_hook = scope:recipient }
+		}
+		flag = hook
+		localization = SCHEME_HOOK
+	}
+	should_use_extra_icon = {
+		scope:actor = { has_usable_hook = scope:recipient }
+	}
+	extra_icon = "gfx/interface/icons/character_interactions/hook_icon.dds"
+	
+	on_send = {
+		scope:recipient = {
+			#set_variable = {
+			#	name = woc_request_for_grant_land_cooldown
+			#	years = 1
+			#}
+		}
+	}
+	
+	auto_accept = {
+		scope:recipient = { 
+			custom_tooltip = woc_request_for_grant_land_auto_accept
+			OR = {
+				has_trait = woc_puppet
+				woc_council_law_value >= 5
+				is_imprisoned_by = scope:actor
+			}
+		}
+	}
+	
+	on_auto_accept = {
+		scope:recipient = {
+			trigger_event = char_interaction.0200
+		}
+	}
+	
+	on_accept = {
+		scope:actor = {
+			trigger_event = woc_council_show.2000
+		}
+		woc_council_revoke_title_interaction_effect = yes
+		scope:actor = {
+			add_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_impact
+				value = -25
+			}
+		}
+	}
+	
+	on_decline = {
+		scope:actor = {
+			trigger_event = woc_council_show.2001
+		}
+		scope:recipient = {
+			progress_towards_rival_effect = {
+				CHARACTER = scope:actor
+				REASON = woc_rival_refuse_councillor
+				OPINION = -30
+			}
+		}
+	}
+	
+	ai_accept = {
+		base = -50 # Try to make it 0 for most interactions
+
+		modifier = {
+			scope:hook = yes
+			add = 15
+			desc = SCHEME_HOOK_USED
+		}
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:recipient
+			opinion_target = scope:actor
+			multiplier = 0.8
+			desc = AI_OPINION_REASON
+		}
+		
+		modifier = {
+			add = 20
+			scope:actor = {
+				has_realm_law_flag = vassal_refusal_is_treason
+			}
+			desc = AI_REFUSAL_IS_TREASON
+		}
+		
+		modifier = {
+			add = 20
+			scope:recipient = {
+				has_trait = trusting
+			}
+			desc = TAKE_THE_VOWS_TRUSTING
+		}
+		
+		modifier = {
+			add = 20
+			scope:recipient = {
+				has_trait = content
+			}
+			desc = INTERACTION_CONTENT
+		}
+		
+		modifier = {
+			add = 20
+			scope:actor.current_military_strength > scope:recipient.current_military_strength
+			scope:recipient = {
+				has_trait = craven
+			}
+			desc = INTERACTION_CRAVEN
+		}
+		
+		modifier = {
+			exists = scope:actor.primary_title.title_capital_county
+			OR = {
+				scope:landed_title = scope:actor.primary_title.title_capital_county
+				scope:landed_title = scope:actor.primary_title.title_capital_county.de_jure_liege
+			}
+			add = 50
+			desc = AI_TITLE_IS_REALM_CAPITAL
+		}
+		
+		modifier = {
+			exists = scope:actor.primary_title.title_capital_county
+			NOR = {
+				scope:landed_title = scope:actor.primary_title.title_capital_county
+				scope:landed_title = scope:actor.primary_title.title_capital_county.de_jure_liege
+			}
+			scope:landed_title.de_jure_liege = scope:actor.primary_title.title_capital_county.de_jure_liege
+			add = 30
+			desc = AI_TITLE_IS_IN_CAPITAL_DUCHY
+		}
+		
+		ai_value_modifier = {
+			who = scope:recipient
+			ai_greed = {
+				if = {
+					limit = {
+						scope:recipient = { NOT = { ai_greed = 0 } }
+					}
+					value = -0.75
+				}
+			}
+			ai_honor  = {
+				if = {
+					limit = {
+						scope:recipient = { #If AI is honorable and the law compels to obey the liege, AI will be more likely to obey.
+							ai_honor > 0
+						}
+						scope:actor = {
+							has_realm_law_flag = vassal_refusal_is_treason
+						}
+					}
+					value = 0.5
+				}
+			}
+		}
+		modifier = { #Title is part of vassal's primary title de-jure.
+			add = -25
+			scope:recipient.primary_title.tier > tier_county
+			OR = {
+				scope:recipient.primary_title = {
+					is_de_jure_liege_or_above_target = scope:landed_title
+				}
+				scope:recipient.primary_title = scope:landed_title
+			}
+			desc = AI_REFUSAL_IS_DE_JURE_UNDER
+		}
+		modifier = {
+			add = intimidated_halved_reason_value
+			scope:recipient = {
+				has_dread_level_towards = {
+					target = scope:actor
+					level = 1
+				}
+			}
+			desc = INTIMIDATED_REASON
+		}
+		modifier = {
+			add = cowed_halved_reason_value
+			scope:recipient = {
+				has_dread_level_towards = {
+					target = scope:actor
+					level = 2
+				}
+			}
+			desc = COWED_REASON
+		}
+		modifier = { #Comparative military strength.
+			desc = offer_vassalization_interaction_aibehavior_power_tt
+	  	  	add = {
+				value = 1
+				subtract = {
+					value = scope:recipient.current_military_strength
+					divide = { value = scope:actor.current_military_strength min = 1 }
+				}
+				multiply = 50
+				max = 20
+	  		}
+		}
+		modifier = { # AI Mongols, tyranny wars just delay the inevitable fun!
+			scope:actor = {
+				is_ai = yes
+				OR = {
+					has_trait = greatest_of_khans
+					has_character_modifier = the_great_khan_modifier
+				}
+			}
+			scope:recipient = {
+				is_ai = yes
+			}
+			add = 500
+		}
+	}
+	
+	ai_frequency = 60
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_potential = {
+		OR = {
+			ai_greed >= low_positive_ai_value
+			intrigue >= 5
+			liege.tyranny >= 15 
+			has_trait = disloyal
+		}
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+		is_imprisoned = no
+	}
+	
+	ai_will_do = {
+		base = 50
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = -0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		ai_value_modifier = {
+			who = scope:actor
+			ai_greed = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_greed = 0 } }
+					}
+					value = 0.75
+				}
+			}
+		}
+		
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_friend = scope:actor.liege
+					has_relation_lover = scope:actor.liege
+					has_relation_best_friend = scope:actor.liege
+					has_relation_soulmate = scope:actor.liege
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+	}
+}
+
+woc_call_liege_into_war_interaction = {
+	category = interaction_category_vassal
+	desc = woc_call_liege_into_war_interaction_desc
+	
+	interface = call_ally
+	special_interaction = call_ally_interaction
+	popup_on_receive = yes
+	pause_on_receive = yes
+	icon = alliance
+
+	greeting = positive
+	notification_text = CALL_ALLY_NOTIFICATION
+
+	is_shown = {
+		has_game_rule = woc_council_request_accept
+		scope:actor = {
+			is_at_war = yes
+		}
+		scope:actor = { #If you can call them as a House Member then do that
+			NOT = {
+				is_character_interaction_valid = {
+					recipient = scope:recipient
+					interaction = call_house_member_to_war_interaction
+				}
+			}
+		}
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = {
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:actor.liege = { 
+			has_royal_court = yes 
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	has_valid_target = {
+		exists = scope:target
+	}	
+
+	has_valid_target_showing_failures_only = {
+		scope:target = {
+			is_war_leader = scope:actor
+			is_civil_war = no
+		}
+
+		scope:actor = {
+			trigger_if = {
+				limit = {
+					scope:target = {
+						OR = {
+							using_cb = undirected_great_holy_war
+							using_cb = directed_great_holy_war
+						}
+					}
+				}
+
+				trigger_if = {
+					limit = {
+						this = scope:target.casus_belli.primary_attacker
+					}
+					#if it's a religious war the recipient has to be of the same faith
+					custom_description = {
+						text = is_of_wrong_faith_for_holy_war
+						subject = scope:actor
+						object = scope:recipient
+						faith = scope:recipient.faith
+					}
+				}
+				trigger_else = {
+					custom_description = {
+						text = is_of_attacker_faith_in_holy_war
+						subject = scope:actor
+						object = scope:recipient
+						scope:target = { NOT = { primary_attacker.faith = scope:recipient.faith } }
+					}
+				}
+			}
+		}
+
+
+		joiner_not_already_in_another_war_with_any_target_war_participants_trigger = {
+			WARRIOR = scope:actor
+			JOINER = scope:recipient
+		}
+	}
+
+	
+	is_valid_showing_failures_only = {
+		
+		scope:recipient = {
+			is_ruler = yes
+		}
+
+		# Only War Leaders can call allies
+		scope:actor = {
+			NOT = {
+				is_at_war_with = scope:recipient
+			}
+			custom_description = {
+				text = must_be_war_leader
+				any_character_war = {
+					is_war_leader = scope:actor
+				}
+			}
+			has_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_impact
+				value >= 20
+			}
+		}
+
+		# Cannot call the same character multiple times
+		scope:actor = {
+			custom_description = {
+				text = cannot_call_same_character_multiple_times
+				subject = scope:recipient
+				any_character_war = {
+					ALL_FALSE = {
+						was_called = scope:recipient
+						is_participant = scope:recipient
+					}
+				}
+			}
+		}
+		# Cannot call a character of the "wrong" religion to a Great Holy War
+		scope:actor = {
+			trigger_if = {
+				limit = {
+					NOT = { faith = scope:recipient.faith }
+				}
+				custom_description = {
+					text = is_of_wrong_faith_for_holy_war
+					subject = scope:actor
+					object = scope:recipient
+					any_character_war = {
+						NOR = {
+							using_cb = undirected_great_holy_war
+							using_cb = directed_great_holy_war
+						}
+					}
+				}
+			}
+		}
+	}
+
+	can_be_picked = {
+		can_join_war_liege_vassal_check_trigger = { WARRIOR = scope:actor JOINER = scope:recipient }
+		scope:target = {
+			is_war_leader = scope:actor
+
+			# not already in target war
+			custom_description = {
+				text = join_war_interaction_already_in_target_war
+				NOR = {
+					any_war_attacker = { this = scope:recipient }
+					any_war_defender = { this = scope:recipient }
+				}
+			}
+
+			# Diarchs can only be called to internal wars.
+			custom_tooltip = {
+				text = call_ally_interaction.tt.diarchs_called_to_internal_wars
+				trigger_if = {
+					limit = { scope:recipient ?= scope:actor.diarch }
+					primary_defender = scope:actor
+					diarch_callable_in_internal_war_trigger = yes
+				}
+			}
+		}
+	}
+
+	on_auto_accept = {
+		scope:recipient = {
+			trigger_event = call_ally.0001
+		}
+		scope:target = {
+			if = {
+				limit = {
+					is_religious_war = yes
+					scope:recipient = {
+						any_active_accolade = {
+							has_accolade_parameter = acclaimed_knight_piety_from_battle
+						}
+					}
+				}
+				scope:recipient = {
+					add_piety = miniscule_piety_gain
+				}
+			}
+			if = {
+				limit = {
+					is_religious_war = yes
+					scope:recipient = {
+						any_active_accolade = {
+							has_accolade_parameter = acclaimed_knight_piety_from_battle_high
+						}
+					}
+				}
+				scope:recipient = {
+					add_piety = minor_piety_gain
+				}
+			}
+		}
+	}
+		
+	on_accept = {
+		call_ally_interaction_effect = yes
+
+		save_scope_value_as = {
+			name = call_ally_interaction
+			value = yes
+		}
+
+		scope:actor = {
+			hidden_effect = { #To nudge friendship
+				if = {
+					limit = {
+						NOR = {
+							has_relation_friend = scope:recipient
+							has_relation_potential_friend = scope:recipient
+						}
+					}
+					set_relation_potential_friend = scope:recipient
+				}
+			}
+			trigger_event = call_ally.0100
+			add_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_impact
+				value = -20
+			}
+		}
+		scope:target = {
+			if = {
+				limit = {
+					is_religious_war = yes
+					scope:recipient = {
+						any_active_accolade = {
+							has_accolade_parameter = acclaimed_knight_piety_from_battle
+						}
+					}
+				}
+				scope:recipient = {
+					add_piety = minor_piety_gain
+				}
+			}
+			if = {
+				limit = {
+					is_religious_war = yes
+					scope:recipient = {
+						any_active_accolade = {
+							has_accolade_parameter = acclaimed_knight_piety_from_battle_high
+						}
+					}
+				}
+				scope:recipient = {
+					add_piety = medium_piety_gain
+				}
+			}
+		}
+	}
+	
+	on_decline = {
+		#The war could theoretically end on the day the decline is sent
+		if = {
+			limit = {
+				exists = scope:target
+			}
+			scope:target = {
+				if = {
+					limit = {
+						is_attacker = scope:actor
+					}
+					scope:actor = {
+						add_opinion = {
+							modifier = rejected_call_to_offensive_war
+							target = scope:recipient
+						}
+					}
+					scope:recipient = {
+						add_prestige_experience = major_prestige_loss
+					}
+				}
+				else = {
+					scope:actor = {
+						add_opinion = {
+							modifier = rejected_call_to_defensive_war
+							target = scope:recipient
+						}
+					}
+					scope:recipient = {
+						add_prestige_experience = massive_prestige_loss
+					}
+				}
+				hidden_effect = {
+					if = {
+						limit = {
+							NOT = { was_called = scope:recipient }
+						}
+						set_called_to = scope:recipient
+					}
+				}
+			}
+			scope:actor = {
+				trigger_event = call_ally.0101
+			}
+		}
+	}
+
+	auto_accept = {
+		OR = {
+			# Always accept a call from a Spouse
+			custom_description = {
+				text = "recipient_is_spouse"
+				subject = scope:actor
+				object = scope:recipient
+				scope:recipient = {
+					is_spouse_of = scope:actor
+					is_ai = yes
+				}
+			}
+			# Always accept a call from the Heir
+			custom_description = {
+				text = "is_recipients_player_heir"
+				subject = scope:actor
+				object = scope:recipient
+				
+				exists = scope:recipient.player_heir
+				scope:recipient = {
+					player_heir = scope:actor
+					is_close_or_extended_family_of = scope:actor # Only for family
+					is_ai = yes
+				}
+			}
+			# Always accept a call from the one you are heir of
+			custom_description = {
+				text = "is_player_heir"
+				subject = scope:recipient
+				object = scope:actor
+
+				exists = scope:actor.player_heir
+				scope:actor.player_heir = scope:recipient
+				scope:actor = { # Shouldn't be able to force your liege to join just because you've not got any family...
+					is_close_or_extended_family_of = scope:recipient
+				}
+				scope:recipient = {
+					is_ai = yes
+				}
+			}
+			scope:recipient = { 
+				custom_tooltip = woc_request_for_grant_land_auto_accept
+				OR = {
+					has_trait = woc_puppet
+					woc_council_law_value >= 5
+					is_imprisoned_by = scope:actor
+				}
+			}
+		}
+	}
+	
+	ai_accept = {
+		base = 20
+
+		modifier = {  # Refuse call to conflicts of little benefit
+			add = -1000
+			desc = WONT_FIGHT_MEANINGLESS_REASON
+			trigger_if = {
+				limit = { exists = scope:target }
+				scope:target = { using_cb = fp2_border_raid }
+				scope:recipient = { # Unless they like going on raids
+					NOR = {
+						has_trait = viking
+						has_trait = reaver
+					}
+				}
+			}
+			trigger_else = { always = no }
+		}
+
+		modifier = {  # Refuse call against Heir
+			add = -1000
+			exists = scope:recipient.player_heir
+			trigger_if = {
+				limit = { scope:target.casus_belli.primary_defender = scope:actor }
+				scope:target.casus_belli.primary_attacker = scope:recipient.player_heir
+			}
+			trigger_else = {
+				scope:target.casus_belli.primary_defender = scope:recipient.player_heir
+			}
+			desc = WONT_FIGHT_HEIR_REASON
+		}
+
+		modifier = {  # Refuse call against Spouse
+			add = -1000
+			scope:recipient = {
+				trigger_if = {
+					limit = { scope:target.casus_belli.primary_defender = scope:actor }
+					any_spouse = {
+						this = scope:target.casus_belli.primary_attacker
+					}
+				}
+				trigger_else = {
+					any_spouse = {
+						this = scope:target.casus_belli.primary_defender
+					}
+				}
+				
+			}
+			desc = WONT_FIGHT_SPOUSE_REASON
+		}
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:recipient
+			opinion_target = scope:actor
+			multiplier = 1.0
+			desc = AI_OPINION_REASON
+		}
+
+		# Honor factor
+		ai_value_modifier = {
+			ai_honor = 1
+			min = 0
+		}
+
+		modifier = {  # Tends to join defensive wars
+			add = 50
+			scope:target.casus_belli.primary_defender = scope:actor
+			desc = DEFENSIVE_WAR_REASON
+		}
+		
+		modifier = { # Same language
+			add = 5
+			desc = speaks_same_language_interaction_reason
+			trigger = {
+				scope:actor = {
+					knows_language_of_culture = scope:recipient.culture
+				}
+			}
+		}
+		
+		modifier = { # Shared Court Language (non-spoken)
+			add = 10
+			desc = foreign_realm_court_language_non_spoken_interaction_reason
+			trigger = {
+				scope:actor = {
+					has_royal_court = yes
+					NOT = { knows_court_language_of = this }
+				}
+				NOT = {
+					scope:actor.top_liege = scope:recipient.top_liege
+				}
+				OR = {
+					AND = {
+						scope:recipient = {
+							has_royal_court = yes
+						}
+						scope:actor = { # You share Court Language
+							has_same_court_language = scope:recipient
+						}
+					}
+					
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege does
+						is_independent_ruler = no
+						has_royal_court = no
+						liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege's liege does, while their liege doesn't have a royal court
+						is_independent_ruler = no
+						has_royal_court = no
+						exists = liege.liege
+						liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege's liege's liege does, while their liege doesn't have a royal court
+						is_independent_ruler = no
+						has_royal_court = no
+						exists = liege.liege
+						exists = liege.liege.liege
+						liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege.liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege's liege's liege's liege does, while their liege doesn't have a royal court
+						is_independent_ruler = no
+						has_royal_court = no
+						exists = liege.liege
+						exists = liege.liege.liege
+						exists = liege.liege.liege.liege
+						liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege.liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege.liege.liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+				}
+			}
+		}
+		
+		modifier = { # Shared Court Language (spoken)
+			add = 30
+			desc = foreign_realm_court_language_spoken_interaction_reason
+			trigger = {
+				scope:actor = {
+					has_royal_court = yes
+					knows_court_language_of = this
+				}
+				NOT = {
+					scope:actor.top_liege = scope:recipient.top_liege
+				}
+				OR = {
+					AND = {
+						scope:recipient = {
+							has_royal_court = yes
+						}
+						scope:actor = { # You share Court Language
+							has_same_court_language = scope:recipient
+						}
+					}
+					
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege does
+						is_independent_ruler = no
+						has_royal_court = no
+						liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege's liege does, while their liege doesn't have a royal court
+						is_independent_ruler = no
+						has_royal_court = no
+						exists = liege.liege
+						liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege's liege's liege does, while their liege doesn't have a royal court
+						is_independent_ruler = no
+						has_royal_court = no
+						exists = liege.liege
+						exists = liege.liege.liege
+						liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege.liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+					scope:recipient = { # The recipient doesn't have a royal court, but their liege's liege's liege's liege does, while their liege doesn't have a royal court
+						is_independent_ruler = no
+						has_royal_court = no
+						exists = liege.liege
+						exists = liege.liege.liege
+						exists = liege.liege.liege.liege
+						liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege.liege = {
+							is_independent_ruler = no
+							has_royal_court = no
+						}
+						liege.liege.liege.liege = {
+							has_royal_court = yes
+							has_same_court_language = scope:actor
+						}
+					}
+				}
+			}
+		}
+
+		modifier = {  # Serious diarchs wish to support their liege
+			add = 50
+			desc = ENTRENCHED_REGENT_WILL_SUPPORT_LIEGE
+			trigger_if = {
+				limit = { scope:recipient ?= scope:actor.diarch }
+				scope:actor = { has_diarchy_parameter = diarchy_type_is_entrenched_regency }
+			}
+			trigger_else = { always = no }
+		}		
+
+		compare_modifier = { # Likes fighting infidels
+			trigger = {
+				scope:recipient.faith = scope:actor.faith
+				OR = {
+					AND = {
+						scope:target.casus_belli.primary_attacker = {
+							this = scope:actor
+							faith = {
+								faith_hostility_level = {
+									target = scope:target.casus_belli.primary_defender.faith
+									value >= religious_cb_enabled_hostility_level
+								}
+							}
+						}
+					}
+					AND = {
+						scope:target.casus_belli.primary_defender = {
+							this = scope:actor
+							faith = {
+								faith_hostility_level = {
+									target = scope:target.casus_belli.primary_defender.faith
+									value >= religious_cb_enabled_hostility_level
+								}
+							}
+						}
+					}
+				}
+			}
+			target = scope:recipient
+			value = ai_zeal
+			desc = "ZEAL_AGAINST_INFIDELS"
+			min = 0
+			multiplier = 0.5
+		}
+
+		modifier = {  # Reluctant to attack another ally
+			add = -50
+			scope:target.casus_belli.primary_attacker = scope:actor
+			scope:recipient = {
+				is_allied_to = scope:target.casus_belli.primary_defender
+			}
+			desc = ATTACK_ON_ALLY_REASON
+		}
+
+		modifier = {  # Reluctant to defend against another ally
+			add = -25
+			scope:target.casus_belli.primary_defender = scope:actor
+			scope:recipient = {
+				is_allied_to = scope:target.casus_belli.primary_attacker
+			}
+			desc = WAR_WITH_ALLY_REASON
+		}
+
+		modifier = {  # Reluctant to join wars against religious brethren.
+			add = -50
+			NOT = { scope:recipient.faith = scope:actor.faith }
+			scope:target.casus_belli.primary_attacker = scope:actor
+			scope:target.casus_belli.primary_defender.faith = scope:recipient.faith
+			scope:target.casus_belli.war = {
+				OR = {
+					using_cb = minor_religious_war
+					using_cb = religious_war
+					using_cb = major_religious_war
+					using_cb = undirected_great_holy_war
+					using_cb = directed_great_holy_war
+				}
+			}
+			desc = WONT_ATTACK_RELIGIOUS_BRETHREN_REASON
+		}
+
+		modifier = { # Reluctant to join against Friends
+			add = -50
+			trigger_if = {
+				limit = {
+					scope:target.casus_belli.primary_defender = scope:actor
+				}
+				has_relation_friend = scope:target.casus_belli.primary_attacker
+			}
+			trigger_else = {
+				has_relation_friend = scope:target.casus_belli.primary_defender
+			}
+		}
+
+		modifier = { # Reluctant to join against Best Friends
+			add = -100
+			trigger_if = {
+				limit = {
+					scope:target.casus_belli.primary_defender = scope:actor
+				}
+				has_relation_best_friend = scope:target.casus_belli.primary_attacker
+			}
+			trigger_else = {
+				has_relation_best_friend = scope:target.casus_belli.primary_defender
+			}
+		}
+		modifier = { # Reluctant to join against Lovers
+			add = -100
+			trigger_if = {
+				limit = {
+					scope:target.casus_belli.primary_defender = scope:actor
+				}
+				has_relation_lover = scope:target.casus_belli.primary_attacker
+			}
+			trigger_else = {
+				has_relation_lover = scope:target.casus_belli.primary_defender
+			}
+		}
+		modifier = { # Reluctant to join against Soul mate
+			add = -200
+			trigger_if = {
+				limit = {
+					scope:target.casus_belli.primary_defender = scope:actor
+				}
+				has_relation_soulmate = scope:target.casus_belli.primary_attacker
+			}
+			trigger_else = {
+				has_relation_soulmate = scope:target.casus_belli.primary_defender
+			}
+		}
+		modifier = {  # Refuse call for hostages' safety
+			any_home_court_hostage = {
+				warden = {
+					OR = {
+						is_at_war_with = scope:actor
+						any_ally = { is_at_war_with = scope:actor }
+					}
+				}
+			}
+			add = {
+				value = 0
+				every_home_court_hostage = {
+					limit = {
+						warden = {
+							OR = {
+								is_at_war_with = scope:actor
+								any_ally = { is_at_war_with = scope:actor }
+							}
+						}
+					}
+					subtract = call_to_arms_hostage_value
+				}
+				multiply = 0.25
+			}
+			desc = HOSTAGE_ENEMY_CALL_TO_ARMS_REASON
+		}
+	}
+
+	# Score above 0 means the AI will call this ally. Note that DESIRED_WAR_SIDE_STRENGTH still applies and can prevent calling the ally
+	ai_will_do = {
+		base = 100
+		
+		modifier = { # If the player is at war, do not bother them with offensive calls
+			scope:target.casus_belli.primary_attacker = scope:actor
+			scope:recipient = {
+				is_ai = no
+				any_character_war = {
+					primary_defender = scope:recipient
+				}
+			}
+			factor = 0
+		}
+		
+		modifier = { # Don't call players in against their heirs (they wouldn't accept the reverse situation... don't be a hypocrite)
+			exists = scope:recipient.player_heir
+			scope:recipient = {			
+				is_ai = no
+			}
+			trigger_if = {
+				limit = { scope:target.casus_belli.primary_defender = scope:actor }
+				scope:target.casus_belli.primary_attacker = scope:recipient.player_heir
+			}
+			trigger_else = {
+				scope:target.casus_belli.primary_defender = scope:recipient.player_heir
+			}
+			factor = 0
+		}
+		
+		modifier = { # Same with spouses
+			scope:recipient = {			
+				is_ai = no
+			}
+			trigger_if = {
+				limit = { scope:target.casus_belli.primary_defender = scope:actor }
+				any_spouse = {
+					this = scope:target.casus_belli.primary_attacker
+				}
+			}
+			trigger_else = {
+				any_spouse = {
+					this = scope:target.casus_belli.primary_defender
+				}
+			}
+			factor = 0
+		}
+		
+		modifier = { # Don't call brand-new allies into old wars, at least until some time has elapsed.
+			has_variable = delay_calling_recent_ally
+			var:delay_calling_recent_ally = scope:recipient
+			scope:target = {
+				war_days >= 30
+			}
+			factor = 0
+
+		}
+
+		modifier = { # If the recipient is allied to both the attacker and the defender, the attacker shouldn't call
+			scope:target.casus_belli.primary_attacker = scope:actor
+			scope:target.casus_belli.primary_defender = {
+				is_allied_to = scope:recipient
+			}
+			factor = 0
+		}
+	}
+}
+
+woc_council_join_war_interaction = {
+	category = interaction_category_vassal
+	interface = interfere_in_war
+	special_interaction = interfere_in_war_interaction
+	popup_on_receive = yes
+	desc = woc_council_join_war_interaction_desc
+	icon = alliance
+
+	greeting = positive
+	notification_text = join_war_interaction_notification
+	
+	is_shown = {
+		scope:actor = {
+			is_landed = yes
+			highest_held_title_tier >= tier_county
+			exists = scope:actor.liege
+			OR = {
+				AND = {
+					is_councillor_of = scope:actor.liege
+					woc_council_valid_council_position = yes
+					NOT = {
+						has_council_position = councillor_court_chaplain
+					}
+				}
+				trigger_if = {
+					limit = {
+						scope:actor.liege = { has_active_diarchy = yes }
+					}
+					is_diarch_of_target = scope:actor.liege
+				}
+			}
+		}
+		scope:recipient = {
+			is_at_war = yes
+			this = scope:actor.liege
+			NOR = {
+				this = scope:actor
+				is_at_war_with = scope:actor
+			}
+		}
+	}
+	
+	can_be_picked = {
+		exists = scope:target
+		scope:target = {
+			custom_description = {
+				text = join_war_interaction_recipient_not_liege
+				subject = scope:recipient
+				scope:actor = {
+					target_is_liege_or_above = scope:recipient
+				}
+			}
+		}
+
+		joiner_not_already_in_another_war_with_any_target_war_participants_trigger = {
+			WARRIOR = scope:recipient
+			JOINER = scope:actor
+		}
+	}
+
+	on_accept = {
+		if = {
+			limit = {
+				exists = scope:target
+			}
+			scope:target = {
+				hidden_effect = {
+					set_called_to = scope:actor
+				}
+				if = {
+					limit = { is_attacker = scope:recipient }
+					add_attacker = scope:actor
+					if = {
+						limit = {
+							OR = {
+								scope:actor = {
+									any_home_court_hostage = {
+										warden ?= { is_defender_in_war = scope:target }
+									}
+								}
+								scope:target = {
+									any_war_defender = {
+										any_warden_hostage = { home_court ?= scope:actor }
+									}
+								}
+							}
+						}
+						custom_tooltip = hostage_execution_warning_tt
+					}
+				}
+				else = {
+					add_defender = scope:actor
+					if = {
+						limit = {
+							OR = {
+								scope:actor = {
+									any_home_court_hostage = {
+										warden ?= { is_attacker_in_war = scope:target }
+									}
+								}
+								scope:target = {
+									any_war_attacker = {
+										any_warden_hostage = { home_court ?= scope:actor }
+									}
+								}
+							}
+						}
+						custom_tooltip = hostage_execution_warning_tt
+					}
+				}
+			}
+		}
+		scope:actor = {
+			custom_tooltip = woc_council_join_war_interaction_actor_ct
+			stress_impact = {
+				craven = medium_stress_impact_gain
+				shy = minor_stress_impact_gain
+			}
+		}
+		scope:recipient = {
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				progress_towards_friend_effect = {
+					CHARACTER = scope:actor
+					OPINION = 0
+					REASON = friend_alliance
+				}
+			}
+			else = {
+				hidden_effect = { #To nudge friendship
+					if = {
+						limit = {
+							NOR = {
+								has_relation_friend = scope:actor
+								has_relation_potential_friend = scope:actor
+							}
+						}
+						set_relation_potential_friend = scope:actor
+					}
+				}
+			}
+		}
+	}
+
+	on_decline = {
+		scope:actor = {
+			trigger_event = char_interaction.0236
+		}
+	}
+
+	auto_accept = yes
+
+	ai_accept = {
+		base = 100 # everyone wants help
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 36
+	
+	ai_potential = {
+		always = yes
+	}
+	
+	ai_will_do = {
+		base = 100
+	}
+}
+
+woc_vassal_diffidatio_interaction = {
+	category = interaction_category_vassal
+	icon = independence
+	desc = woc_vassal_diffidatio_interaction_desc
+	
+	
+	ai_min_reply_days = 4
+	ai_max_reply_days = 9
+	
+	is_shown = {
+		NOT = { scope:recipient = scope:actor }
+		has_game_rule = woc_council_diffidatio_accept
+		scope:actor = { 
+			is_landed = yes
+			highest_held_title_tier > tier_county
+			NOT = { has_variable = woc_vassal_diffidatio }
+		}
+		scope:recipient = { 
+			has_royal_court = yes 
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	is_valid_showing_failures_only = {
+		custom_tooltip = {
+			text = diarch_coup_liege_interaction.tt.action_blocked_by_loyalty_hook
+			NOT = {
+				diarch_loyalty_due_to_hook_trigger = {
+					LIEGE = scope:actor.liege
+					DIARCH = scope:actor
+				}
+			}
+		}
+		OR = {
+			custom_tooltip = {
+				text = woc_vassal_diffidatio_valid
+				OR = {
+					scope:recipient = {
+						has_variable = woc_council_reject_magna_carta
+					}
+					scope:actor = {
+						has_any_major_revenge_opinion_against_character_trigger = { CHARACTER = scope:recipient }
+					}
+					scope:recipient.tyranny >= 50
+				}
+			}
+			trigger_if = {
+				limit = { 
+					exists = scope:actor 
+					scope:actor = {
+						government_has_flag = government_is_theocracy
+					}
+				}
+				scope:recipient = {
+					has_trait = excommunicated
+				}
+			}
+		}
+		scope:recipient = {
+			NOT = { culture = { has_innovation = innovation_ermine_cloaks } }
+		}
+		trigger_if = {
+			limit = { exists = scope:actor }
+			scope:actor = {
+				is_imprisoned = no 
+				is_adult = yes
+				NOT = { has_trait = incapable }
+				NOT = { has_trait = woc_puppet }
+			}
+		}
+	}
+	
+	can_send = {
+		scope:actor.liege = { has_royal_court = yes }
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	auto_accept = yes
+	
+	on_accept = {
+		scope:actor = {
+			set_variable = woc_vassal_diffidatio
+			vassal_contract_set_obligation_level = {
+				type = woc_vassal_diffidatio
+				level = woc_vassal_diffidatio_going
+			}
+		}
+		scope:recipient = {
+			send_interface_message = {
+				title = woc_vassal_diffidatio_title
+				right_icon = scope:recipient
+				left_icon = scope:actor
+				custom_tooltip = woc_vassal_diffidatio.tt
+			}
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 60
+	
+	ai_potential = {
+		NOR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+		}
+		is_imprisoned = no
+	}
+	
+	ai_will_do = {
+		base = 50
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = -0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		ai_value_modifier = {
+			who = scope:actor
+			ai_greed = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_greed = 0 } }
+					}
+					value = 0.5
+				}
+			}
+			ai_honor = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_honor = 0 } }
+					}
+					value = 0.5
+				}
+			}
+			ai_boldness = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_boldness = 0 } }
+					}
+					value = 0.5
+				}
+			}
+			min = 0
+		}
+		
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			OR = {
+				scope:actor = {
+					OR = {
+						has_relation_friend = scope:actor.liege
+						has_relation_lover = scope:actor.liege
+						has_relation_best_friend = scope:actor.liege
+						has_relation_soulmate = scope:actor.liege
+					}
+				}
+				scope:recipient = {
+					OR = {
+						has_character_modifier = woc_council_magna_carta
+						culture = { has_innovation = innovation_ermine_cloaks }
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+	}
+}
+
+woc_vassal_withdraw_diffidatio_interaction = {
+	category = interaction_category_vassal
+	icon = icon_vassal
+	desc = woc_vassal_withdraw_diffidatio_interaction_desc
+	
+	
+	ai_min_reply_days = 4
+	ai_max_reply_days = 9
+	
+	is_shown = {
+		NOT = { scope:recipient = scope:actor }
+		scope:actor = { 
+			is_landed = yes
+			has_variable = woc_vassal_diffidatio
+		}
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	is_valid_showing_failures_only = {
+		trigger_if = {
+			limit = { exists = scope:actor }
+			scope:actor = {
+				is_imprisoned = no 
+				is_adult = yes
+				NOT = { has_trait = incapable }
+				NOT = { has_trait = woc_puppet }
+			}
+		}
+	}
+	
+	can_send = {
+		scope:recipient ?= scope:actor.liege
+	}
+	
+	auto_accept = yes
+	
+	on_accept = {
+		scope:actor = {
+			remove_variable = woc_vassal_diffidatio
+		}
+		scope:recipient = {
+			send_interface_message = {
+				title = woc_vassal_withdraw_diffidatio_title
+				right_icon = scope:recipient
+				left_icon = scope:actor
+				custom_tooltip = woc_vassal_withdraw_diffidatio.tt
+			}
+		}
+	}
+	
+	ai_targets = {
+		ai_recipients = liege
+	}
+	
+	ai_frequency = 120
+	
+	ai_potential = {
+		NOR = {
+			liege.tyranny >= 50 
+			has_trait = disloyal
+		}
+		OR = {
+			has_trait = loyal
+			has_relation_friend = liege
+			has_relation_lover = liege
+			has_relation_best_friend = liege
+			has_relation_soulmate = liege
+			liege = {
+				has_character_modifier = woc_council_magna_carta
+			}
+		}
+		is_imprisoned = no
+	}
+	
+	ai_will_do = {
+		base = 50
+
+		opinion_modifier = { # Opinion Factor
+			who = scope:actor
+			opinion_target = scope:recipient
+			multiplier = 0.5
+			desc = AI_OPINION_REASON
+		}
+		
+		ai_value_modifier = {
+			who = scope:actor
+			ai_greed = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_greed = 0 } }
+					}
+					value = -0.5
+				}
+			}
+			ai_honor = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_honor = 0 } }
+					}
+					value = -0.5
+				}
+			}
+			ai_boldness = {
+				if = {
+					limit = {
+						scope:actor = { NOT = { ai_boldness = 0 } }
+					}
+					value = -0.5
+				}
+			}
+			min = 0
+		}
+		
+		modifier = {
+			add = 50
+			
+			opinion = {
+				target = scope:actor.liege
+				value >= high_positive_opinion
+			}
+		}
+		
+		modifier = {
+			add = -50
+			
+			opinion = {
+				target = scope:actor.liege
+				value <= high_negative_opinion
+			}
+		}
+		
+		modifier = {
+			add = 1000
+			OR = {
+				scope:actor = {
+					OR = {
+						has_relation_friend = scope:actor.liege
+						has_relation_lover = scope:actor.liege
+						has_relation_best_friend = scope:actor.liege
+						has_relation_soulmate = scope:actor.liege
+					}
+				}
+				scope:recipient = {
+					OR = {
+						has_character_modifier = woc_council_magna_carta
+						culture = { has_innovation = innovation_ermine_cloaks }
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0
+			scope:actor = {
+				OR = {
+					has_relation_rival = scope:actor.liege
+					has_relation_nemesis = scope:actor.liege
+				}
+			}
+		}
+	}
+}
+
+woc_grant_title_auto_ban_title_interaction = {
+	category = interaction_category_diplomacy
+	
+	icon = grant_titles_interaction
+	special_interaction = grant_titles_interaction
+	interface = grant_titles
+	target_type = title
+	target_filter = actor_domain_titles
+
+	desc = woc_grant_title_auto_ban_title_interaction_desc
+	
+	is_shown = {
+		scope:actor = {
+			has_royal_court = yes
+			woc_council_law_value >= 2
+		}
+		scope:recipient = scope:actor
+	}
+	can_be_picked_title = {
+		scope:target = {
+			is_leased_out = no
+			tier <= tier_duchy
+			NOT = {
+				has_variable = woc_grant_title_auto_ban_title
+			}
+		}
+	}
+	auto_accept = yes
+	on_accept = {
+		every_in_list = {
+			list = target_titles
+			set_variable = woc_grant_title_auto_ban_title
+		}
+	}
+}
+
+woc_grant_title_allow_interaction = {
+	category = interaction_category_diplomacy
+	
+	icon = grant_titles_interaction
+	special_interaction = grant_titles_interaction
+	interface = grant_titles
+	target_type = title
+	target_filter = actor_domain_titles
+
+	desc = woc_grant_title_allow_interaction_desc
+	
+	is_shown = {
+		scope:actor = {
+			has_royal_court = yes
+			woc_council_law_value >= 2
+		}
+		scope:recipient = scope:actor
+	}
+	can_be_picked_title = {
+		scope:target = {
+			is_leased_out = no
+			tier <= tier_duchy
+			has_variable = woc_grant_title_auto_ban_title
+		}
+	}
+	auto_accept = yes
+	on_accept = {
+		every_in_list = {
+			list = target_titles
+			remove_variable = woc_grant_title_auto_ban_title
+		}
+	}
+}

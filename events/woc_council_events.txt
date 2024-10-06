@@ -1,0 +1,2379 @@
+﻿namespace = woc_council
+
+woc_council.0001 = {
+	hidden = yes
+	
+	immediate = {
+		every_councillor = {
+			limit = {
+				woc_council_valid_council_position = yes
+			}
+			if = {
+				limit = {
+					exists = scope:war_proposal_instant_liege
+				}
+				trigger_event = woc_council.0002
+			}
+			if = {
+				limit = {
+					exists = scope:grant_title_proposal_instant_liege
+				}
+				trigger_event = woc_council.0012
+			}
+			if = {
+				limit = {
+					exists = scope:revoke_title_proposal_instant_liege
+				}
+				trigger_event = woc_council.0022
+			}
+			if = {
+				limit = {
+					exists = scope:enhancement_crown_proposal_instant_liege
+				}
+				trigger_event = woc_council.0032
+			}
+		}
+		if = {
+			limit = {
+				has_active_diarchy = yes
+				diarch = {
+					woc_council_valid_council_position = no
+				}
+			}
+			diarch = {
+				if = {
+					limit = {
+						exists = scope:war_proposal_instant_liege
+					}
+					trigger_event = woc_council.0002
+				}
+				if = {
+					limit = {
+						exists = scope:grant_title_proposal_instant_liege
+					}
+					trigger_event = woc_council.0012
+				}
+				if = {
+					limit = {
+						exists = scope:revoke_title_proposal_instant_liege
+					}
+					trigger_event = woc_council.0022
+				}
+				if = {
+					limit = {
+						exists = scope:enhancement_crown_proposal_instant_liege
+					}
+					trigger_event = woc_council.0032
+				}
+			}
+		}
+		set_variable = {
+			name = woc_council_disagree_empty_council_var
+			value = woc_council_disagree_empty_council
+		}
+		if = {
+			limit = {
+				OR = {
+					any_councillor = {
+						is_ai = no
+					}
+					AND = {
+						has_active_diarchy = yes
+						diarch = {
+							is_ai = no
+							woc_council_valid_council_position = no
+						}
+					}
+				}
+			}
+			trigger_event = {
+				id = woc_council.0003
+				days = 30
+			}
+		}
+		else_if = {
+			trigger_event = woc_council.0003
+		}
+	}
+}
+
+woc_council.0002 = {
+	type = letter_event
+	trigger = {
+		AND = {
+			scope:war_proposal_instant_liege = {
+				has_royal_court = yes
+			}
+			exists = scope:war_proposal_instant_liege
+		}
+	}
+	opening = {
+		desc = woc_council.0002.opening
+	}
+	desc = {
+		desc = woc_council.0002.desc
+		triggered_desc = {
+			trigger = {
+				scope:war_proposal_instant_liege = {
+					has_variable = proposed_war_target_instant
+				}
+			}
+			desc = woc_council.0002.desc_war
+		}
+		desc = woc_council.0002.desc_end
+	}
+	sender = scope:war_proposal_instant_liege
+	immediate = {
+		save_scope_as = war_proposal_instant_council
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:war_proposal_instant_liege = {
+				has_variable_list = valid_war_proposal_ongoing_list
+			}
+		}
+		show_as_unavailable = {
+			scope:war_proposal_instant_liege = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_ongoing_list
+						target = scope:war_proposal_instant_target
+					}
+				}
+			}
+		}
+		name = woc_council.0002.b
+		custom_tooltip = woc_council.0002.b.tt
+		hidden_effect = {
+			scope:war_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_war_proposal }
+					}
+					set_variable = {
+						name = agree_war_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_war_proposal
+					}
+					change_variable = {
+						name = agree_war_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_war_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:war_proposal_instant_liege = {
+				has_variable_list = valid_war_proposal_ongoing_list
+			}
+		}
+		show_as_unavailable = {
+			scope:war_proposal_instant_liege = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = valid_war_proposal_ongoing_list
+						target = scope:war_proposal_instant_target
+					}
+				}
+			}
+		}
+		name = woc_council.0002.c
+		custom_tooltip = woc_council.0002.c.tt
+		hidden_effect = {
+			scope:war_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_war_proposal }
+					}
+					set_variable = {
+						name = disagree_war_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_war_proposal
+					}
+					change_variable = {
+						name = disagree_war_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_war_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.0012 = {
+	type = letter_event
+	trigger = {
+		scope:grant_title_proposal_instant_liege = {
+			has_royal_court = yes
+		}
+		exists = scope:grant_title_proposal_instant_liege
+	}
+	opening = {
+		desc = woc_council.0002.opening
+	}
+	desc = {
+		desc = woc_council.0002.desc
+		triggered_desc = {
+			trigger = {
+				scope:grant_title_proposal_instant_liege = {
+					has_variable = proposed_grant_title_target_instant
+				}
+			}
+			desc = woc_council.0002.desc_grant_title
+		}
+		desc = woc_council.0002.desc_end
+	}
+	sender = scope:grant_title_proposal_instant_liege
+	immediate = {
+		save_scope_as = war_proposal_instant_council
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:grant_title_proposal_instant_liege = {
+				has_variable_list = valid_grant_title_proposal_ongoing_list
+			}
+		}
+		show_as_unavailable = {
+			scope:grant_title_proposal_instant_liege = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_ongoing_list
+						target = scope:grant_title_proposal_instant_target
+					}
+				}
+			}
+		}
+		name = woc_council.0002.d
+		custom_tooltip = woc_council.0002.d.tt
+		hidden_effect = {
+			scope:grant_title_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_grant_title_proposal }
+					}
+					set_variable = {
+						name = agree_grant_title_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_grant_title_proposal
+					}
+					change_variable = {
+						name = agree_grant_title_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_grant_title_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:grant_title_proposal_instant_liege = {
+				has_variable_list = valid_grant_title_proposal_ongoing_list
+			}
+		}
+		show_as_unavailable = {
+			scope:grant_title_proposal_instant_liege = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = valid_grant_title_proposal_ongoing_list
+						target = scope:grant_title_proposal_instant_target
+					}
+				}
+			}
+		}
+		name = woc_council.0002.e
+		custom_tooltip = woc_council.0002.e.tt
+		hidden_effect = {
+			scope:grant_title_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_grant_title_proposal }
+					}
+					set_variable = {
+						name = disagree_grant_title_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_grant_title_proposal
+					}
+					change_variable = {
+						name = disagree_grant_title_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_grant_title_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.0022 = {
+	type = letter_event
+	trigger = {
+		scope:revoke_title_proposal_instant_liege = {
+			has_royal_court = yes
+		}
+		exists = scope:revoke_title_proposal_instant_liege
+	}
+	opening = {
+		desc = woc_council.0002.opening
+	}
+	desc = {
+		desc = woc_council.0002.desc
+		triggered_desc = {
+			trigger = {
+				scope:revoke_title_proposal_instant_liege = {
+					has_variable = proposed_revoke_title_target_instant
+				}
+			}
+			desc = woc_council.0002.desc_revoke_title
+		}
+		desc = woc_council.0002.desc_end
+	}
+	sender = scope:revoke_title_proposal_instant_liege
+	immediate = {
+		save_scope_as = war_proposal_instant_council
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:revoke_title_proposal_instant_liege = {
+				has_variable_list = valid_revoke_title_proposal_ongoing_list
+			}
+		}
+		show_as_unavailable = {
+			scope:revoke_title_proposal_instant_liege = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_ongoing_list
+						target = scope:revoke_title_proposal_instant_target
+					}
+				}
+			}
+		}
+		name = woc_council.0002.f
+		custom_tooltip = woc_council.0002.f.tt
+		hidden_effect = {
+			scope:revoke_title_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_revoke_title_proposal }
+					}
+					set_variable = {
+						name = agree_revoke_title_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_revoke_title_proposal
+					}
+					change_variable = {
+						name = agree_revoke_title_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_revoke_title_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:revoke_title_proposal_instant_liege = {
+				has_variable_list = valid_revoke_title_proposal_ongoing_list
+			}
+		}
+		show_as_unavailable = {
+			scope:revoke_title_proposal_instant_liege = {
+				NOT = {
+					is_target_in_variable_list = {
+						name = valid_revoke_title_proposal_ongoing_list
+						target = scope:revoke_title_proposal_instant_target
+					}
+				}
+			}
+		}
+		name = woc_council.0002.g
+		custom_tooltip = woc_council.0002.g.tt
+		hidden_effect = {
+			scope:revoke_title_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_revoke_title_proposal }
+					}
+					set_variable = {
+						name = disagree_revoke_title_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_revoke_title_proposal
+					}
+					change_variable = {
+						name = disagree_revoke_title_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_revoke_title_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.0032 = {
+	type = letter_event
+	trigger = {
+		scope:enhancement_crown_proposal_instant_liege = {
+			has_royal_court = yes
+		}
+		exists = scope:enhancement_crown_proposal_instant_liege
+	}
+	opening = {
+		desc = woc_council.0002.opening
+	}
+	desc = {
+		desc = woc_council.0002.desc
+		triggered_desc = {
+			trigger = {
+				scope:enhancement_crown_proposal_instant_liege = {
+					has_variable = valid_enhancement_crown_proposal_law
+				}
+			}
+			desc = woc_council.0002.desc_enhancement_crown
+		}
+		desc = woc_council.0002.desc_end
+	}
+	sender = scope:enhancement_crown_proposal_instant_liege
+	immediate = {
+		save_scope_as = war_proposal_instant_council
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:enhancement_crown_proposal_instant_liege = {
+				has_variable = valid_enhancement_crown_proposal_law
+			}
+		}
+		show_as_unavailable = {
+			scope:enhancement_crown_proposal_instant_liege = {
+				NOT = {
+					has_variable = valid_enhancement_crown_proposal_law
+				}
+			}
+		}
+		name = woc_council.0002.h
+		custom_tooltip = woc_council.0002.h.tt
+		hidden_effect = {
+			scope:enhancement_crown_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_enhancement_crown_proposal }
+					}
+					set_variable = {
+						name = agree_enhancement_crown_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_enhancement_crown_proposal
+					}
+					change_variable = {
+						name = agree_enhancement_crown_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_enhancement_crown_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:enhancement_crown_proposal_instant_liege = {
+				has_variable = valid_enhancement_crown_proposal_law
+			}
+		}
+		show_as_unavailable = {
+			scope:enhancement_crown_proposal_instant_liege = {
+				NOT = {
+					has_variable = valid_enhancement_crown_proposal_law
+				}
+			}
+		}
+		name = woc_council.0002.i
+		custom_tooltip = woc_council.0002.i.tt
+		hidden_effect = {
+			scope:enhancement_crown_proposal_instant_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_enhancement_crown_proposal }
+					}
+					set_variable = {
+						name = disagree_enhancement_crown_proposal
+						value = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_enhancement_crown_proposal
+					}
+					change_variable = {
+						name = disagree_enhancement_crown_proposal
+						add = scope:war_proposal_instant_council.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_council_agree_enhancement_crown_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.0003 = {
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				woc_council_pass_value >= 0
+			}
+			if = {
+				limit = {
+					exists = scope:war_proposal_instant_liege
+				}
+				scope:war_proposal_instant_liege = {
+					add_to_variable_list = {
+						name = valid_war_recipient
+						target = scope:war_proposal_instant_target
+					}
+				}
+				send_interface_toast = {
+					title = war_proposal_instant_pass_notification
+
+					left_icon = scope:war_proposal_instant_liege					
+					right_icon = scope:war_proposal_instant_target
+
+					custom_tooltip = war_proposal_instant_pass_tt_notification
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:grant_title_proposal_instant_liege
+				}
+				scope:grant_title_proposal_instant_liege = {
+					add_to_variable_list = {
+						name = valid_grant_title_recipient
+						target = scope:grant_title_proposal_instant_target
+					}
+				}
+				send_interface_toast = {
+					title = grant_title_proposal_instant_pass_notification
+
+					left_icon = scope:grant_title_proposal_instant_liege					
+					right_icon = scope:grant_title_proposal_instant_target
+
+					custom_tooltip = grant_title_proposal_instant_pass_tt_notification
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:revoke_title_proposal_instant_liege
+				}
+				scope:revoke_title_proposal_instant_liege = {
+					add_to_variable_list = {
+						name = valid_revoke_title_recipient
+						target = scope:revoke_title_proposal_instant_target
+					}
+					add_opinion = {
+						target = scope:revoke_title_proposal_instant_target
+						modifier = woc_council_revoke_title_vassal_opinion
+					}
+				}
+				send_interface_toast = {
+					title = revoke_title_proposal_instant_pass_notification
+
+					left_icon = scope:revoke_title_proposal_instant_liege					
+					right_icon = scope:revoke_title_proposal_instant_target
+
+					custom_tooltip = revoke_title_proposal_instant_pass_tt_notification
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:enhancement_crown_proposal_instant_liege
+				}
+				scope:enhancement_crown_proposal_instant_liege = {
+					increase_crown_authority_effect = yes
+					increase_tribal_authority_effect = yes
+					increase_imperial_bureaucracy_effect = yes
+				}
+				send_interface_toast = {
+					title = enhancement_crown_proposal_pass_tt_notification_title
+
+					right_icon = scope:enhancement_crown_proposal_instant_liege
+					custom_tooltip = enhancement_crown_proposal_instant_pass_notification
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				woc_council_pass_value < 0
+			}
+			if = {
+				limit = {
+					exists = scope:war_proposal_instant_liege
+				}
+				send_interface_toast = {
+					title = war_proposal_instant_reject_notification
+
+					left_icon = scope:war_proposal_instant_liege					
+					right_icon = scope:war_proposal_instant_target
+
+					custom_tooltip = war_proposal_instant_reject_tt_notification
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:grant_title_proposal_instant_liege
+				}
+				send_interface_toast = {
+					title = grant_title_proposal_instant_reject_notification
+
+					left_icon = scope:grant_title_proposal_instant_liege					
+					right_icon = scope:grant_title_proposal_instant_target
+
+					custom_tooltip = grant_title_proposal_instant_reject_tt_notification
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:revoke_title_proposal_instant_liege
+				}
+				send_interface_toast = {
+					title = revoke_title_proposal_instant_reject_notification
+
+					left_icon = scope:revoke_title_proposal_instant_liege					
+					right_icon = scope:revoke_title_proposal_instant_target
+
+					custom_tooltip = revoke_title_proposal_instant_reject_tt_notification
+				}
+			}
+			else_if = {
+				limit = {
+					exists = scope:enhancement_crown_proposal_instant_liege
+				}
+				send_interface_toast = {
+					title = enhancement_crown_proposal_reject_tt_notification_title
+
+					right_icon = scope:enhancement_crown_proposal_instant_liege
+					custom_tooltip = enhancement_crown_proposal_instant_reject_notification
+				}
+			}
+		}
+		remove_variable = agree_war_proposal
+		remove_variable = disagree_war_proposal
+		remove_variable = proposed_war_target_instant
+		if = {
+			limit = {
+				exists = scope:war_proposal_instant_target
+			}
+			remove_list_variable = {
+				name = valid_war_proposal_ongoing_list
+				target = scope:war_proposal_instant_target
+			}
+			scope:war_proposal_instant_target = {
+				remove_list_variable = {
+					name = valid_war_proposal_instant_flag_list
+					target = scope:war_proposal_instant_liege
+				}
+				remove_list_variable = {
+					name = valid_war_proposal_flag_list
+					target = scope:war_proposal_instant_liege
+				}
+			}
+			remove_list_variable = {
+				name = valid_war_proposal_list
+				target = scope:war_proposal_instant_target
+			}
+		}
+		remove_variable = agree_grant_title_proposal
+		remove_variable = disagree_grant_title_proposal
+		remove_variable = proposed_grant_title_target_instant
+		if = {
+			limit = {
+				exists = scope:grant_title_proposal_instant_target
+			}
+			remove_list_variable = {
+				name = valid_grant_title_proposal_ongoing_list
+				target = scope:grant_title_proposal_instant_target
+			}
+			scope:grant_title_proposal_instant_target = {
+				remove_list_variable = {
+					name = valid_grant_title_proposal_instant_flag_list
+					target = scope:grant_title_proposal_instant_liege
+				}
+				remove_list_variable = {
+					name = valid_grant_title_proposal_flag_list
+					target = scope:grant_title_proposal_instant_liege
+				}
+			}
+			remove_list_variable = {
+				name = valid_grant_title_proposal_list
+				target = scope:grant_title_proposal_instant_target
+			}
+		}
+		remove_variable = agree_revoke_title_proposal
+		remove_variable = disagree_revoke_title_proposal
+		remove_variable = proposed_revoke_title_target_instant
+		if = {
+			limit = {
+				exists = scope:revoke_title_proposal_instant_target
+			}
+			remove_list_variable = {
+				name = valid_revoke_title_proposal_ongoing_list
+				target = scope:revoke_title_proposal_instant_target
+			}
+			scope:revoke_title_proposal_instant_target = {
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_instant_flag_list
+					target = scope:revoke_title_proposal_instant_liege
+				}
+				remove_list_variable = {
+					name = valid_revoke_title_proposal_flag_list
+					target = scope:revoke_title_proposal_instant_liege
+				}
+			}
+			remove_list_variable = {
+				name = valid_revoke_title_proposal_list
+				target = scope:revoke_title_proposal_instant_target
+			}
+		}
+		remove_variable = agree_enhancement_crown_proposal
+		remove_variable = disagree_enhancement_crown_proposal
+		remove_variable = valid_enhancement_crown_proposal_law
+		remove_variable = valid_enhancement_crown_proposal_instant_law
+	}
+}
+
+woc_council.0004 = {
+	hidden = yes
+	immediate = {
+		send_interface_message = {
+			title = woc_liege_pulling_councilor_invaild
+			right_icon = scope:recipient
+			left_icon = scope:actor
+			custom_tooltip = woc_liege_pulling_councilor_invaild.tt
+			remove_list_variable = {
+				name = woc_liege_pulling_councilor_list
+				target = scope:recipient
+			}
+		}
+	}
+}
+
+woc_council.0005 = {
+	hidden = yes
+	immediate = {
+		send_interface_message = {
+			title = woc_cp_pulling_cp_invaild
+			right_icon = scope:secondary_recipient
+			left_icon = scope:actor
+			custom_tooltip = woc_cp_pulling_cp_invaild.tt
+			remove_list_variable = {
+				name = councilor_supporters_list
+				target = scope:secondary_recipient
+			}
+		}
+	}
+}
+
+woc_council.1001 = {
+	hidden = yes
+	
+	immediate = {
+		every_councillor = {
+			limit = {
+				woc_council_valid_council_position = yes
+			}
+			trigger_event = woc_council.1002
+			trigger_event = woc_council.1012
+			trigger_event = woc_council.1022
+		}
+		if = {
+			limit = {
+				has_active_diarchy = yes
+				diarch = {
+					woc_council_valid_council_position = no
+				}
+			}
+			diarch = {
+				trigger_event = woc_council.1002
+				trigger_event = woc_council.1012
+				trigger_event = woc_council.1022
+			}
+		}
+		set_variable = {
+			name = woc_council_disagree_empty_council_var
+			value = woc_council_disagree_empty_council
+		}
+		trigger_event = {
+			id = woc_council.1003
+			days = 30
+		}
+	}
+}
+
+woc_council.1002 = {
+	type = letter_event
+	trigger = {
+		AND = {
+			exists = scope:woc_vote_at_council_request_liege
+			scope:woc_vote_at_council_request_liege = {
+				has_royal_court = yes
+				has_variable = enhancement_council_law_proposal_request_on_going
+			}
+		}
+	}
+	opening = {
+		desc = woc_council.1002.opening
+	}
+	desc = woc_council.1002.desc
+	sender = scope:woc_vote_at_council_request_councillor
+	immediate = {
+		save_scope_as = woc_vote_at_council_request_root
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:woc_vote_at_council_request_liege = {
+				has_variable = enhancement_council_law_proposal_request_on_going
+			}
+		}
+		show_as_unavailable = {
+			scope:woc_vote_at_council_request_liege = {
+				NOT = {
+					has_variable = enhancement_council_law_proposal_request_on_going
+				}
+			}
+		}
+		name = woc_council.0002.b
+		custom_tooltip = woc_council.1002.b.tt
+		hidden_effect = {
+			scope:woc_vote_at_council_request_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_enhancement_council_law }
+					}
+					set_variable = {
+						name = agree_enhancement_council_law
+						value = root.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_enhancement_council_law
+					}
+					change_variable = {
+						name = agree_enhancement_council_law
+						add = root.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_agree_enhancement_council_law_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:woc_vote_at_council_request_liege = {
+				has_variable = enhancement_council_law_proposal_request_on_going
+			}
+		}
+		show_as_unavailable = {
+			scope:woc_vote_at_council_request_liege = {
+				NOT = {
+					has_variable = enhancement_council_law_proposal_request_on_going
+				}
+			}
+		}
+		name = woc_council.0002.c
+		custom_tooltip = woc_council.1002.c.tt
+		hidden_effect = {
+			scope:woc_vote_at_council_request_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_enhancement_council_law }
+					}
+					set_variable = {
+						name = disagree_enhancement_council_law
+						value = root.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_enhancement_council_law
+					}
+					change_variable = {
+						name = disagree_enhancement_council_law
+						add = root.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_agree_enhancement_council_law_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.1012 = {
+	type = letter_event
+	trigger = {
+		AND = {
+			exists = scope:woc_vote_at_council_request_liege
+			scope:woc_vote_at_council_request_liege = {
+				has_royal_court = yes
+				has_variable = declare_incompetence_proposal_request_on_going
+			}
+		}
+	}
+	opening = {
+		desc = woc_council.1012.opening
+	}
+	desc = woc_council.1012.desc
+	sender = scope:woc_vote_at_council_request_councillor
+	immediate = {
+		save_scope_as = woc_vote_at_council_request_root
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:woc_vote_at_council_request_liege = {
+				has_variable = declare_incompetence_proposal_request_on_going
+			}
+		}
+		show_as_unavailable = {
+			scope:woc_vote_at_council_request_liege = {
+				NOT = {
+					has_variable = declare_incompetence_proposal_request_on_going
+				}
+			}
+		}
+		name = woc_council.0002.b
+		custom_tooltip = woc_council.1012.b.tt
+		hidden_effect = {
+			scope:woc_vote_at_council_request_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_declare_incompetence }
+					}
+					set_variable = {
+						name = agree_declare_incompetence
+						value = root.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_declare_incompetence
+					}
+					change_variable = {
+						name = agree_declare_incompetence
+						add = root.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_agree_enhancement_council_law_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:woc_vote_at_council_request_liege = {
+				has_variable = declare_incompetence_proposal_request_on_going
+			}
+		}
+		show_as_unavailable = {
+			scope:woc_vote_at_council_request_liege = {
+				NOT = {
+					has_variable = declare_incompetence_proposal_request_on_going
+				}
+			}
+		}
+		name = woc_council.0002.c
+		custom_tooltip = woc_council.1012.c.tt
+		hidden_effect = {
+			scope:woc_vote_at_council_request_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_declare_incompetence }
+					}
+					set_variable = {
+						name = disagree_declare_incompetence
+						value = root.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_declare_incompetence
+					}
+					change_variable = {
+						name = disagree_declare_incompetence
+						add = root.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_agree_enhancement_council_law_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.1022 = {
+	type = letter_event
+	trigger = {
+		AND = {
+			exists = scope:woc_vote_at_council_request_liege
+			scope:woc_vote_at_council_request_liege = {
+				has_royal_court = yes
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+		}
+	}
+	opening = {
+		desc = woc_council.1022.opening
+	}
+	desc = woc_council.1022.desc
+	sender = scope:woc_vote_at_council_request_councillor
+	immediate = {
+		save_scope_as = woc_vote_at_council_request_root
+	}
+	option = {
+		name = woc_council.0002.a
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		trigger = {
+			scope:woc_vote_at_council_request_liege = {
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+		}
+		show_as_unavailable = {
+			scope:woc_vote_at_council_request_liege = {
+				NOT = {
+					has_variable = council_overthrow_regent_proposal_request_on_going
+				}
+			}
+		}
+		name = woc_council.0002.b
+		custom_tooltip = woc_council.1022.b.tt
+		hidden_effect = {
+			scope:woc_vote_at_council_request_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = agree_council_overthrow_regent }
+					}
+					set_variable = {
+						name = agree_council_overthrow_regent
+						value = root.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = agree_council_overthrow_regent
+					}
+					change_variable = {
+						name = agree_council_overthrow_regent
+						add = root.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_agree_enhancement_council_law_attitude_value > 0
+			}
+		}
+	}
+	option = {
+		trigger = {
+			scope:woc_vote_at_council_request_liege = {
+				has_variable = council_overthrow_regent_proposal_request_on_going
+			}
+		}
+		show_as_unavailable = {
+			scope:woc_vote_at_council_request_liege = {
+				NOT = {
+					has_variable = council_overthrow_regent_proposal_request_on_going
+				}
+			}
+		}
+		name = woc_council.0002.c
+		custom_tooltip = woc_council.1022.c.tt
+		hidden_effect = {
+			scope:woc_vote_at_council_request_liege = {
+				if = {
+					limit = {
+						NOT = { has_variable = disagree_council_overthrow_regent }
+					}
+					set_variable = {
+						name = disagree_council_overthrow_regent
+						value = root.woc_council_vote_power
+					}
+				}
+				else_if = {
+					limit = {
+						has_variable = disagree_council_overthrow_regent
+					}
+					change_variable = {
+						name = disagree_council_overthrow_regent
+						add = root.woc_council_vote_power
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1000
+				woc_agree_enhancement_council_law_attitude_value <= 0
+			}
+		}
+	}
+}
+
+woc_council.1003 = {
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				woc_council_pass_request_value >= 0
+			}
+			if = {
+				limit = {
+					exists = scope:woc_vote_at_council_request_liege
+					has_variable = enhancement_council_law_proposal_request_on_going
+				}
+				scope:woc_vote_at_council_request_liege = {
+					woc_decrease_council_law_effect = yes
+					trigger_event = woc_council.1004
+				}
+			}
+			if = {
+				limit = {
+					exists = scope:woc_vote_at_council_request_liege
+					has_variable = declare_incompetence_proposal_request_on_going
+				}
+				scope:woc_vote_at_council_request_liege = {
+					add_trait = woc_puppet
+					add_trait_xp = {
+						trait = woc_puppet
+						value = 50
+					}
+					add_realm_law_skip_effects = woc_council_2_law_fully
+					trigger_event = woc_council.1014
+				}
+			}
+			if = {
+				limit = {
+					exists = scope:woc_vote_at_council_request_liege
+					has_variable = council_overthrow_regent_proposal_request_on_going
+				}
+				scope:woc_vote_at_council_request_liege = {
+					designate_diarch = scope:secondary_recipient
+					trigger_event = woc_council.1024
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				woc_council_pass_request_value < 0
+			}
+			if = {
+				limit = {
+					exists = scope:woc_vote_at_council_request_liege
+					has_variable = enhancement_council_law_proposal_request_on_going
+				}
+				scope:woc_vote_at_council_request_liege = {
+					every_councillor = {
+						limit = {
+							woc_council_valid_council_position = yes
+						}
+						send_interface_message = {
+							type = event_generic_neutral
+							title = enhancement_council_law_reject_msg_tt
+							left_icon = scope:woc_vote_at_council_request_councillor					
+							right_icon = scope:woc_vote_at_council_request_liege
+							custom_tooltip = enhancement_council_law_reject_msg_ct
+						}
+					}
+					if = {
+						limit = {
+							has_active_diarchy = yes
+							diarch = {
+								woc_council_valid_council_position = no
+							}
+						}
+						diarch = {
+							send_interface_message = {
+								type = event_generic_neutral
+								title = enhancement_council_law_reject_msg_tt
+								left_icon = scope:woc_vote_at_council_request_councillor					
+								right_icon = scope:woc_vote_at_council_request_liege
+								custom_tooltip = enhancement_council_law_reject_msg_ct
+							}
+						}
+					}
+					send_interface_toast = {
+						title = enhancement_council_law_reject_notification
+
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+
+						custom_tooltip = enhancement_council_law_reject_tt_notification
+					}
+				}
+				scope:woc_vote_at_council_request_councillor = {
+					send_interface_toast = {
+						title = enhancement_council_law_reject_notification
+
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+
+						custom_tooltip = enhancement_council_law_reject_tt_notification
+					}
+				}
+			}
+			if = {
+				limit = {
+					exists = scope:woc_vote_at_council_request_liege
+					has_variable = declare_incompetence_proposal_request_on_going
+				}
+				scope:woc_vote_at_council_request_liege = {
+					every_councillor = {
+						limit = {
+							woc_council_valid_council_position = yes
+						}
+						send_interface_message = {
+							type = event_generic_neutral
+							title = declare_incompetence_reject_msg_tt
+							left_icon = scope:woc_vote_at_council_request_councillor					
+							right_icon = scope:woc_vote_at_council_request_liege
+							custom_tooltip = declare_incompetence_reject_msg_ct
+						}
+					}
+					if = {
+						limit = {
+							has_active_diarchy = yes
+							diarch = {
+								woc_council_valid_council_position = no
+							}
+						}
+						diarch = {
+							send_interface_message = {
+								type = event_generic_neutral
+								title = declare_incompetence_reject_msg_tt
+								left_icon = scope:woc_vote_at_council_request_councillor					
+								right_icon = scope:woc_vote_at_council_request_liege
+								custom_tooltip = declare_incompetence_reject_msg_ct
+							}
+						}
+					}
+					send_interface_toast = {
+						title = declare_incompetence_reject_notification
+
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+
+						custom_tooltip = declare_incompetence_reject_tt_notification
+					}
+				}
+				scope:woc_vote_at_council_request_councillor = {
+					send_interface_toast = {
+						title = declare_incompetence_reject_notification
+
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+
+						custom_tooltip = declare_incompetence_reject_tt_notification
+					}
+				}
+			}
+			if = {
+				limit = {
+					exists = scope:woc_vote_at_council_request_liege
+					has_variable = council_overthrow_regent_proposal_request_on_going
+				}
+				scope:woc_vote_at_council_request_liege = {
+					every_councillor = {
+						limit = {
+							woc_council_valid_council_position = yes
+						}
+						send_interface_message = {
+							type = event_generic_neutral
+							title = council_overthrow_regent_reject_msg_tt
+							left_icon = scope:woc_vote_at_council_request_councillor					
+							right_icon = scope:woc_vote_at_council_request_liege
+							custom_tooltip = council_overthrow_regent_reject_msg_ct
+						}
+					}
+					if = {
+						limit = {
+							has_active_diarchy = yes
+							diarch = {
+								woc_council_valid_council_position = no
+							}
+						}
+						diarch = {
+							send_interface_message = {
+								type = event_generic_neutral
+								title = council_overthrow_regent_reject_msg_tt
+								left_icon = scope:woc_vote_at_council_request_councillor					
+								right_icon = scope:woc_vote_at_council_request_liege
+								custom_tooltip = council_overthrow_regent_reject_msg_ct
+							}
+						}
+					}
+					send_interface_toast = {
+						title = council_overthrow_regent_reject_notification
+
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+
+						custom_tooltip = council_overthrow_regent_reject_tt_notification
+					}
+				}
+				scope:woc_vote_at_council_request_councillor = {
+					send_interface_toast = {
+						title = council_overthrow_regent_reject_notification
+
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+
+						custom_tooltip = council_overthrow_regent_reject_tt_notification
+					}
+				}
+			}
+		}
+		remove_variable = agree_enhancement_council_law
+		remove_variable = disagree_enhancement_council_law
+		remove_variable = enhancement_council_law_proposal_request_on_going
+		remove_variable = agree_declare_incompetence
+		remove_variable = disagree_declare_incompetence
+		remove_variable = declare_incompetence_proposal_request_on_going
+		remove_variable = agree_council_overthrow_regent
+		remove_variable = disagree_council_overthrow_regent
+		remove_variable = council_overthrow_regent_proposal_request_on_going
+	}
+}
+
+woc_council.1004 = {
+	type = character_event
+	title = woc_council.1004.t
+	desc = woc_council.1004.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+	}
+	right_portrait = {
+		character = scope:woc_vote_at_council_request_councillor
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council.1004.a
+		hidden_effect = {
+			every_councillor = {
+				limit = {
+					woc_council_valid_council_position = yes
+					NOT = { is_diarch_of_target = scope:woc_vote_at_council_request_liege }
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = enhancement_council_law_pass_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = enhancement_council_law_pass_msg_ct
+				}
+			}
+			if = {
+				limit = {
+					has_active_diarchy = yes
+					diarch = scope:woc_vote_at_council_request_councillor
+				}
+				diarch = {
+					send_interface_message = {
+						type = event_generic_neutral
+						title = enhancement_council_law_pass_msg_tt
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+						custom_tooltip = enhancement_council_law_pass_msg_ct
+						change_strife_opinion = major_strife_loss
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_active_diarchy = yes
+					NOT = { diarch = scope:woc_vote_at_council_request_councillor }
+				}
+				diarch = {
+					send_interface_message = {
+						type = event_generic_neutral
+						title = enhancement_council_law_pass_msg_tt
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+						custom_tooltip = enhancement_council_law_pass_msg_ct
+					}
+				}
+			}
+			every_vassal = {
+				limit = {
+					is_ai = no
+					NOR = {
+						woc_council_valid_council_position = yes
+						is_diarch_of_target = scope:woc_vote_at_council_request_liege
+					}
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = enhancement_council_law_pass_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = enhancement_council_law_pass_msg_ct
+				}
+			}
+			send_interface_message = {
+				type = event_generic_neutral
+				title = enhancement_council_law_pass_msg_tt
+				left_icon = scope:woc_vote_at_council_request_councillor					
+				right_icon = scope:woc_vote_at_council_request_liege
+				custom_tooltip = enhancement_council_law_pass_msg_ct
+			}
+			scope:woc_vote_at_council_request_councillor = {
+				send_interface_toast = {
+					title = enhancement_council_law_pass_notification
+
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+
+					custom_tooltip = enhancement_council_law_pass_tt_notification
+				}
+			}
+		}
+		ai_chance = {
+			base = 1000
+		}
+	}
+	option = { 
+		name = woc_council.1004.b
+		custom_tooltip = woc_council.1004.b.tt
+		trigger = {
+			root = {
+				woc_council_law_value < 5
+			}
+		}
+		show_as_unavailable = {
+			root = {
+				woc_council_law_value >= 5
+			}
+		}
+		add_tyranny = 20
+		hidden_effect = {
+			woc_increase_council_law_effect = yes
+			every_vassal = {
+				limit = {
+					is_ai = no
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = enhancement_council_law_pass_tyranny_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = enhancement_council_law_pass_tyranny_msg_ct
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+woc_council.1014 = {
+	type = character_event
+	title = woc_council.1014.t
+	desc = woc_council.1014.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+	}
+	right_portrait = {
+		character = scope:woc_vote_at_council_request_councillor
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council.1014.a
+		hidden_effect = {
+			every_councillor = {
+				limit = {
+					woc_council_valid_council_position = yes
+					NOT = { is_diarch_of_target = scope:woc_vote_at_council_request_liege }
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = declare_incompetence_pass_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = declare_incompetence_pass_msg_ct
+				}
+			}
+			if = {
+				limit = {
+					has_active_diarchy = yes
+				}
+				diarch = {
+					send_interface_message = {
+						type = event_generic_neutral
+						title = declare_incompetence_pass_msg_tt
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+						custom_tooltip = declare_incompetence_pass_msg_ct
+					}
+				}
+			}
+			every_vassal = {
+				limit = {
+					is_ai = no
+					NOR = {
+						woc_council_valid_council_position = yes
+						is_diarch_of_target = scope:woc_vote_at_council_request_liege
+					}
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = declare_incompetence_pass_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = declare_incompetence_pass_msg_ct
+				}
+			}
+			send_interface_message = {
+				type = event_generic_neutral
+				title = declare_incompetence_pass_msg_tt
+				left_icon = scope:woc_vote_at_council_request_councillor					
+				right_icon = scope:woc_vote_at_council_request_liege
+				custom_tooltip = declare_incompetence_pass_msg_ct
+			}
+			scope:woc_vote_at_council_request_councillor = {
+				send_interface_toast = {
+					title = declare_incompetence_pass_notification
+
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+
+					custom_tooltip = declare_incompetence_pass_tt_notification
+				}
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council.1024 = {
+	type = character_event
+	title = woc_council.1024.t
+	desc = woc_council.1024.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+	}
+	right_portrait = {
+		character = scope:woc_vote_at_council_request_councillor
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council.1024.a
+		hidden_effect = {
+			every_councillor = {
+				limit = {
+					woc_council_valid_council_position = yes
+					NOT = { is_diarch_of_target = scope:woc_vote_at_council_request_liege }
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = council_overthrow_regent_pass_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = council_overthrow_regent_pass_msg_ct
+				}
+			}
+			if = {
+				limit = {
+					has_active_diarchy = yes
+				}
+				diarch = {
+					send_interface_message = {
+						type = event_generic_neutral
+						title = council_overthrow_regent_pass_msg_tt
+						left_icon = scope:woc_vote_at_council_request_councillor					
+						right_icon = scope:woc_vote_at_council_request_liege
+						custom_tooltip = council_overthrow_regent_pass_msg_ct
+					}
+				}
+			}
+			every_vassal = {
+				limit = {
+					is_ai = no
+					NOR = {
+						woc_council_valid_council_position = yes
+						is_diarch_of_target = scope:woc_vote_at_council_request_liege
+					}
+				}
+				send_interface_message = {
+					type = event_generic_neutral
+					title = council_overthrow_regent_pass_msg_tt
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+					custom_tooltip = council_overthrow_regent_pass_msg_ct
+				}
+			}
+			send_interface_message = {
+				type = event_generic_neutral
+				title = council_overthrow_regent_pass_msg_tt
+				left_icon = scope:woc_vote_at_council_request_councillor					
+				right_icon = scope:woc_vote_at_council_request_liege
+				custom_tooltip = council_overthrow_regent_pass_msg_ct
+			}
+			scope:woc_vote_at_council_request_councillor = {
+				send_interface_toast = {
+					title = council_overthrow_regent_pass_notification
+
+					left_icon = scope:woc_vote_at_council_request_councillor					
+					right_icon = scope:woc_vote_at_council_request_liege
+
+					custom_tooltip = council_overthrow_regent_pass_tt_notification
+				}
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+namespace = woc_council_show
+
+woc_council_show.1000 = {
+	type = character_event
+	title = woc_council_show.1000.t
+	desc = woc_council_show.1000.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+	}
+	right_portrait = {
+		character = scope:woc_vote_at_council_request_councillor
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council_show.1000.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council_show.1001 = {
+	type = character_event
+	title = woc_council_show.1001.t
+	desc = woc_council_show.1001.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+	}
+	right_portrait = {
+		character = scope:woc_vote_at_council_request_councillor
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council_show.1001.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council_show.1002 = {
+	type = character_event
+	title = woc_council_show.1002.t
+	desc = woc_council_show.1002.desc
+	theme = realm
+	
+	left_portrait = {
+		character = root
+	}
+	right_portrait = {
+		character = scope:woc_vote_at_council_request_councillor
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council_show.1002.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council_show.1003 = {
+	type = character_event
+	title = woc_council_show.1003.t
+	desc = woc_council_show.1003.desc
+	theme = realm
+	
+	right_portrait = {
+		character = scope:woc_abolish_the_magna_carta_liege
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council_show.1003.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council_show.1004 = {
+	type = character_event
+	title = woc_council_show.1004.t
+	desc = woc_council_show.1004.desc
+	theme = realm
+	
+	right_portrait = {
+		character = scope:woc_abolish_the_magna_carta_liege
+	}
+	left_portrait = {
+		character = scope:woc_abolish_the_magna_carta_religious_head
+	}
+	immediate = {
+	}
+	option = { 
+		name = woc_council_show.1004.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council_show.1005 = {
+	type = character_event
+	title = woc_council_show.1005.t
+	desc = woc_council_show.1005.desc
+	theme = realm
+	
+	right_portrait = {
+		character = scope:defender
+	}
+	left_portrait = {
+		character = scope:attacker
+	}
+	immediate = {
+		add_character_modifier = woc_council_magna_carta
+		remove_variable = woc_council_reject_magna_carta
+		create_character_memory = {
+			type = woc_council_magna_carta_war_lost
+			participants = {
+				winner = scope:attacker
+				loser = scope:defender
+			}
+		}
+	}
+	option = { 
+		name = woc_council_show.1005.a
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+woc_council_show.2000 = {
+	type = letter_event
+	opening = {
+		desc = char_interaction.0001.opening
+	}
+	desc = char_interaction.0199.desc
+		
+	sender = scope:recipient
+
+	immediate = {
+		show_as_tooltip = { woc_council_revoke_title_interaction_effect = yes }
+	}
+
+	option = {
+		name = char_interaction.0199.a
+	}
+}
+
+woc_council_show.2001 = {
+	type = letter_event
+	opening = {
+		desc = char_interaction.0001.opening
+	}
+	desc = char_interaction.0201.desc
+		
+	sender = scope:recipient
+
+	immediate = {
+		show_as_tooltip = { woc_council_revoke_title_interaction_effect = yes }
+	}
+
+	option = {
+		name = char_interaction.0201.a
+	}
+}
+
+
+namespace = woc_council_suggestion
+woc_council_suggestion.0001 = {
+	hidden = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				any_scheme = {
+					scheme_type = woc_council_missions
+				}
+			}
+			every_scheme = {
+				limit = {
+					scheme_type = woc_council_missions
+				}
+				add_scheme_progress = 2000
+			}
+		}
+	}
+}
+
+woc_council_suggestion.0002 = {
+	type = character_event
+	title = woc_council_suggestion.0002.t
+	desc = {
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 1
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_diplo_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 2
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_diplo_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 3
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_diplo_3.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 4
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_martial_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 5
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_martial_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 6
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_martial_3.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 7
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_steward_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 8
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_steward_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 9
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_steward_3.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 10
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_learn_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 11
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_learn_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 12
+			}
+			desc = woc_council_suggestion.0002.woc_council_suggestion_learn_3.desc
+		}
+	}
+	theme = realm
+	left_portrait = {
+		character = root
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				any_scheme = {
+					scheme_type = woc_council_missions
+				}
+			}
+			every_scheme = {
+				limit = {
+					scheme_type = woc_council_missions
+				}
+				end_scheme = yes
+			}
+		}
+		remove_character_modifier = woc_council_add_max_schemes
+	}
+	
+	option = {
+		name = woc_council_suggestion.0002.a
+	}
+	
+	after = {
+		remove_variable = woc_council_suggestion
+	}
+}
+
+woc_council_suggestion.0003 = {
+	type = character_event
+	title = woc_council_suggestion.0003.t
+	desc = {
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 1
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_diplo_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 2
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_diplo_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 3
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_diplo_3.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 4
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_martial_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 5
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_martial_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 6
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_martial_3.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 7
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_steward_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 8
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_steward_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 9
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_steward_3.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 10
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_learn_1.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 11
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_learn_2.desc
+		}
+		triggered_desc = {
+			trigger = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 12
+			}
+			desc = woc_council_suggestion.0003.woc_council_suggestion_learn_3.desc
+		}
+		desc = woc_council_suggestion.0003.desc_end
+	}
+	theme = realm
+	left_portrait = {
+		character = root
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				any_scheme = {
+					scheme_type = woc_council_missions
+				}
+			}
+			every_scheme = {
+				limit = {
+					scheme_type = woc_council_missions
+				}
+				end_scheme = yes
+			}
+		}
+		remove_character_modifier = woc_council_add_max_schemes
+		remove_character_modifier = woc_council_missions_4_cost
+		if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 1
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_1
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 2
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_2
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 3
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_3
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 4
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_4
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 5
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_5
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 6
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_6
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 7
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_7
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 8
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_8
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 9
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_9
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 10
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_10
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 11
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_11
+				years = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_variable = woc_council_suggestion
+				var:woc_council_suggestion = 12
+			}
+			add_character_modifier = {
+				modifier = woc_council_missions_12
+				years = 5
+			}
+		}
+		every_councillor = {
+			if = {
+				limit = {
+					NOT = { has_trait = woc_councillor }
+				}
+				add_trait = woc_councillor
+			}
+			add_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_xp
+				value = {
+					integer_range = {
+						min = 7
+						max = 12
+					}
+				}
+			}
+			add_trait_xp = {
+				trait = woc_councillor
+				track = woc_councillor_impact
+				value = {
+					integer_range = {
+						min = 3
+						max = 7
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = woc_council_suggestion.0003.a
+	}
+	
+	after = {
+		remove_variable = woc_council_suggestion
+	}
+}

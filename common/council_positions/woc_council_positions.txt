@@ -1,0 +1,162 @@
+councillor_woc_advisor = {
+	skill = stewardship
+	
+	name = councillor_woc_advisor
+
+	tooltip = councillor_woc_advisor_desc
+
+	modifier = {
+		name = councillor_woc_advisor_modifier
+		fellow_vassal_opinion = 5
+		monthly_diplomacy_lifestyle_xp_gain_mult = 0.05
+		monthly_stewardship_lifestyle_xp_gain_mult = 0.1
+		scale = council_scaled_by_liege_tier
+	}
+
+	modifier = {
+		name = councillor_woc_advisor_modifier
+		monthly_prestige = 0.5
+		scale = council_scaled_monthly_income
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier
+		diplomacy = 1
+		scale = woc_council_chancellor_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier
+		stewardship = 1
+		scale = woc_council_steward_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier
+		martial = 1
+		scale = woc_council_marshal_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier
+		intrigue = 1
+		scale = woc_council_spymaster_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier
+		learning = 1
+		scale = woc_council_court_chaplain_scale
+	}
+
+
+	valid_character = {
+		exists = root.liege_or_court_owner
+		#is_vassal_of = root.liege_or_court_owner
+		can_be_councillor_basics_trigger = yes
+		NOR = {
+			has_council_position = councillor_spouse
+			has_council_position = councillor_court_chaplain
+			has_council_position = councillor_chancellor
+			has_council_position = councillor_steward
+			has_council_position = councillor_marshal
+			has_council_position = councillor_spymaster
+			has_council_position = councillor_woc_advisor_second
+		}
+	}
+	
+	valid_position = {
+		woc_council_law_value >= 3
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+	}
+
+	portrait_animation = chaplain
+}
+
+councillor_woc_advisor_second = {
+	skill = diplomacy
+	
+	name = councillor_woc_advisor_second
+
+	tooltip = councillor_woc_advisor_second_desc
+	
+	modifier = {
+		name = councillor_woc_advisor_modifier
+		fellow_vassal_opinion = 5
+		monthly_diplomacy_lifestyle_xp_gain_mult = 0.1
+		monthly_stewardship_lifestyle_xp_gain_mult = 0.05
+		scale = council_scaled_by_liege_tier
+	}
+
+	modifier = {
+		name = councillor_woc_advisor_modifier
+		monthly_prestige = 0.5
+		scale = council_scaled_monthly_income
+	}
+
+	council_owner_modifier = {
+		name = woc_advisor_modifier_2
+		diplomacy = 1
+		scale = woc_council_chancellor_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier_2
+		stewardship = 1
+		scale = woc_council_steward_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier_2
+		martial = 1
+		scale = woc_council_marshal_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier_2
+		intrigue = 1
+		scale = woc_council_spymaster_scale
+	}
+	
+	council_owner_modifier = {
+		name = woc_advisor_modifier_2
+		learning = 1
+		scale = woc_council_court_chaplain_scale
+	}
+
+	valid_character = {
+		exists = root.liege_or_court_owner
+		#is_vassal_of = root.liege_or_court_owner
+		can_be_councillor_basics_trigger = yes
+		NOR = {
+			has_council_position = councillor_spouse
+			has_council_position = councillor_court_chaplain
+			has_council_position = councillor_chancellor
+			has_council_position = councillor_steward
+			has_council_position = councillor_marshal
+			has_council_position = councillor_spymaster
+			has_council_position = councillor_woc_advisor
+		}
+	}
+	
+	valid_position = {
+		woc_council_law_value >= 6
+	}
+
+	on_get_position = {
+		got_council_position_effect = yes
+	}
+
+	on_fired_from_position = {
+		fired_from_council_position_effect = yes
+	}
+
+	portrait_animation = chancellor
+}

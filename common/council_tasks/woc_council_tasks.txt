@@ -1,0 +1,732 @@
+woc_advisor_task_default = {
+	default_task = yes
+	position = councillor_woc_advisor
+	
+	effect_desc = woc_advisor_task_default_effect_desc
+	
+	task_type = task_type_general
+	task_progress = task_progress_infinite
+	council_owner_modifier = {
+		name = woc_task_collect_taxes_modifier
+		domain_tax_mult = 0.01
+		scale = steward_collect_taxes_scale_base
+	}
+}
+
+woc_advisor_second_task_default = {
+	default_task = yes
+	position = councillor_woc_advisor_second
+	
+	effect_desc = woc_advisor_second_task_default_effect_desc
+	
+	task_type = task_type_general
+	task_progress = task_progress_infinite
+	
+	council_owner_modifier = {
+		name = woc_task_domestic_affairs_opinion_moidifier
+		tyranny_loss_mult = 0.005
+		scale = chancellor_domestic_affairs_tyranny_base
+	}
+}
+
+woc_advisor_task_convince_dejure = {
+	position = councillor_woc_advisor
+
+	task_type = task_type_county
+	county_target = neighbor_land
+	ai_county_target = neighbor_land
+	task_progress = task_progress_percentage
+
+	effect_desc = {
+		desc = {
+			desc = task_convince_dejure_effect_desc
+			desc = council_task_possible_side_effects
+			triggered_desc = {
+				trigger = {
+					stewardship > mediocre_skill_rating
+				}
+				desc = task_convince_dejure_gain_prestige
+			}
+			triggered_desc = {
+				trigger = {
+					stewardship < high_skill_rating
+				}
+				desc = task_convince_dejure_lose_prestige
+			}
+			triggered_desc = {
+				trigger = {
+					stewardship < high_skill_rating
+				}
+				desc = task_convince_dejure_diplomatic_blunder
+			}
+		}
+	}
+
+	is_shown = {
+		has_dlc_feature = royal_court
+	}
+
+	progress = {
+		value = 0
+		add = {
+			value = steward_convince_dejure_base
+			desc = STEWARD_PROGRESS_BASE
+		}
+		add = {
+			value = scope:councillor.steward_convince_dejure_monthly_increase
+			desc = SCALED_COUNCILLOR_STEWARDSHIP_VALUE
+		}
+		#CGV bonuses/maluses
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					court_grandeur_current_level = 7
+				}
+			}
+			add = {
+				value = 0.1
+				desc = steward_convince_dejure_cg_bonus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					court_grandeur_current_level = 8
+				}
+			}
+			add = {
+				value = 0.2
+				desc = steward_convince_dejure_cg_bonus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					court_grandeur_current_level = 9
+				}
+			}
+			add = {
+				value = 0.3
+				desc = steward_convince_dejure_cg_bonus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					court_grandeur_current_level = 10
+				}
+			}
+			add = {
+				value = 0.4
+				desc = steward_convince_dejure_cg_bonus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:county.holder.top_liege = {
+					court_grandeur_current_level = 7
+				}
+			}
+			add = {
+				value = -0.1
+				desc = steward_convince_dejure_cg_malus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:county.holder.top_liege = {
+					court_grandeur_current_level = 8
+				}
+			}
+			add = {
+				value = -0.2
+				desc = steward_convince_dejure_cg_malus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:county.holder.top_liege = {
+					court_grandeur_current_level = 9
+				}
+			}
+			add = {
+				value = -0.3
+				desc = steward_convince_dejure_cg_malus_desc
+			}
+		}
+		if = {
+			limit = {
+				scope:county.holder.top_liege = {
+					court_grandeur_current_level = 10
+				}
+			}
+			add = {
+				value = -0.4
+				desc = steward_convince_dejure_cg_malus_desc
+			}
+		}
+		# Relation Bonuses/Penalties
+		if = { # Friend
+			limit = {
+				scope:councillor_liege = {
+					has_relation_friend = scope:councillor
+					NOT = { has_relation_best_friend = scope:councillor }
+				}
+			}
+			add = {
+				value = scope:councillor.steward_convince_dejure_monthly_increase_friend_bonus
+				desc = COUNCILLOR_IS_YOUR_FRIEND
+			}
+		}
+		if = { # Best Friend
+			limit = {
+				scope:councillor_liege = {
+					has_relation_best_friend = scope:councillor
+				}
+			}
+			add = {
+				value = scope:councillor.steward_convince_dejure_monthly_increase_best_friend_bonus
+				desc = COUNCILLOR_IS_YOUR_BEST_FRIEND
+			}
+		}
+		if = { # Rival
+			limit = {
+				scope:councillor_liege = {
+					has_relation_rival = scope:councillor
+					NOT = { has_relation_nemesis = scope:councillor }
+				}
+			}
+			add = {
+				value = scope:councillor.steward_convince_dejure_monthly_increase_rival_bonus
+				desc = COUNCILLOR_IS_YOUR_RIVAL
+			}
+		}
+		if = { # Nemesis
+			limit = {
+				scope:councillor_liege = {
+					has_relation_nemesis = scope:councillor
+				}
+			}
+			add = {
+				value = scope:councillor.steward_convince_dejure_monthly_increase_nemesis_bonus
+				desc = COUNCILLOR_IS_YOUR_NEMESIS
+			}
+		}
+		if = {
+			limit = {
+				councillor_liege_has_erudition_legacy_5_perk = yes
+			}
+			add = {
+				value = steward_convince_dejure_erudition_bonus
+				desc = ERUDITION_DYNASTY_PERK_BONUS_VALUE
+			}
+		}
+		if = {
+			limit = {
+				councillor_liege_has_family_business_bonus = yes
+			}
+			add = {
+				value = steward_convince_dejure_family_business_bonus
+				desc = FAMILY_BUSINESS_BONUS_VALUE
+			}
+		}
+		if = {
+			limit = {
+				councillor_liege_has_consulted_house_bonus = yes
+			}
+			add = {
+				value = steward_convince_dejure_consulted_house_bonus
+				desc = CONSULTED_HOUSE_BONUS_VALUE
+			}
+		}
+		multiply = {
+			value = 5
+			desc = WOC_ADVISOR_SCALED_VALUE
+		}
+	}
+
+	#Unlocked at Court Grandeur level 6
+	is_valid_showing_failures_only = {
+		#scope:councillor_liege = {
+		#	court_grandeur_current_level >= 6
+		#}
+	}
+
+	potential_county = {
+		custom_tooltip = {
+			text = steward_convince_dejure_potential_county_tt
+			scope:councillor_liege = {
+				any_held_title = {
+					any_in_de_jure_hierarchy = {
+						tier = tier_county
+						NOT = {
+							has_county_modifier = steward_de_jure_denied_modifier
+						}
+						this = scope:county
+						holder = {
+							NOT = {
+								target_is_liege_or_above = scope:councillor_liege
+							}
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = steward_convince_dejure_potential_county_tt_2
+		trigger_if = {
+			limit = {
+				scope:councillor_liege = { is_ai = yes }
+			}
+			OR = {
+				is_independent_ruler = yes
+				scope:councillor_liege.primary_title.tier > tier_county
+			}
+			scope:county = {
+				any_neighboring_county = {
+					holder.top_liege = scope:councillor_liege # The AI only wants to convince counties bordering their own land
+				}
+			}
+		}
+	}
+
+	on_finish_task_county = {
+		scope:councillor = {
+			start_default_task = yes
+		}
+		scope:councillor_liege = {
+			if = {
+				limit = {
+					is_independent_ruler = no
+				}
+				add_character_flag = {
+					flag = no_de_jure_convince
+					years = 50
+				}
+			}
+			else = {
+				add_character_flag = {
+					flag = no_de_jure_convince
+					years = 20
+				}
+			}
+		}
+		scope:county.holder.top_liege = {
+			trigger_event = steward_task.0001
+		}
+	}
+
+	monthly_on_action = task_convince_dejure_side_effects
+	
+	ai_will_do = {
+		value = 0
+		if = {
+			limit = {
+				scope:councillor = {
+					is_performing_council_task = task_convince_dejure
+				}
+			}
+			add = 10000 # Always keep going if this is already chosen
+		}
+		# increase likelyhood with court grandeur level
+		if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_modifier = court_grandeur_level_6
+				}
+			}
+			add = 100
+		}
+		else_if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_modifier = court_grandeur_level_7
+				}
+			}
+			add = 150
+		}
+		else_if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_modifier = court_grandeur_level_8
+				}
+			}
+			add = 200
+		}
+		else_if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_modifier = court_grandeur_level_9
+				}
+			}
+			add = 250
+		}
+		else_if = {
+			limit = {
+				scope:councillor_liege = {
+					has_character_modifier = court_grandeur_level_10
+				}
+			}
+			add = 300
+		}
+		if = {
+			# Don't do this too often
+			limit = {
+				scope:councillor_liege = { has_character_flag = no_de_jure_convince }
+			}
+			multiply = 0
+		}
+	}
+}
+
+woc_advisor_second_task_bestow_royal_favor = {
+	position = councillor_woc_advisor_second
+	task_type = task_type_court
+	task_progress = task_progress_percentage
+	restart_on_finish = yes
+
+	effect_desc = {
+		### Prestige effect
+		desc = task_bestow_royal_favor_prestige_effect_desc
+		# Bureaucrats tooltip
+		triggered_desc = {
+			trigger = {
+				councillor_liege_has_erudition_legacy_5_perk = yes
+				scope:councillor.chancellor_bestow_royal_favor_opinion_gain_erudition_bonus >= 1
+			}
+			desc = task_bestoy_royal_favor_effect_desc_bureaucrats_bonus_prestige
+		}
+		# Family Business tooltip
+		triggered_desc = {
+			trigger = {
+				councillor_liege_has_family_business_bonus = yes
+				scope:councillor.chancellor_bestow_royal_favor_opinion_gain_family_business_bonus >= 1
+			}
+			desc = task_bestoy_royal_favor_effect_desc_family_business_bonus_prestige
+		}
+		# Fp3 Consulted House Member tooltip
+		triggered_desc = {
+			trigger = {
+				councillor_liege_has_consulted_house_bonus = yes
+				scope:councillor.chancellor_bestow_royal_favor_opinion_gain_consulted_house_bonus >= 1
+			}
+			desc = task_bestoy_royal_favor_effect_desc_consulted_house_bonus_prestige
+		}
+		### Opinion effect
+		desc = task_bestow_royal_favor_opinion_effect_desc
+		# Bureaucrats tooltip
+		triggered_desc = {
+			trigger = {
+				councillor_liege_has_erudition_legacy_5_perk = yes
+			}
+			desc = task_bestoy_royal_favor_effect_desc_bureaucrats_bonus_opinion
+		}
+		# Family Business tooltip
+		triggered_desc = {
+			trigger = {
+				councillor_liege_has_family_business_bonus = yes
+			}
+			desc = task_bestoy_royal_favor_effect_desc_family_business_bonus_opinion
+		}
+		# Fp3 Consulted House Member tooltip
+		triggered_desc = {
+			trigger = {
+				councillor_liege_has_consulted_house_bonus = yes
+			}
+			desc = task_bestoy_royal_favor_effect_desc_consulted_house_bonus_opinion
+		}
+		desc = {
+			desc = council_task_possible_side_effects
+			triggered_desc = {
+				trigger = {
+					scope:councillor.diplomacy > mediocre_skill_rating
+				}
+				desc = task_increase_control_improved_vassal_opinion
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor.diplomacy > mediocre_skill_rating
+				}
+				desc = task_increase_control_end_internal_war
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor.diplomacy < high_skill_rating
+				}
+				desc = task_increase_control_lose_vassal_opinion
+			}
+			triggered_desc = {
+				trigger = {
+					scope:councillor.diplomacy < high_skill_rating
+					liege = {
+						any_vassal = {
+							government_has_flag = government_is_feudal
+							primary_title.tier > tier_barony
+						}
+					}
+				}
+				desc = task_increase_control_worsen_contract
+			}
+		}
+	}
+
+	is_shown = {
+		has_dlc_feature = royal_court
+	}
+
+	is_valid_showing_failures_only =  {
+		#liege = {
+		#	court_grandeur_current_level >= 2
+		#}
+	}
+
+	on_start_task = {
+		scope:councillor.councillor_task_target = {
+			hidden_effect = {
+				send_interface_message = {
+					type = event_chancellor_task_good
+					title = task_bestow_royal_favor
+					desc = task_bestow_royal_favor_target_message
+					left_icon = scope:councillor_liege
+					#Two different levels depending on the liege's CGV
+					if = {
+						limit = {
+							scope:councillor_liege = {
+								court_grandeur_current_level >= 7
+							}
+						}
+						add_character_modifier = {
+							modifier = chancellor_task_bestow_royal_favor_vassal_boosted_modifier
+						}
+					}
+					else = {
+						add_character_modifier = {
+							modifier = chancellor_task_bestow_royal_favor_vassal_modifier
+						}
+					}
+				}
+			}
+
+			# We check that you're still the target of this council task (this event will loop until you're not)
+			trigger_event = chancellor_task.0999
+		}
+	}
+
+	on_cancel_task = {
+		if = {
+			limit = {
+				OR = {
+					scope:councillor.councillor_task_target = { has_character_modifier = chancellor_task_bestow_royal_favor_vassal_boosted_modifier }
+					scope:councillor.councillor_task_target = { has_character_modifier = chancellor_task_bestow_royal_favor_vassal_modifier }
+				}
+			}
+			scope:councillor.councillor_task_target = {
+				send_interface_message = {
+					type = event_chancellor_task_bad
+					title = task_bestow_royal_favor
+					desc = task_bestow_royal_favor_target_cancel_message
+					left_icon = scope:councillor_liege
+					if = {
+						limit = { has_character_modifier = chancellor_task_bestow_royal_favor_vassal_boosted_modifier }
+						remove_character_modifier = chancellor_task_bestow_royal_favor_vassal_boosted_modifier
+					}
+					else = { remove_character_modifier = chancellor_task_bestow_royal_favor_vassal_modifier }
+				}
+			}
+		}
+	}
+
+	council_owner_modifier = {
+		name = task_bestow_royal_favor_prestige_modifier
+		monthly_prestige = 1
+		scale = chancellor_bestow_royal_favor_prestige_total
+	}
+
+	monthly_on_action = task_bestow_royal_favor_side_effects
+
+	on_finish_task_court = {
+		scope:councillor_liege = {
+			trigger_event = chancellor_task.0991
+		}
+	}
+
+	valid_target_court = {
+		scope:target_character = {
+			in_diplomatic_range = scope:councillor_liege
+			NOT = { this = scope:councillor_liege }
+			trigger_if = { # For the sake of tooltips
+				limit = {
+					NOT = { this = scope:councillor_liege }
+				}
+				is_vassal_or_below_of = scope:councillor_liege
+			}
+			is_alive = yes
+			highest_held_title_tier >= tier_county
+			NOT = { is_at_war_with = scope:councillor_liege }
+		}
+	}
+
+	potential_target_court = {
+		scope:target_character = {
+			is_alive = yes
+			is_landed = yes
+			highest_held_title_tier >= tier_county
+			is_at_war_with_liege = no
+			NOT = { is_at_war_with = scope:councillor_liege }
+			custom_description = {
+				text = chancellor_will_not_increase_their_own_opinion
+				NOT = {
+					this = scope:councillor
+				}
+			}
+			trigger_if = {
+				limit = {
+					scope:councillor_liege = { is_ai = yes }
+				}
+				is_powerful_vassal = yes
+				is_vassal_of = scope:councillor_liege
+				OR = {
+					opinion = {
+						target = scope:councillor_liege
+						value <= 0
+					}
+					has_any_good_relationship_with_character_trigger = { CHARACTER = scope:councillor_liege }
+				}
+				NOT = {
+					opinion = {
+						target = scope:councillor_liege
+						value >= 100
+					}
+				}
+			}
+		}
+	}
+
+	progress = {
+		value = 0
+		add = {
+			value = scope:councillor.chancellor_bestow_royal_favor_progress_gain
+			desc = SCALED_COUNCILLOR_DIPLOMACY_VALUE
+		}
+		# Relation Bonuses/Penalties
+		if = {
+			limit = {
+				exists = scope:councillor_liege
+			}
+			if = { # Friend
+				limit = {
+					scope:councillor_liege = {
+						has_relation_friend = scope:councillor
+						NOT = { has_relation_best_friend = scope:councillor }
+					}
+				}
+				add = {
+					value = scope:councillor.chancellor_bestow_royal_favor_monthly_increase_friend_bonus
+					desc = COUNCILLOR_IS_YOUR_FRIEND
+				}
+			}
+			if = { # Best Friend
+				limit = {
+					scope:councillor_liege = {
+						has_relation_best_friend = scope:councillor
+					}
+				}
+				add = {
+					value = scope:councillor.chancellor_bestow_royal_favor_monthly_increase_best_friend_bonus
+					desc = COUNCILLOR_IS_YOUR_BEST_FRIEND
+				}
+			}
+			if = { # Rival
+				limit = {
+					scope:councillor_liege = {
+						has_relation_rival = scope:councillor
+						NOT = { has_relation_nemesis = scope:councillor }
+					}
+				}
+				add = {
+					value = scope:councillor.chancellor_bestow_royal_favor_monthly_increase_rival_bonus
+					desc = COUNCILLOR_IS_YOUR_RIVAL
+				}
+			}
+			if = { # Nemesis
+				limit = {
+					scope:councillor_liege = {
+						has_relation_nemesis = scope:councillor
+					}
+				}
+				add = {
+					value = scope:councillor.chancellor_bestow_royal_favor_monthly_increase_nemesis_bonus
+					desc = COUNCILLOR_IS_YOUR_NEMESIS
+				}
+			}
+			#other bonuses/penalties, from FP3 
+			if = {
+				limit = { 
+					councillor_liege_has_khvarenah_legacy_perk = yes
+				}
+				multiply = {
+					value = 1.2
+					desc = KHVARENAH_DYNASTY_PERK_BONUS_VALUE
+				}
+			}
+		}
+		multiply = {
+			value = 2
+			desc = WOC_ADVISOR_SCALED_VALUE
+		}
+	}
+
+	ai_will_do = {
+		value = 1
+		if = { # Do this if you only have one vassal that dislike you (if you have more than one we likely want the AI to go for Domestic Affairs instead)
+			limit = {
+				scope:councillor_liege = {
+					any_powerful_vassal = {
+						opinion = {
+							target = scope:councillor_liege
+							value <= 0
+						}
+						count = 1
+					}
+				}
+			}
+			add = 100
+		}
+
+		if = { # We want some favoritism to show up
+			limit = {
+				scope:councillor_liege = {
+					NOT = { # But only if the realm is kinda stable
+						any_powerful_vassal = {
+							opinion = {
+								target = scope:councillor_liege
+								value <= 0
+							}
+						}
+					}
+					any_vassal = {
+						has_any_good_relationship_with_character_trigger = { CHARACTER = scope:councillor_liege }
+					}
+				}
+			}
+			add = 100
+		}
+
+		if = { # If you're already doing Domestic Affairs and multiple powerful vassals dislike you: keep doing what you're doing!
+			limit = {
+				scope:councillor = {
+					is_performing_council_task = task_domestic_affairs
+				}
+				scope:councillor_liege = {
+					any_powerful_vassal = {
+						opinion = {
+							target = scope:councillor_liege
+							value <= 0
+						}
+						count >= 2
+					}
+				}
+			}
+			add = -1000
+		}
+	}
+}

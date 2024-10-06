@@ -1,0 +1,176 @@
+woc_council_completed_log_entry_effect = {
+	if = {
+		limit = { exists = involved_activity }
+		involved_activity = {
+			add_activity_log_entry = {
+				key = woc_council_completed_log
+				tags = { completed }
+				score = 100
+				show_in_conclusion = yes
+				character = root
+				#Effects
+				root = {
+					woc_council_reward_effect = yes
+					woc_council_reward_add_prestige_effect = yes
+				}
+			}
+		}
+	}
+}
+
+woc_council_reward_effect = {
+	save_scope_as = root_scope
+	if = {
+		limit = {
+			root.involved_activity = {
+				has_activity_option = {
+					category = woc_council_option_reception
+					option = woc_council_reception_minor
+				}
+			}
+		}
+		every_vassal = {
+			limit = {
+				has_vassal_stance = glory_hound
+				is_participant_in_activity = root.involved_activity
+			}
+			custom = every_participating_glory_hound_vassal
+			add_opinion = {
+				modifier = disapproving_opinion
+				target = root
+				opinion = -15
+			}
+		}
+		every_vassal = {
+			limit = {
+				has_vassal_stance = courtly
+				is_participant_in_activity = root.involved_activity
+			}
+			custom = every_participating_courtly_vassal
+			add_opinion = {
+				modifier = disapproving_opinion
+				target = root
+				opinion = -15
+			}
+		}
+	}
+	if = {
+		limit = {
+			root.involved_activity = {
+				has_activity_option = {
+					category = woc_council_option_reception
+					option = woc_council_reception_large
+				}
+			}
+		}
+		every_vassal = {
+			limit = {
+				has_vassal_stance = glory_hound
+				is_participant_in_activity = root.involved_activity
+			}
+			custom = every_participating_glory_hound_vassal
+			add_opinion = {
+				modifier = approving_opinion
+				target = root
+				opinion = 10
+			}
+		}
+		every_vassal = {
+			limit = {
+				has_vassal_stance = courtly
+				is_participant_in_activity = root.involved_activity
+			}
+			custom = every_participating_courtly_vassal
+			add_opinion = {
+				modifier = approving_opinion
+				target = root
+				opinion = 10
+			}
+		}
+	}
+	stress_impact = {
+		base = woc_council_stress_impact_gain
+		shy = woc_council_stress_impact_gain
+		lazy = woc_council_stress_impact_gain
+	}
+}
+woc_council_reward_add_prestige_effect = {
+	add_prestige = {
+		value = woc_council_reward_add_prestige_value
+		if = {
+			limit = {
+				root.involved_activity = {
+					has_activity_option = {
+						category = woc_council_option_convocation_place
+						option = woc_council_place_minor
+					}
+				}
+			}
+			multiply = 0
+		}
+		else_if = {
+			limit = {
+				root.involved_activity = {
+					has_activity_option = {
+						category = woc_council_option_convocation_place
+						option = woc_council_place_large
+					}
+				}
+			}
+			multiply = 1.5
+		}
+	}
+}
+
+woc_council_guest_completed_log_entry_effect = {
+	if = {
+		limit = { exists = involved_activity }
+		involved_activity = {
+			add_activity_log_entry = {
+				key = woc_council_completed_log
+				tags = { completed }
+				score = 100
+				show_in_conclusion = yes
+				character = root
+				#Effects
+				root = {
+					woc_council_guest_reward_effect = yes
+				}
+			}
+		}
+	}
+}
+
+woc_council_guest_reward_effect = {
+	if = {
+		limit = {
+			NOT = { has_trait = woc_councillor }
+		}
+		add_trait = woc_councillor
+	}
+	add_trait_xp = {
+		trait = woc_councillor
+		track = woc_councillor_xp
+		value = {
+			integer_range = {
+				min = 5
+				max = 10
+			}
+		}
+	}
+	add_trait_xp = {
+		trait = woc_councillor
+		track = woc_councillor_impact
+		value = {
+			integer_range = {
+				min = 3
+				max = 7
+			}
+		}
+	}
+	stress_impact = {
+		base = woc_council_stress_impact_gain
+		shy = woc_council_stress_impact_gain
+		lazy = woc_council_stress_impact_gain
+	}
+}

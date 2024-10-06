@@ -1,0 +1,21 @@
+
+
+woc_council_urgent_magna_carta_event_selection = {
+	trigger = {
+		root = scope:host
+		scope:host = {
+			government_has_flag = government_is_feudal
+			NOT = {
+				has_variable = woc_council_reject_magna_carta 
+				has_character_modifier = woc_council_magna_carta
+			}
+		}
+		scope:activity = {
+			woc_expand_vassals_right_agree_value >= 0.2
+		}
+	}
+	events = {
+		woc_council_activity.2100
+	}
+}
+

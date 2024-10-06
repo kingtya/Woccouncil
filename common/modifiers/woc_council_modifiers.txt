@@ -1,0 +1,125 @@
+﻿woc_council_decrease_vassal_tax_modifier = {
+	icon = economy_negative
+	vassal_tax_contribution_mult = -0.1
+}
+
+woc_council_decrease_vassal_levy_modifier = {
+	icon = economy_negative
+	vassal_levy_contribution_mult = -0.1
+}
+
+woc_council_enlistment_of_additional_troops = {
+	icon = martial_positive
+	men_at_arms_cap = 2
+	levy_size = 0.5
+	levy_reinforcement_rate = 0.25
+}
+
+woc_council_additional_army_maintenance = {
+	icon = martial_negative
+	development_growth_factor = -0.75
+	development_growth = -0.5
+}
+
+woc_council_magna_carta = {
+	icon = county_modifier_corruption_positive
+	tyranny_gain_mult = 0.5
+	vassal_tax_contribution_mult = -0.1
+	direct_vassal_opinion = 15
+	county_opinion_add = 10
+}
+
+woc_council_magna_carta_dynasty = {
+	icon = county_modifier_corruption_positive
+}
+
+woc_council_magna_carta_artifact_modifier = {
+	diplomacy_per_prestige_level = 1
+	monthly_prestige_gain_per_happy_powerful_vassal_mult = 0.05
+	tyranny_loss_mult = 0.1
+}
+
+woc_council_add_max_schemes = {
+	icon = diplomacy_positive
+	max_personal_schemes_add = 1
+}
+
+woc_council_missions_1 = {
+	icon = prestige_positive
+	courtly_opinion = 5
+	glory_hound_opinion = 5
+}
+
+woc_council_missions_2 = {
+	icon = prestige_positive
+	minority_opinion = 15
+}
+
+woc_council_missions_3 = {
+	icon = prestige_positive
+	parochial_opinion = 15
+}
+
+woc_council_missions_4_cost = {
+	icon = stewardship_negative
+	monthly_income_mult = -0.1
+}
+
+woc_council_missions_4 = {
+	icon = martial_positive
+	levy_attack = 10
+	levy_toughness = 10
+	levy_maintenance = 0.05
+}
+
+woc_council_missions_5 = {
+	icon = martial_positive
+	maa_damage_add = 10
+	maa_toughness_add = 10
+	men_at_arms_maintenance = 0.1
+}
+
+woc_council_missions_6 = {
+	icon = martial_positive
+	advantage = 10
+	counter_efficiency = 0.5
+	army_maintenance_mult = 0.25
+}
+
+woc_council_missions_7 = {
+	icon = economy_positive
+	domain_tax_mult = 0.15
+}
+
+woc_council_missions_8 = {
+	icon = county_modifier_opinion_positive
+	county_opinion_add = 15
+	monthly_county_control_growth_factor = 0.25
+	domain_tax_mult = 0.05
+}
+
+woc_council_missions_9 = {
+	icon = county_modifier_development_positive
+	development_growth_factor = 0.25
+	build_speed = -0.1
+	domain_tax_mult = 0.05
+}
+
+woc_council_missions_10 = {
+	icon = piety_positive
+	realm_priest_opinion = 20
+	religious_vassal_opinion = 5
+	zealot_same_faith_opinion = 5
+}
+
+woc_council_missions_11 = {
+	icon = prowess_positive
+	tolerance_advantage_mod = 10
+	zealot_same_faith_opinion = 5
+}
+
+woc_council_missions_12 = {
+	icon = piety_positive
+	religious_head_opinion = 20
+	zealot_same_faith_opinion = 5
+}

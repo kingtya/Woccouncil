@@ -1,0 +1,407 @@
+@woc_proposal_right_cooldown_years = 10
+
+woc_council_1_law = { ##内阁内政投票权
+	default = woc_council_1_law_retract_titles
+	cumulative = yes
+	flag = woc_council_1_law
+	flag = imperial_law
+	#大权独揽
+	woc_council_1_law_retrieve = {
+		modifier = {
+		}
+
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+		
+		can_pass = {
+			trigger_if = {
+				limit = { has_realm_law = woc_council_1_law_limited }
+				custom_description = {
+					subject = root
+					text = "has_woc_council_1_law_cooldown"
+					NAND = {
+						has_variable = woc_council_1_law_cooldown
+						NOT = {
+							culture = { has_innovation = innovation_all_things }
+						}
+					}
+				}
+				NOR = { 
+					has_trait = woc_puppet 
+					has_character_modifier = woc_council_magna_carta
+				}
+			}
+			has_realm_law = woc_council_1_law_limited
+		}
+		
+		pass_cost = {
+			prestige = {
+				value = {
+					if = {
+						limit = {
+							has_realm_law = woc_council_1_law_limited
+						}
+						add = 500
+					}
+				}
+			}
+		}
+		
+		on_pass = {
+			set_variable = {
+				name = woc_council_1_law_cooldown
+				years = 5
+			}
+		}
+		ai_will_do = {
+			if = {
+				limit = { has_realm_law = woc_council_1_law_limited }
+				value = 1
+			}
+		}
+	}	
+	#逮捕
+	woc_council_1_law_limited = {
+		modifier = {
+			tyranny_gain_mult = 0.3
+		}
+		
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+		
+		can_pass = {
+			trigger_if = {
+				limit = { 
+					OR = {
+						has_realm_law = woc_council_1_law_limited 
+						has_realm_law = woc_council_1_law_expanding 
+					}
+				}
+				custom_description = {
+					subject = root
+					text = "has_woc_council_1_law_cooldown"
+					NAND = {
+						has_variable = woc_council_1_law_cooldown
+						NOT = {
+							culture = { has_innovation = innovation_all_things }
+						}
+					}
+				}
+			}
+			trigger_if = {
+				limit = { 
+					has_realm_law = woc_council_1_law_expanding 
+				}
+				NOR = { 
+					has_trait = woc_puppet 
+					has_character_modifier = woc_council_magna_carta
+				}
+			}
+			OR = {
+				has_realm_law = woc_council_1_law_limited
+				has_realm_law = woc_council_1_law_expanding
+			}
+		}
+		
+		pass_cost = {
+			prestige = {
+				value = {
+					if = {
+						limit = {
+							has_realm_law = woc_council_1_law_expanding
+						}
+						add = 500
+					}
+				}
+			}
+		}
+		
+		on_pass = {
+			set_variable = {
+				name = woc_council_1_law_cooldown
+				years = 5
+			}
+		}
+		
+		ai_will_do = {
+			if = {
+				limit = { has_realm_law = woc_council_1_law_expanding }
+				value = 1
+			}
+		}
+	}
+	#授予头衔/准许独立
+	woc_council_1_law_expanding = {
+		modifier = {
+			tyranny_gain_mult = 0.3
+		}
+		
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+		
+		can_pass = {
+			trigger_if = {
+				limit = { 
+					OR = {
+						has_realm_law = woc_council_1_law_fully 
+						has_realm_law = woc_council_1_law_limited 
+					}
+				}
+				custom_description = {
+					subject = root
+					text = "has_woc_council_1_law_cooldown"
+					NAND = {
+						has_variable = woc_council_1_law_cooldown
+						NOT = {
+							culture = { has_innovation = innovation_all_things }
+						}
+					}
+				}
+			}
+			trigger_if = {
+				limit = { 
+					has_realm_law = woc_council_1_law_fully 
+				}
+				NOR = { 
+					has_trait = woc_puppet 
+					has_character_modifier = woc_council_magna_carta
+				}
+			}
+			OR = {
+				has_realm_law = woc_council_1_law_fully
+				has_realm_law = woc_council_1_law_limited
+			}
+		}
+		
+		pass_cost = {
+			prestige = {
+				value = {
+					if = {
+						limit = {
+							has_realm_law = woc_council_1_law_fully
+						}
+						add = 500
+					}
+				}
+			}
+		}
+		
+		on_pass = {
+			set_variable = {
+				name = woc_council_1_law_cooldown
+				years = 5
+			}
+		}
+		
+		ai_will_do = {
+			if = {
+				limit = { has_realm_law = woc_council_1_law_fully }
+				value = 1
+			}
+		}
+	}
+	woc_council_1_law_fully = {
+		modifier = {
+			tyranny_gain_mult = 0.4
+		}
+		
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+		
+		can_pass = {
+			trigger_if = {
+				limit = { 
+					has_realm_law = woc_council_1_law_expanding 
+				}
+				custom_description = {
+					subject = root
+					text = "has_woc_council_1_law_cooldown"
+					NAND = {
+						has_variable = woc_council_1_law_cooldown
+						NOT = {
+							culture = { has_innovation = innovation_all_things }
+						}
+					}
+				}
+			}
+			has_realm_law = woc_council_1_law_expanding 
+		}
+		
+		on_pass = {
+			set_variable = {
+				name = woc_council_1_law_cooldown
+				years = 5
+			}
+		}
+	}
+}
+
+woc_proposal_right = {
+	default = woc_proposal_right_1
+	cumulative = yes
+	flag = woc_council_2_law
+	
+	woc_proposal_right_0 = { # 独裁政治
+		modifier = {
+			vassal_opinion = -5
+			councillor_opinion = -5
+			short_reign_duration_mult = 0.5
+		}
+
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+
+		can_pass = {
+			can_pass_woc_proposal_right_0 = yes
+		}
+
+		pass_cost = { prestige = 500 }
+
+		on_pass = {
+			set_variable = {
+				name = woc_council_2_law_cooldown
+				years = @woc_proposal_right_cooldown_years
+			}
+		}
+
+		ai_will_do = {
+			value = 1
+			if = {
+				limit = {
+					OR = {
+						has_trait = arbitrary
+						has_trait = arrogant
+					}
+				}
+				add = 1
+			}
+		}
+	}
+	
+	woc_proposal_right_1 = { # 密室政治
+		modifier = {
+			councillor_opinion = 10
+			short_reign_duration_mult = -0.25
+			tyranny_gain_mult = 0.1
+		}
+
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+
+		can_pass = {
+			can_pass_woc_proposal_right_1 = yes
+		}
+
+		pass_cost = { prestige = 500 }
+
+		on_pass = {
+			set_variable = {
+				name = woc_council_2_law_cooldown
+				years = @woc_proposal_right_cooldown_years
+			}
+		}
+
+		ai_will_do = {
+			value = 1
+		}
+	}
+	
+	woc_proposal_right_2 = { # 寡头政治
+		modifier = {
+			vassal_opinion = 5
+			powerful_vassal_opinion = 5
+			councillor_opinion = -5
+			short_reign_duration_mult = -0.25
+			tyranny_gain_mult = 0.1
+		}
+
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+
+		can_pass = {
+			can_pass_woc_proposal_right_2 = yes
+		}
+
+		pass_cost = { prestige = 500 }
+
+		on_pass = {
+			set_variable = {
+				name = woc_council_2_law_cooldown
+				years = @woc_proposal_right_cooldown_years
+			}
+		}
+
+		ai_will_do = {
+			value = 1
+		}
+	}
+	
+	woc_proposal_right_3 = { # 全民议政
+		modifier = {
+			vassal_opinion = 5
+			powerful_vassal_opinion = -5
+			short_reign_duration_mult = -0.1
+			tyranny_gain_mult = 0.1
+		}
+
+		can_keep = { 
+			has_royal_court = yes
+		}
+		
+		can_have = {
+			has_royal_court = yes
+		}
+
+		can_pass = {
+			can_pass_woc_proposal_right_3 = yes
+		}
+
+		pass_cost = { prestige = 500 }
+
+		on_pass = {
+			set_variable = {
+				name = woc_council_2_law_cooldown
+				years = @woc_proposal_right_cooldown_years
+			}
+		}
+
+		ai_will_do = {
+			value = 1
+		}
+	}
+}
