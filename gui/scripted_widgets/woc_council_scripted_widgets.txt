@@ -1,0 +1,2 @@
+﻿gui/woc_royal_council.gui = woc_royal_council_window
+gui/woc_royal_council.gui = woc_royal_council_button

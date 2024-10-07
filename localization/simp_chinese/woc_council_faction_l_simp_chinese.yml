@@ -1,0 +1,7 @@
+﻿l_simp_chinese:
+ #UI文本
+ woc_council_faction:0 "[woc_council_faction|E]"
+ 
+ #游戏描述
+ game_concept_woc_council_faction:0 "封臣阶层"
+ game_concept_woc_council_faction_desc:0 "每个[ruler|E]的直属[vassal|E]都将被自动划归进封臣阶层拥有"

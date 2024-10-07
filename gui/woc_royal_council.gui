@@ -1,0 +1,2656 @@
+window = {
+	name = woc_royal_council_button
+	parentanchor = top|right
+	position = { -630 13% }
+	visible = "[IsGameViewOpen('council_window')]"
+	size = { 80 80 }
+	
+	layer = windows_layer
+	
+	movable = no
+	
+	state = {
+		name = _show
+		using = Animation_FadeIn_Standard
+		#on_start = "[GetVariableSystem.Clear( 'royal_council_window_toggle' )]"
+	}
+
+	button_round = {
+		parentanchor = right|vcenter
+		position = { -15 0 }
+		size = { 70 70 }
+		visible = "[And(IsGameViewOpen('council_window'),Or(GetPlayer.HasRoyalCourt,GetPlayer.GetLiege.HasRoyalCourt))]"
+
+		onclick = "[GetVariableSystem.Toggle( 'royal_council_window_toggle' )]"
+
+		icon = {
+			parentanchor = center
+			size = { 70 70 }
+			texture = "gfx/interface/icons/icon_royal_court.dds"
+			tooltip = "COUNCIL_WINDOW_ROYAL_COUNCIL_TOGGLE"
+		}
+	}
+}
+
+window = {
+	name = woc_royal_council_window
+
+	visible = "[And(IsGameViewOpen('council_window'),GetVariableSystem.Exists( 'royal_council_window_toggle' ))]"
+
+	parentanchor = top|right
+	position = { -720 6% }
+	
+	size = { 30% 90% }
+	minimumsize = { 600 100 }
+	
+	layer = windows_layer
+	
+	movable = no
+
+	using = Window_Background_Popup
+	
+	widget = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		size = { 96% 97% }
+		parentanchor = center
+					
+		vbox_royal_council_layout = {} 
+		hbox_woc_not_royal_count_layout = {} 
+	}
+}
+
+
+types vbox_royal_council_layoutWindow 
+{
+	type vbox_royal_council_layout = vbox {
+		name = "royal_council"
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		
+		visible = "[Or(And(GetPlayer.HasRoyalCourt,AccessCouncilWindow.IsPlayerCouncilShown),And(GetPlayer.GetLiege.HasRoyalCourt,AccessCouncilWindow.IsLiegeCouncilShown))]"
+		
+		background =  {
+			texture = "gfx/interface/component_tiles/background_area_light.dds"
+		}
+		
+		background =  {
+			texture = "gfx/interface/illustrations/council/bg_council_chancellor.dds"
+			datacontext = "[GetScriptedGui('woc_not_has_nomadic_or_tribal')]"
+			visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+			alpha = 0.3
+		}
+		
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+
+			blockoverride "header_text"
+			{
+				text = "COUNCIL_WINDOW_ROYAL_COUNCIL"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[GetVariableSystem.Toggle( 'royal_council_window_toggle' )]"
+			}
+		}
+		
+		hbox = {
+			layoutpolicy_horizontal = expanding
+
+			button_tab = {
+				layoutpolicy_horizontal = expanding
+				text = "COUNCIL_WINDOW_ROYAL_COUNCIL"
+
+				onclick = "[GetVariableSystem.Set( 'ui_library_tabs', 'action_buttons' )]"
+				down = "[GetVariableSystem.HasValue( 'ui_library_tabs', 'action_buttons' )]"
+			}
+
+			button_tab = {
+				layoutpolicy_horizontal = expanding
+				text = "woc_council_faction"
+
+				onclick = "[GetVariableSystem.Set( 'ui_library_tabs', 'other_inputs' )]"
+				down = "[GetVariableSystem.HasValue( 'ui_library_tabs', 'other_inputs' )]"
+			}
+		}
+		
+		scrollbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			blockoverride "scrollbox_margins" { }
+			blockoverride "scrollbox_content"
+			{
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					spacing = 5
+					spacer = {
+						size = { 10 10 }
+					}
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						#layoutpolicy_vertical = expanding
+						widget = {
+							size = { 120 180 }
+							datacontext = "[GetPlayer]"
+							visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/currencies/icon_prestige_03.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "woc_council_liege"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								hbox = {
+									minimumsize = { 0 50 }
+									woc_council_vassal_stance_icon = {
+										name = "vassal_stance"
+										size = { 50 50 }
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[GetPlayer.GetDiarchy.GetDiarch]"
+							visible = "[And(GetPlayer.HasActiveDiarchy, AccessCouncilWindow.IsPlayerCouncilShown)]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/icon_royal_court.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "woc_council_regent"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								hbox = {
+									minimumsize = { 0 50 }
+									button = {
+										datacontext = "[GetScriptedGui('woc_council_agree')]"
+										visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+										name = "agree"
+										size = { 45 45 }			
+										texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+										tooltip = "woc_council_are_agree"
+									}
+									button = {
+										datacontext = "[GetScriptedGui('woc_council_disagree')]"
+										visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+										name = "disagree"
+										size = { 45 45 }
+										texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+										onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+										tooltip = "woc_council_are_disagree"
+									}
+									woc_council_vassal_stance_icon = {
+										name = "vassal_stance"
+										size = { 50 50 }
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[GetPlayer.GetLiege]"
+							visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/currencies/icon_prestige_03.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "woc_council_liege"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								hbox = {
+									minimumsize = { 0 50 }
+									woc_council_vassal_stance_icon = {
+										name = "vassal_stance"
+										size = { 50 50 }
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[GetPlayer.GetLiege.GetDiarchy.GetDiarch]"
+							visible = "[And(GetPlayer.GetLiege.HasActiveDiarchy, AccessCouncilWindow.IsLiegeCouncilShown)]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/icon_royal_court.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "woc_council_regent"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								hbox = {
+									minimumsize = { 0 50 }
+									button = {
+										datacontext = "[GetScriptedGui('woc_council_agree')]"
+										visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+										name = "agree"
+										size = { 45 45 }			
+										texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+										tooltip = "woc_council_are_agree"
+									}
+									button = {
+										datacontext = "[GetScriptedGui('woc_council_disagree')]"
+										visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+										name = "disagree"
+										size = { 45 45 }
+										texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+										onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+										tooltip = "woc_council_are_disagree"
+									}
+									woc_council_vassal_stance_icon = {
+										name = "vassal_stance"
+										size = { 50 50 }
+									}
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 10 20 }
+					}
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						#layoutpolicy_vertical = expanding
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_spouse')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/marriage.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_spouse"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_court_chaplain')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/learning.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_court_chaplain"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_chancellor')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/diplomacy.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_chancellor"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 10 20 }
+					}
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_steward')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/steward_job.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_steward"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_marshal')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/martial.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_marshal"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_spymaster')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/spy_master.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_spymaster"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 10 20 }
+					}
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_woc_advisor')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/council.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_woc_advisor"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+						widget = {
+							size = { 120 180 }
+							datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_woc_advisor_second')]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							datacontext = "[ActiveCouncilTask.GetPositionType]"
+							datacontext = "[ActiveCouncilTask.GetCouncillor]"
+							#visible = "[Character.IsValid]"
+							vbox = {
+								hbox = {
+									icon = {
+										texture = "gfx/interface/icons/message_feed/council.dds"
+										size = {30 30}
+									}
+									text_single = {
+										text = "councillor_woc_advisor_second"
+										using = Font_Type_Flavor
+										using = Font_Size_Medium
+									}
+								}
+								portrait_head = {
+									size = { 120 120 }	
+									background = {
+										using = Background_Area
+									}
+								}
+								widget = {
+									size = { 120 50 }
+									hbox = {
+										visible = "[Character.IsValid]"
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_agree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "agree"
+											size = { 45 45 }			
+											texture = "gfx/interface/icons/woc_council/woc_agree.dds"
+											tooltip = "woc_council_are_agree"
+										}
+										button = {
+											datacontext = "[GetScriptedGui('woc_council_disagree')]"
+											visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+											name = "disagree"
+											size = { 45 45 }
+											texture = "gfx/interface/icons/woc_council/woc_disagree.dds"
+											onclick = "[Character.OpenPlayerInteraction('woc_liege_pulling_councilor_interaction')]"
+											tooltip = "woc_council_are_disagree"
+										}
+										woc_council_vassal_stance_icon = {
+											name = "vassal_stance"
+											size = { 50 50 }
+										}
+									}
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 10 20 }
+					}
+					widget = {
+						name = "woc_council_advisor"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						size = { 520 280 }
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							
+							widget_woc_councillor_item = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_woc_advisor')]"
+								datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+								datacontext = "[ActiveCouncilTask.GetPositionType]"
+								datacontext = "[ActiveCouncilTask.GetCouncillor]"
+								
+								background =  {
+									texture = "gfx/interface/skinned/illustrations/council/bg_council_steward.dds"
+									fittype = centercrop
+									using = Mask_Rough_Edges
+									alpha = 0.7
+								}
+
+								background = {
+									texture = "gfx/interface/component_masks/mask_vignette.dds"
+									color = { 0.15 0.15 0.15 1 }
+									alpha = 0.3
+								}
+							}
+
+							widget_woc_councillor_item = {
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+								datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_woc_advisor_second')]"
+								datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+								datacontext = "[ActiveCouncilTask.GetPositionType]"
+								datacontext = "[ActiveCouncilTask.GetCouncillor]"
+								
+								background =  {
+									texture = "gfx/interface/skinned/illustrations/council/bg_council_chancellor.dds"
+									fittype = centercrop
+									using = Mask_Rough_Edges
+									alpha = 0.7
+								}
+
+								background = {
+									texture = "gfx/interface/component_masks/mask_vignette.dds"
+									color = { 0.15 0.15 0.15 1 }
+									alpha = 0.3
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 25 20 }
+					}
+					text_label_center = {
+						layoutpolicy_horizontal = growing
+						max_width = 350
+						text = "woc_council_law"
+					}
+					spacer = {
+						size = { 25 20 }
+					}
+					margin_widget = {
+						name = "scales_of_council_power_bar_1"
+						size = { 350 15 }
+						allow_outside = yes
+						visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+						
+						progressbar_standard = {
+							layoutpolicy_horizontal = expanding
+							parentanchor = center
+							size = { 350 15 }
+							min = 0
+							max = 6
+							value = "[FixedPointToFloat(GetPlayer.MakeScope.ScriptValue('woc_council_law_value'))]"
+							tintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						
+						
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)0')]"
+							position = { -170 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -170 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_liege.dds"
+							}
+							tooltip = "council_power_tt_0"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)1')]"
+							position = { -120 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -120 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/revoke_title.dds"
+							}
+							tooltip = "council_power_tt_1"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)2')]"
+							position = { -70 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -70 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/grant_titles_interaction.dds"
+							}
+							tooltip = "council_power_tt_2"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)3')]"
+							position = { -15 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -15 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_shift_privileges.dds"
+							}
+							tooltip = "council_power_tt_3"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)4')]"
+							position = { 50 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { 50 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/declare_war_interaction.dds"
+							}
+							tooltip = "council_power_tt_4"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)5')]"
+							position = { 110 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { 110 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_scheme_claim_throne.dds"
+							}
+							tooltip = "council_power_tt_5"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)6')]"
+							position = { 180 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { 180 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_vassal.dds"
+							}
+							tooltip = "council_power_tt_6"
+						}
+					}
+					margin_widget = {
+						name = "scales_of_council_power_bar_2"
+						size = { 350 15 }
+						allow_outside = yes
+						visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+						
+						progressbar_standard = {
+							layoutpolicy_horizontal = expanding
+							parentanchor = center
+							size = { 350 15 }
+							min = 0
+							max = 6
+							value = "[FixedPointToFloat(GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'))]"
+							tintcolor = "[TooltipInfo.GetTintColor]"
+						}
+						
+						
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)0')]"
+							position = { -170 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -170 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_liege.dds"
+							}
+							tooltip = "council_power_tt_0"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)1')]"
+							position = { -120 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -120 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/revoke_title.dds"
+							}
+							tooltip = "council_power_tt_1"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)2')]"
+							position = { -70 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -70 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/grant_titles_interaction.dds"
+							}
+							tooltip = "council_power_tt_2"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)3')]"
+							position = { -15 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { -15 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_shift_privileges.dds"
+							}
+							tooltip = "council_power_tt_3"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)4')]"
+							position = { 50 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { 50 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/declare_war_interaction.dds"
+							}
+							tooltip = "council_power_tt_4"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)5')]"
+							position = { 110 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { 110 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_scheme_claim_throne.dds"
+							}
+							tooltip = "council_power_tt_5"
+						}
+						widget_council_power_icon_highlight = {
+							visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_law_value'), '(CFixedPoint)6')]"
+							position = { 180 0 }
+							tooltip = "council_power_current_tt"
+						}
+						widget_council_power_icon = {
+							position = { 180 0 }
+							icon = {
+								parentanchor = center
+								size = { 35 35 }
+								texture = "gfx/interface/icons/character_interactions/icon_vassal.dds"
+							}
+							tooltip = "council_power_tt_6"
+						}
+					}
+					spacer = {
+						size = { 10 10 }
+					}
+					hbox = {		
+						layoutpolicy_horizontal = growing
+						hbox = {
+							datamodel = "[AccessMyRealmWindow.GetRealmLaws]"
+							item = {
+								vbox = {
+									visible = "[And( GuiLawGroup.GetLawGroup.HasFlag( 'woc_council_1_law' ), GuiLawGroup.IsAvailable )]"
+									text_label_center = {
+										layoutpolicy_horizontal = growing
+										max_width = 350
+										text = "#E [GuiLawGroup.GetLawGroup.GetName]#!"
+									}
+									hbox = {
+										layoutpolicy_horizontal = expanding
+										button = {
+											datacontext = "[GuiLawGroup]"
+											size = { 50 50 }
+											texture = "gfx/interface/icons/law_icons/bureaucracy_law.dds"
+											onclick = "[OpenSuccessionLawChangeWindow(GuiLawGroup.Self)]"
+											tooltip = "MRW_CHANGE_LAW_TT"
+										}
+										text_single = {
+											layoutpolicy_horizontal = growing
+											max_width = 350
+											using = Font_Size_Medium
+											text = "[GuiLawGroup.GetCurrentLevel.GetLaw.GetName]"
+											default_format = "#high"
+										}																						
+									}								
+									divider_light = {
+										layoutpolicy_horizontal = expanding
+									}
+								}
+							}
+						}
+						hbox = {
+							datamodel = "[AccessMyRealmWindow.GetRealmLaws]"
+							item = {
+								vbox = {
+									visible = "[And( GuiLawGroup.GetLawGroup.HasFlag( 'woc_council_2_law' ), GuiLawGroup.IsAvailable )]"
+									text_label_center = {
+										layoutpolicy_horizontal = growing
+										max_width = 350
+										text = "#E [GuiLawGroup.GetLawGroup.GetName]#!"
+									}
+									hbox = {
+										layoutpolicy_horizontal = expanding
+										button = {
+											datacontext = "[GuiLawGroup]"
+											size = { 50 50 }
+											texture = "gfx/interface/icons/law_icons/bureaucracy_law.dds"
+											onclick = "[OpenSuccessionLawChangeWindow(GuiLawGroup.Self)]"
+											tooltip = "MRW_CHANGE_LAW_TT"
+										}
+										text_single = {
+											layoutpolicy_horizontal = growing
+											max_width = 350
+											using = Font_Size_Medium
+											text = "[GuiLawGroup.GetCurrentLevel.GetLaw.GetName]"
+											default_format = "#high"
+										}																						
+									}								
+									divider_light = {
+										layoutpolicy_horizontal = expanding
+									}
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 25 20 }
+					}
+					widget = {
+						name = "woc_council_attitude"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						minimumsize = { 0 200 }
+						background =  {
+							texture = "gfx/interface/component_tiles/background_area_light.dds"
+						}
+						background = {
+							texture = "gfx/interface/illustrations/event_scenes_frontend/councilchamber.dds"
+							alpha = 0.4
+							modify_texture = {
+								name = "mask"
+								texture = "gfx/interface/component_masks/mask_rough_edges.dds"
+								spriteType = Corneredstretched
+								spriteborder = { 0 0 }
+								blend_mode = alphamultiply
+							}
+						}
+						vbox = {
+							text_label_center = {
+								text = "COUNCIL_WINDOW_ROYAL_COUNCILLOR_ATTITUDE"
+								using = Font_Type_Flavor
+								using = Font_Size_Medium
+							}
+							hbox = {
+								visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+								dynamicgridbox = {
+									datamodel = "[GetPlayer.MakeScope.GetList('woc_councillor_list_agree')]"
+									datamodel_wrap = 12
+									flipdirection = yes
+									
+									state = {
+										name = get_list
+										trigger_on_create = yes
+										
+										on_start = "[GetScriptedGui('woc_councillor_list_agree_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+										next = get_list
+									}
+									item = {		
+										widget_council_agree_or_disagree = {
+											datacontext = "[Scope.GetCharacter]"
+											#size = { 120 102 }	
+										}
+									}
+								}
+								widget_council_agree_or_disagree = {
+									datacontext = "[GetPlayer.GetDiarchy.GetDiarch]"
+									visible = "[And(GetPlayer.HasActiveDiarchy, AccessCouncilWindow.IsPlayerCouncilShown)]"
+								}
+								dynamicgridbox = {
+									datamodel = "[GetPlayer.MakeScope.GetList('woc_councillor_list_disagree')]"
+									datamodel_wrap = 12
+									flipdirection = yes
+									
+									state = {
+										name = get_list
+										trigger_on_create = yes
+										
+										on_start = "[GetScriptedGui('woc_councillor_list_disagree_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+										next = get_list
+									}
+									item = {		
+										widget_council_agree_or_disagree = {
+											datacontext = "[Scope.GetCharacter]"
+											#size = { 120 102 }	
+										}
+									}
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_court_chaplain')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_chancellor')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_steward')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_marshal')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_spymaster')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[GetScriptedGui('woc_councillor_woc_advisor_valid')]"
+									visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[GetScriptedGui('woc_councillor_woc_advisor_second_valid')]"
+									visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								}
+							}
+							hbox = {
+								visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+								dynamicgridbox = {
+									datamodel = "[GetPlayer.GetLiege.MakeScope.GetList('woc_councillor_list_agree')]"
+									datamodel_wrap = 10
+									flipdirection = yes
+									
+									state = {
+										name = get_list
+										trigger_on_create = yes
+										
+										on_start = "[GetScriptedGui('woc_councillor_list_agree_gui').Execute(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).End)]"
+										next = get_list
+									}
+									item = {		
+										widget_council_agree_or_disagree = {
+											datacontext = "[Scope.GetCharacter]"
+											#size = { 120 102 }	
+										}
+									}
+								}
+								widget_council_agree_or_disagree = {
+									datacontext = "[GetPlayer.GetLiege.GetDiarchy.GetDiarch]"
+									visible = "[And(GetPlayer.GetLiege.HasActiveDiarchy, AccessCouncilWindow.IsLiegeCouncilShown)]"
+								}
+								dynamicgridbox = {
+									datamodel = "[GetPlayer.GetLiege.MakeScope.GetList('woc_councillor_list_disagree')]"
+									datamodel_wrap = 10
+									flipdirection = yes
+									
+									state = {
+										name = get_list
+										trigger_on_create = yes
+										
+										on_start = "[GetScriptedGui('woc_councillor_list_disagree_gui').Execute(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).End)]"
+										next = get_list
+									}
+									item = {		
+										widget_council_agree_or_disagree = {
+											datacontext = "[Scope.GetCharacter]"
+											#size = { 120 102 }	
+										}
+									}
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_court_chaplain')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_chancellor')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_steward')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_marshal')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[AccessCouncilWindow.GetCouncillor('councillor_spymaster')]"
+									datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+									datacontext = "[ActiveCouncilTask.GetPositionType]"
+									datacontext = "[ActiveCouncilTask.GetCouncillor]"
+									visible = "[Not(Character.IsValid)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[GetScriptedGui('woc_councillor_woc_advisor_valid')]"
+									visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).End)]"
+								}
+								widget_council_empty_disagree = {
+									datacontext = "[GetScriptedGui('woc_councillor_woc_advisor_second_valid')]"
+									visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).End)]"
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 10 10 }
+					}
+					text_label_center = {
+						text = "COUNCIL_WINDOW_ROYAL_COUNCIL_PROPOSAL"
+						using = Font_Type_Flavor
+						using = Font_Size_Medium
+					}
+					spacer = {
+						size = { 10 10 }
+					}
+					widget = {
+						size = { 450 50 }
+						datacontext = "[GetScriptedGui('woc_valid_enhancement_crown_proposal')]"
+						visible = "[And(ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.MakeScope).End),AccessCouncilWindow.IsPlayerCouncilShown)]"
+						hbox = {
+							button_standard = {
+								size = { 50 50 }
+								parentanchor = left|vcenter
+								icon_flat_standard = {
+									size = { 100% 100% }
+									texture = "gfx/interface/icons/flat_icons/election_vote_strength.dds"
+								}
+								onclick = "[GetScriptedGui('woc_council_enhancement_crown_vote_going_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								tooltip = "woc_council_enhancement_crown_vote_going"
+							}
+							spacer = {
+								size = { 10 10 }
+							}
+							button_standard = {
+								size = { 400 50 }
+								onclick = "[GetScriptedGui('woc_council_enhancement_crown_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+								name = "see_attitude"
+								tooltip = "see_woc_council_attitude"
+								text_single = {
+									parentanchor = center
+									text = "enhancement_crown_proposal_tt"
+									fontsize = 16
+								}
+								button_dismiss = {
+									onclick = "[GetScriptedGui('woc_council_enhancement_crown_vote_retract_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).End)]"
+									visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+									size = { 50 50 }
+									parentanchor = right|vcenter
+									tooltip = "woc_council_enhancement_crown_vote_retract"
+								}
+							}
+						}
+					}
+					hbox = {
+						button_standard = {
+							size = { 450 50 }
+							datacontext = "[GetScriptedGui('woc_valid_enhancement_crown_proposal')]"
+							visible = "[And(ScriptedGui.IsShown(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).End),AccessCouncilWindow.IsLiegeCouncilShown)]"
+							onclick = "[GetScriptedGui('woc_council_enhancement_crown_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).End)]"
+							name = "see_attitude"
+							tooltip = "see_woc_council_attitude"
+							text_single = {
+								parentanchor = center
+								text = "enhancement_crown_proposal_tt"
+								fontsize = 16
+							}
+						}
+					}
+					hbox = {
+						dynamicgridbox = {
+							datamodel = "[GetPlayer.MakeScope.GetList('valid_war_proposal_list')]"
+							visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+							maxhorizontalslots = 1
+							maxverticalslots = 10
+							datamodel_wrap = 10
+							item = {
+								container = {
+									widget = {
+										size = { 450 50 }
+										hbox = {
+											button_standard = {
+												size = { 50 50 }
+												parentanchor = vcenter
+												button = {
+													size = { 50 50 }
+													parentanchor = left|vcenter
+													icon_flat_standard = {
+														size = { 100% 100% }
+														texture = "gfx/interface/icons/flat_icons/election_vote_strength.dds"
+													}
+													datacontext = "[Scope.GetCharacter]"
+													onclick = "[GetScriptedGui('woc_council_war_vote_going_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_war_target_1', Character.MakeScope ).End)]"
+													tooltip = "woc_council_war_vote_going"
+												}
+											}
+											spacer = {
+												size = { 10 10 }
+											}
+											button_standard = {
+												size = { 400 50 }
+												parentanchor = vcenter
+												datacontext = "[Scope.GetCharacter]"
+												onclick = "[GetScriptedGui('woc_council_war_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_war_target_1', Character.MakeScope ).End)]"
+												name = "see_attitude"
+												tooltip = "see_woc_council_attitude"
+												text_single = {
+													parentanchor = center
+													datacontext = "[Scope.GetCharacter]"
+													text = "war_proposal_tt"
+													fontsize = 16
+												}
+												button_dismiss = {
+													onclick = "[GetScriptedGui('woc_council_war_vote_retract_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_war_target_1', Character.MakeScope ).End)]"
+													size = { 50 50 }
+													parentanchor = right|vcenter
+													tooltip = "woc_council_war_vote_retract"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						dynamicgridbox = {
+							datamodel = "[GetPlayer.GetLiege.MakeScope.GetList('valid_war_proposal_list')]"
+							visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+							layoutpolicy_horizontal = expanding
+							maxhorizontalslots = 1
+							maxverticalslots = 10
+							datamodel_wrap = 10
+							item = {
+								button_standard = {
+									size = { 450 50 }
+									datacontext = "[Scope.GetCharacter]"
+									onclick = "[GetScriptedGui('woc_council_war_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).AddScope( 'council_war_target_1', Character.MakeScope ).End)]"
+									name = "see_attitude"
+									tooltip = "see_woc_council_attitude"
+									text_single = {
+										parentanchor = center
+										datacontext = "[Scope.GetCharacter]"
+										text = "war_proposal_tt"
+										fontsize = 16
+									}
+								}
+							}
+						}
+					}
+					hbox = {
+						dynamicgridbox = {
+							datamodel = "[GetPlayer.MakeScope.GetList('valid_grant_title_proposal_list')]"
+							visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+							layoutpolicy_horizontal = expanding
+							maxhorizontalslots = 1
+							maxverticalslots = 10
+							datamodel_wrap = 10
+							item = {
+								container = {
+									widget = {
+										size = { 450 50 }
+										hbox = {
+											button_standard = {
+												size = { 50 50 }
+												parentanchor = vcenter
+												button = {
+													size = { 50 50 }
+													parentanchor = left|vcenter
+													icon_flat_standard = {
+														size = { 100% 100% }
+														texture = "gfx/interface/icons/flat_icons/election_vote_strength.dds"
+													}
+													datacontext = "[Scope.GetCharacter]"
+													onclick = "[GetScriptedGui('woc_council_grant_title_vote_going_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_grant_title_target_1', Character.MakeScope ).End)]"
+													tooltip = "woc_council_grant_title_vote_going"
+												}
+											}
+											spacer = {
+												size = { 10 10 }
+											}
+											button_standard = {
+												size = { 400 50 }
+												datacontext = "[Scope.GetCharacter]"
+												onclick = "[GetScriptedGui('woc_council_grant_title_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_grant_title_target_1', Character.MakeScope ).End)]"
+												name = "see_attitude"
+												tooltip = "see_woc_council_attitude"
+												text_single = {
+													parentanchor = center
+													datacontext = "[Scope.GetCharacter]"
+													text = "grant_title_proposal_tt"
+													fontsize = 16
+												}
+												button_dismiss = {
+													onclick = "[GetScriptedGui('woc_council_grant_title_vote_retract_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_war_target_1', Character.MakeScope ).End)]"
+													size = { 50 50 }
+													parentanchor = right|vcenter
+													tooltip = "woc_council_grant_title_vote_retract"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						dynamicgridbox = {
+							datamodel = "[GetPlayer.GetLiege.MakeScope.GetList('valid_grant_title_proposal_list')]"
+							visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+							layoutpolicy_horizontal = expanding
+							maxhorizontalslots = 1
+							maxverticalslots = 10
+							datamodel_wrap = 10
+							item = {
+								button_standard = {
+									size = { 450 50 }
+									datacontext = "[Scope.GetCharacter]"
+									onclick = "[GetScriptedGui('woc_council_grant_title_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).AddScope( 'council_grant_title_target_1', Character.MakeScope ).End)]"
+									name = "see_attitude"
+									tooltip = "see_woc_council_attitude"
+									text_single = {
+										parentanchor = center
+										datacontext = "[Scope.GetCharacter]"
+										text = "grant_title_proposal_tt"
+										fontsize = 16
+									}
+								}
+							}
+						}
+					}
+					hbox = {
+						dynamicgridbox = {
+							datamodel = "[GetPlayer.MakeScope.GetList('valid_revoke_title_proposal_list')]"
+							visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+							layoutpolicy_horizontal = expanding
+							maxhorizontalslots = 1
+							maxverticalslots = 10
+							datamodel_wrap = 10
+							item = {
+								container = {
+									widget = {
+										size = { 450 50 }
+										hbox = {
+											button_standard = {
+												size = { 50 50 }
+												parentanchor = vcenter
+												button = {
+													size = { 50 50 }
+													parentanchor = left|vcenter
+													icon_flat_standard = {
+														size = { 100% 100% }
+														texture = "gfx/interface/icons/flat_icons/election_vote_strength.dds"
+													}
+													datacontext = "[Scope.GetCharacter]"
+													onclick = "[GetScriptedGui('woc_council_revoke_title_vote_going_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_revoke_title_target_1', Character.MakeScope ).End)]"
+													tooltip = "woc_council_revoke_title_vote_going"
+												}
+											}
+											spacer = {
+												size = { 10 10 }
+											}
+											button_standard = {
+												size = { 400 50 }
+												datacontext = "[Scope.GetCharacter]"
+												onclick = "[GetScriptedGui('woc_council_revoke_title_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_revoke_title_target_1', Character.MakeScope ).End)]"
+												name = "see_attitude"
+												tooltip = "see_woc_council_attitude"
+												text_single = {
+													parentanchor = center
+													datacontext = "[Scope.GetCharacter]"
+													text = "revoke_title_proposal_tt"
+													fontsize = 16
+												}
+												button_dismiss = {
+													onclick = "[GetScriptedGui('woc_council_revoke_title_vote_retract_gui').Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope( 'council_war_target_1', Character.MakeScope ).End)]"
+													size = { 50 50 }
+													parentanchor = right|vcenter
+													tooltip = "woc_council_revoke_title_vote_retract"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						dynamicgridbox = {
+							datamodel = "[GetPlayer.GetLiege.MakeScope.GetList('valid_revoke_title_proposal_list')]"
+							visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+							layoutpolicy_horizontal = expanding
+							maxhorizontalslots = 1
+							maxverticalslots = 10
+							datamodel_wrap = 10
+							item = {
+								button_standard = {
+									size = { 450 50 }
+									datacontext = "[Scope.GetCharacter]"
+									onclick = "[GetScriptedGui('woc_council_revoke_title_attitude_gui').Execute(GuiScope.SetRoot(GetPlayer.GetLiege.MakeScope).AddScope( 'council_revoke_title_target_1', Character.MakeScope ).End)]"
+									name = "see_attitude"
+									tooltip = "see_woc_council_attitude"
+									text_single = {
+										parentanchor = center
+										datacontext = "[Scope.GetCharacter]"
+										text = "revoke_title_proposal_tt"
+										fontsize = 16
+									}
+								}
+							}
+						}
+					}
+					spacer = {
+						size = { 10 50 }
+					}
+				}
+			}
+		}
+	}
+
+	type widget_woc_royal_councillor_item = widget {
+		size = { 130 140 }
+
+		### Required Datacontexts
+		# A council position type
+		# The councillor
+		# The active council task
+		widget = {
+			visible = "[Not(GuiCouncilPosition.ArePotentialTasksVisible)]"
+			size = { 100% 100% }
+
+			state = {
+				name = _show
+				using = Animation_FadeIn_Quick
+			}
+
+			state = {
+				name = _hide
+				using = Animation_FadeOut_Quick
+			}
+
+			portrait_council = {
+				name = "councillor_portrait"
+				datacontext = "[ActiveCouncilTask.GetCouncillor]"
+				visible = "[Character.IsValid]"
+				parentanchor = bottom
+				position = { 0 4 }
+				blockoverride "portrait_button_no_character_text"
+				{
+					text = "PORTRAIT_NO_COUNCILLOR"
+				}
+
+				blockoverride "portrait_button"
+				{
+					using = tooltip_ws
+				}
+			}
+
+			block "missing_councillor"
+			{
+				portrait_council = {
+					name = "councillor_portrait_blank"
+					visible = "[Not(Character.IsValid)]"
+					parentanchor = center
+
+					blockoverride "portrait_button_no_character_text"
+					{
+						text = "PORTRAIT_NO_COUNCILLOR"
+					}
+
+					blockoverride "portrait_button_template_onclick"
+					{
+						onclick = "[GuiCouncilPosition.SelectCouncillor]"
+					}
+
+					text_label_center = {
+						parentanchor = bottom|hcenter
+						position = { 0 -10 }
+						text = "COUNCILLOR_CLICK_TO_HIRE"
+						default_format = "#low;italic"
+						max_width = 135
+					}
+
+					blockoverride "onclick" {
+						onclick = "[GuiCouncilPosition.SelectCouncillor]"
+
+						button_icon = {
+							parentanchor = center
+							alwaystransparent = yes
+							size = { 20 20 }
+							position = { 0 70 }
+							texture = "gfx/interface/icons/flat_icons/plus.dds"
+						}
+					}
+					blockoverride "portrait_button"
+					{
+						using = tooltip_ws
+					}
+				}
+
+				portrait_council = {
+					name = "councillor_portrait_blank_liege"
+					visible = "[Not(Character.IsValid)]"
+					parentanchor = center
+
+					text_label_center = {
+						parentanchor = bottom|hcenter
+						position = { 0 -10 }
+						text = "COUNCILLOR_BLANK_LIEGE"
+						default_format = "#low;italic"
+					}
+
+					blockoverride "portrait_button"
+					{
+						using = tooltip_ws
+					}
+				}
+			}
+		}
+	}
+	type widget_council_agree_or_disagree = icon  {
+		name = "timeline_widget"
+		size = { 50 80 }
+		
+		using = Animation_ShowHide_Quick
+
+		vbox = {
+			widget = {
+				size = { 50 50 }
+				icon = {
+					size = { 45 45 }
+					alwaystransparent = yes
+					datacontext = "[GetScriptedGui('woc_council_agree')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/hud/speed_indicator_play.dds"
+					margin_widget = {
+						size = { 100% 100% }
+						alpha = 0.35
+						icon = {
+							size = { 100% 100% }
+							texture = "gfx/interface/hud/speed_indicator_mouseover.dds"
+						}
+					}
+					tooltipwidget = {
+						widget_value_breakdown_tooltip = {																				
+							text_single = {
+								layoutpolicy_horizontal = expanding
+								text = "woc_agree_attitude_reason_tooltip"
+								using = Font_Size_Medium
+								align = nobaseline
+								margin = { 15 -5 }
+							} 
+							datacontext = "[GuiScope.SetRoot(Character.MakeScope).GetScriptValueBreakdown('woc_council_see_attitude_value')]"
+						} 
+					}
+				}
+				icon = {
+					size = { 45 45 }
+					alwaystransparent = yes
+					datacontext = "[GetScriptedGui('woc_council_disagree')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/hud/speed_indicator_pause.dds"
+					alpha = 0.35
+					tooltipwidget = {
+						widget_value_breakdown_tooltip = {																				
+							text_single = {
+								layoutpolicy_horizontal = expanding
+								text = "woc_disagree_attitude_reason_tooltip"
+								using = Font_Size_Medium
+								align = nobaseline
+								margin = { 15 -5 }
+							} 
+							datacontext = "[GuiScope.SetRoot(Character.MakeScope).GetScriptValueBreakdown('woc_council_see_attitude_value')]"
+						} 
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_regent')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/icon_royal_court.dds"
+					tooltip = "woc_council_regent"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_spouse')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/marriage.dds"
+					tooltip = "councillor_spouse"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_court_chaplain')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/learning.dds"
+					tooltip = "councillor_court_chaplain"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_chancellor')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/diplomacy.dds"
+					tooltip = "councillor_chancellor"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_steward')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/steward_job.dds"
+					tooltip = "councillor_steward"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_marshal')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/martial.dds"
+					tooltip = "councillor_marshal"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_spymaster')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/spy_master.dds"
+					tooltip = "councillor_spymaster"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_woc_advisor')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/a_catch_all_councillor_icon.dds"
+					tooltip = "councillor_woc_advisor"
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					datacontext = "[GetScriptedGui('woc_councillor_woc_advisor_second')]"
+					visible = "[ScriptedGui.IsShown(GuiScope.SetRoot(Character.MakeScope).End)]"
+					texture = "gfx/interface/icons/message_feed/a_catch_all_councillor_icon.dds"
+					tooltip = "councillor_woc_advisor_second"
+				}
+			}
+			widget = {
+				size = { 35 35 }
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( Character.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)1')]"
+					texture = "gfx/interface/icons/laws/crown_authority_0.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( Character.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)2')]"
+					texture = "gfx/interface/icons/laws/crown_authority_1.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( Character.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)3')]"
+					texture = "gfx/interface/icons/laws/crown_authority_2.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( Character.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)4')]"
+					texture = "gfx/interface/icons/laws/crown_authority_3.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+			}
+		}
+	}
+	
+	type widget_council_empty_disagree = icon  {
+		name = "timeline_widget"
+		size = { 50 80 }
+		
+		using = Animation_ShowHide_Quick
+
+		vbox = {
+			widget = {
+				size = { 50 50 }
+				icon = {
+					size = { 45 45 }
+					alwaystransparent = yes
+					texture = "gfx/interface/hud/speed_indicator_pause.dds"
+					alpha = 0.35
+				}
+				icon = {
+					size = { 35 35 }
+					position = { 5 5 }
+					texture = "gfx/interface/icons/woc_council/woc_disagree_empty.dds"
+					tooltip = "woc_councillor_empty_tt"
+				}
+			}
+			widget = {
+				size = { 35 35 }
+				visible = "[AccessCouncilWindow.IsPlayerCouncilShown]"
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)1')]"
+					texture = "gfx/interface/icons/laws/crown_authority_0.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)2')]"
+					texture = "gfx/interface/icons/laws/crown_authority_1.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)3')]"
+					texture = "gfx/interface/icons/laws/crown_authority_2.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)4')]"
+					texture = "gfx/interface/icons/laws/crown_authority_3.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+			}
+			widget = {
+				size = { 35 35 }
+				visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)1')]"
+					texture = "gfx/interface/icons/laws/crown_authority_0.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)2')]"
+					texture = "gfx/interface/icons/laws/crown_authority_1.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)3')]"
+					texture = "gfx/interface/icons/laws/crown_authority_2.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+				icon = {
+					size = { 35 35 }
+					visible = "[EqualTo_CFixedPoint( GetPlayer.GetLiege.MakeScope.ScriptValue('woc_council_vote_power'), '(CFixedPoint)4')]"
+					texture = "gfx/interface/icons/laws/crown_authority_3.dds"
+					using = Master_Button_Modify_Texture
+					alwaystransparent = yes
+					blockoverride "master_color_frame" {
+						frame = 2
+					}
+				}
+			}
+		}
+	}
+	type woc_council_vassal_stance_icon = icon
+	{
+		datacontext = "[Character.GetVassalStance]"
+		visible = "[And( Character.IsVassalOf( GetPlayer ), Not( Character.IsPlayer ) )]"
+
+		texture = "[VassalStance.GetIcon]"
+		tooltipwidget = {
+			using = vassal_stance_tooltip
+		}
+	}
+	type widget_woc_councillor_item = widget
+	{
+		size = { 260 250 }
+
+		### Required Datacontexts
+		# A council position type
+		# The councillor
+		# The active council task
+		widget = {
+			visible = "[Not(GuiCouncilPosition.ArePotentialTasksVisible)]"
+			size = { 100% 100% }
+
+			state = {
+				name = _show
+				using = Animation_FadeIn_Quick
+			}
+
+			state = {
+				name = _hide
+				using = Animation_FadeOut_Quick
+			}
+
+			portrait_council = {
+				name = "councillor_portrait"
+				datacontext = "[ActiveCouncilTask.GetCouncillor]"
+				visible = "[Character.IsValid]"
+				parentanchor = bottom
+				position = { 0 4 }
+
+				blockoverride "portrait_button_no_character_text"
+				{
+					text = "PORTRAIT_NO_COUNCILLOR"
+				}
+
+				blockoverride "portrait_button"
+				{
+					using = tooltip_ws
+				}
+			}
+
+			block "missing_councillor"
+			{
+				portrait_council = {
+					name = "councillor_portrait_blank"
+					visible = "[And( Not(Character.IsValid), AccessCouncilWindow.IsPlayerCouncilShown)]"
+					parentanchor = center
+
+					blockoverride "portrait_button_no_character_text"
+					{
+						text = "PORTRAIT_NO_COUNCILLOR"
+					}
+
+					blockoverride "portrait_button_template_onclick"
+					{
+						onclick = "[GuiCouncilPosition.SelectCouncillor]"
+					}
+
+					text_label_center = {
+						parentanchor = bottom|hcenter
+						position = { 0 -10 }
+						text = "COUNCILLOR_CLICK_TO_HIRE"
+						default_format = "#low;italic"
+						max_width = 235
+					}
+
+					blockoverride "onclick" {
+						onclick = "[GuiCouncilPosition.SelectCouncillor]"
+
+						button_icon = {
+							parentanchor = center
+							alwaystransparent = yes
+							size = { 40 40 }
+							position = { 0 70 }
+							texture = "gfx/interface/icons/flat_icons/plus.dds"
+						}
+					}
+					blockoverride "portrait_button"
+					{
+						using = tooltip_ws
+					}
+				}
+
+				portrait_council = {
+					name = "councillor_portrait_blank_liege"
+					visible = "[And( Not(Character.IsValid), AccessCouncilWindow.IsLiegeCouncilShown )]"
+					parentanchor = center
+
+					text_label_center = {
+						parentanchor = bottom|hcenter
+						position = { 0 -10 }
+						text = "COUNCILLOR_BLANK_LIEGE"
+						default_format = "#low;italic"
+					}
+
+					blockoverride "portrait_button"
+					{
+						using = tooltip_ws
+					}
+				}
+			}
+		}
+
+		vbox = {
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				margin = { 0 5 }
+				margin_right = 3
+
+				background = {
+					using = Background_Area_Dark
+				}
+
+				background = {
+					visible = "[ObjectsEqual( Character.Self, GetPlayer )]"
+					texture = "gfx/interface/component_masks/patterns/mask_pattern_02.dds"
+					spriteType = Corneredtiled
+					alpha = 0.4
+
+					using = Color_Blue
+
+					modify_texture = {
+						texture = "gfx/interface/component_masks/mask_fade_horizontal.dds"
+						blend_mode = alphamultiply
+						alpha = 0.9
+						mirror = horizontal
+					}
+
+					modify_texture = {
+						texture = "gfx/interface/component_masks/mask_texture_01.dds"
+						spriteType = Corneredtiled
+						spriteborder = { 15 15 }
+						blend_mode = alphamultiply
+					}
+				}
+
+				background = {
+					visible = "[ObjectsEqual( Character.Self, GetPlayer )]"
+					texture = "gfx/interface/component_masks/mask_frame.dds"
+					spriteType = Corneredstretched
+					spriteborder = { 15 15 }
+					alpha = 0.25
+
+					using = Color_Blue
+
+					modify_texture = {
+						texture = "gfx/interface/component_masks/mask_fade_horizontal.dds"
+						blend_mode = alphamultiply
+						alpha = 0.9
+						mirror = horizontal
+					}
+				}
+
+				spacer = {
+					visible = "[GuiCouncilPosition.CanPotentiallySelectCouncillor]"
+					size = { 6 6 }
+				}
+
+				spacer = {
+					visible = "[AccessCouncilWindow.IsLiegeCouncilShown]"
+					size = { 5 5 }
+				}
+
+				block "replace_councillor"
+				{
+					hbox = {
+
+						button_round = {
+							name = "replace"
+							visible = "[GuiCouncilPosition.CanPotentiallySelectCouncillor]"
+							onclick = "[GuiCouncilPosition.SelectCouncillor]"
+							enabled = "[GuiCouncilPosition.CanSelectCouncillor]"
+							tooltip = "[GuiCouncilPosition.GetSelectCouncillorTooltip]" #COUNCILWINDOW_TT_REPLACE
+							using = tooltip_se
+
+							button_change = {
+								alwaystransparent = yes
+								parentanchor = center
+							}
+						}
+
+						button_round = {
+							name = "leave"
+							visible = "[ObjectsEqual( GetPlayer.Self, Character.Self )]"
+							onclick = "[AccessCouncilWindow.OnLeaveCouncil]"
+							tooltip = "DECISIONS_VIEW_LEAVE_COUNCIL_TT"
+							using = tooltip_se
+
+							button_leave_council = {
+								mirror = horizontal
+								parentanchor = center
+								alwaystransparent = yes
+							}
+						}
+					}
+				}
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					margin_left = 6
+
+					text_single = {
+						name = "title"
+						layoutpolicy_horizontal = expanding
+						text = "[ActiveCouncilTask.GetPositionName|E]"
+						tooltip = "[ActiveCouncilTask.GetPositionTooltip]"
+						autoresize = no
+						fontsize_min = 13
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						text = "[Character.GetShortUINameNoTooltip]"
+						default_format = "#high"
+						align = nobaseline
+						autoresize = no
+						fontsize_min = 13
+					}
+				}
+
+				skill_icon_label = {
+					datacontext = "[GuiCouncilPosition.GetMainSkillItem]"
+					visible = "[ActiveCouncilTask.HasMainSkill]"
+
+					blockoverride "icon_size"
+					{
+						size = { 35 35 }
+					}
+
+					blockoverride "font_size" {
+						using = Font_Size_Medium
+						visible = "[And( ActiveCouncilTask.HasMainSkill, ActiveCouncilTask.HasCouncillor )]"
+						min_width = 13
+					}
+
+					blockoverride "tooltip"
+					{
+						tooltip_visible = "[And( ActiveCouncilTask.HasMainSkill, ActiveCouncilTask.HasCouncillor )]"
+						tooltip = "[SkillItem.GetSkillBreakdownTooltip]"
+					}
+				}
+			}
+
+			widget = {
+				visible = "[GuiCouncilPosition.ArePotentialTasksVisible]"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				state = {
+					name = _show
+					using = Animation_FadeIn_Quick
+				}
+
+				flowcontainer = {
+					name = "council_position_tasks"
+					datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
+					parentanchor = bottom|hcenter
+					margin_bottom = 10
+					direction = vertical
+					spacing = 3
+					alwaystransparent = no
+
+					item = {
+						button_standard = {
+							name = "potential_task"
+							datacontext = "[GuiPotentialCouncilTask.GetCouncilTaskType]"
+							datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
+							visible = "[GuiPotentialCouncilTask.IsVisible]"
+							size = { 220 25 }
+
+							enabled = "[GuiPotentialCouncilTask.CanSelect]"
+							onclick = "[GuiPotentialCouncilTask.SelectTaskType]"
+
+							tooltip = "[CouncilTaskType.GetEffectDesc( ActiveCouncilTask.GetScopes )]"
+
+							text_single = {
+								parentanchor = left|vcenter
+								position = { 10 0 }
+								text = "[CouncilTaskType.GetName]"
+								align = nobaseline
+								default_format = "#clickable"
+							}
+
+							container = {
+								visible = "[CouncilTaskType.HasMainSkill]"
+								parentanchor = right|vcenter
+
+
+								skill_icon_label_vertical = {
+									datacontext = "[GuiCouncilPosition.GetSkillItemForTask(CouncilTaskType.Self)]"
+
+									blockoverride "font_size" {
+										min_width = 13
+									}
+
+									blockoverride "value"
+									{
+										text = "[GuiCouncilPosition.GetSkillModifierForTask(CouncilTaskType.Self)|+=]"
+									}
+
+									blockoverride "tooltip"
+									{
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			widget = {
+				visible = "[Not(GuiCouncilPosition.ArePotentialTasksVisible)]"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				state = {
+					name = _show
+					using = Animation_FadeIn_Quick
+				}
+
+				text_multi = {
+					margin_left = 10
+					margin_bottom = 10
+					margin_right = 5
+					autoresize = yes
+					max_width = 180
+					visible = "[Character.IsLocalPlayer]"
+					align = bottom|left
+					parentanchor = bottom|left
+					text = "ON_COUNCIL_EFFECTS"
+					background = {
+						using = Background_Area_Dark
+					}
+					fontsize = 14
+				}
+
+				portrait_opinion = {
+					visible = "[And(Character.IsValid, Not(Character.IsLocalPlayer) )]"
+					parentanchor = bottom|hcenter
+					position = { 0 -2 }
+
+					blockoverride "opinion_text"
+					{
+						text = "[Character.GetOpinionOf( Character.GetLiege )|=]"
+						fonttintcolor = "[Character.GetOpinionOfTint( Character.GetLiege )]"
+					}
+
+					blockoverride "ott_heading_text"
+					{
+						text = "[Character.GetOpinionHeadingText( Character.GetLiege )]"
+					}
+
+					blockoverride "ott_opinion_value_text"
+					{
+						text = "[Character.GetOpinionOf( Character.GetLiege )|=]"
+						fonttintcolor = "[Character.GetOpinionOfTint( Character.GetLiege )]"
+					}
+
+					blockoverride "ott_opinion_breakdown_text"
+					{
+						text = "[Character.GetOpinionBreakdownText( Character.GetLiege )|=]"
+					}
+				}
+
+				background = {
+					texture = "gfx/interface/component_masks/mask_fade_corner.dds"
+					color = { 0.12 0.12 0.12 1 }
+					alpha = 0.5
+					margin_top = -130
+					margin_left = -150
+				}
+
+				flowcontainer = {
+					parentanchor = bottom|right
+					ignoreinvisible = yes
+					margin_bottom = 3
+
+					icon = {
+						name = "church_approval_icon"
+						visible = "[Character.IsTheocraticLesseeOf( GetPlayer )]"
+
+						texture = "gfx/interface/icons/icon_bishop_approval.dds"
+						framesize = { 120 120 }
+						size = { 50 50 }
+						frame = "[Select_int32( And( Character.TheocraticLesseeHasApprovalStatus, Character.TheocraticLesseeApprovesOfLiege ), '(int32)1', '(int32)2' )]"
+						tooltip = "[Character.GetTheocraticLesseeApprovalTooltip]"
+					}
+
+					flowcontainer = {
+						parentanchor = bottom
+						margin_bottom = 4
+
+						portrait_status_icons = {
+							background = {
+								using = Background_Area_Dark
+								margin = { 1 2 }
+							}
+						}
+					}
+
+					coa_realm_small_crown = {
+						visible = "[Character.HasLandedTitles]"
+						parentanchor = bottom
+						name = "councillor_realm"
+					}
+				}
+
+				block "regular_task"
+				{
+					fixedgridbox = {
+						name = "council_position_tasks"
+						visible = "[Not(AccessCouncilWindow.IsLiegeCouncilShown)]"
+						datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
+
+						addcolumn = 45
+						addrow = 45
+						datamodel_wrap = 4
+						maxhorizontalslots = 2
+						maxverticalslots = 4
+						layoutanchor = bottomleft
+
+						parentanchor = bottom|left
+						position = { 10 0 }
+
+						background = {
+							texture = "gfx/interface/hud/tab_bg.dds"
+							mirror = horizontal
+							margin_top = 15
+							margin_bottom = 12
+							margin_right = 15
+							margin_left = 10
+							using = Color_Black
+						}
+
+						item = {
+							container = {
+								visible = "[GuiPotentialCouncilTask.IsVisible]"
+								widget = {
+									size = { 42 42 }
+
+									icon = {
+										visible = "[GuiPotentialCouncilTask.IsActive]"
+										texture = "gfx/particles/halo.dds"
+										parentanchor = center
+										size = { 58 58 }
+										color = { 1 0.85 0.6 1 }
+									}
+
+									button_round = {
+										visible = "[Or(And(GuiPotentialCouncilTask.CanSelect, Not(AccessCouncilWindow.IsLiegeCouncilShown)), GuiPotentialCouncilTask.IsActive)]"
+										parentanchor = center
+										size = { 46 46 }
+										gfxtype = togglepushbuttongfx
+										effectname = "NoHighlight"
+
+										onclick = "[GuiPotentialCouncilTask.SelectTaskType]"
+										enabled = "[Not(AccessCouncilWindow.IsLiegeCouncilShown)]"
+										down = "[GuiPotentialCouncilTask.IsActive]"
+
+										using = tooltip_ws
+
+										tooltipwidget = {
+											council_task_icon_tooltip_widget = {
+												using = DefaultTooltipBackground
+												using = GeneralTooltipSetup
+												alwaystransparent = no
+											}
+										}
+
+										upframe = 1
+										downframe = 1
+										uphoverframe = 2
+										disableframe = 6
+
+										button_normal = {
+											name = "potential_task"
+											parentanchor = center
+											widgetanchor = center
+											datacontext = "[GuiPotentialCouncilTask.GetCouncilTaskType]"
+											effectname = "NoHighlight"
+											gfxtype = togglepushbuttongfx
+											shaderfile = "gfx/FX/pdxgui_pushbutton.shader"
+											texture = "[CouncilTaskType.GetIcon]"
+											alwaystransparent = yes
+											size = { 38 38 }
+										}
+									}
+								}
+
+								widget = {
+									size = { 40 40 }
+									visible = "[And(Not(GuiPotentialCouncilTask.CanSelect), Not(AccessCouncilWindow.IsLiegeCouncilShown))]"
+
+									icon = {
+										datacontext = "[GuiPotentialCouncilTask.GetCouncilTaskType]"
+										parentanchor = center
+										size = { 35 35 }
+										alwaystransparent = yes
+
+										texture = "[CouncilTaskType.GetIcon]"
+										alpha = 0.4
+
+										tooltipwidget = {
+											invalid_potential_council_task_icon_tooltip_widget = {
+												using = DefaultTooltipBackground
+												using = GeneralTooltipSetup
+												alwaystransparent = no
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			vbox = {
+				visible = "[Not(AccessCouncilWindow.IsLiegeCouncilShown)]"
+				layoutpolicy_horizontal = expanding
+				margin = { 7 0 }
+
+				background = {
+					using = Background_Area_Dark
+				}
+
+				council_task_info = {
+					layoutpolicy_horizontal = expanding
+				}
+
+				block "spouse_task" {}
+			}
+		}
+	}
+	type hbox_woc_not_royal_count_layout = hbox
+	{
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			
+			visible = "[Or(And(Not(GetPlayer.HasRoyalCourt),AccessCouncilWindow.IsPlayerCouncilShown),And(Not(GetPlayer.GetLiege.HasRoyalCourt),AccessCouncilWindow.IsLiegeCouncilShown))]"
+
+			margin = { 0 0 }
+			margin_bottom = 5
+
+			spacing = 5
+
+			text_label_center = {
+				text = "WOC_NOT_ROYAL_COUNT"
+				default_format = "#low;italic"
+				using = Font_Size_Big
+			}
+		}
+
+		expand = {
+			layoutpolicy_vertical = growing
+		}
+	}
+	type widget_council_power_icon = icon  {
+		parentanchor = center
+		size = { 45 45 }
+		texture = "gfx/interface/window_regency/regency_level_bg.dds"
+	}
+	type widget_council_power_icon_highlight = icon  {
+		name = "highlight_current_level"
+		parentanchor = center
+		size = { 65 65 }
+
+		texture = "gfx/interface/window_roco_grandeur/pin_highlight.dds"
+
+		state = {
+			name = _show
+			using = Animation_Curve_Default
+			alpha = 0.6
+		}
+
+		state = {
+			name = _hide
+			using = Animation_Curve_Default
+			alpha = 0
+		}
+
+		state = {
+			name = "a"
+			next = "b"
+			trigger_on_create = yes
+			alpha = 0.6
+
+			modify_texture = {
+				name = "glow_1"
+				rotate_uv = 0
+			}
+
+			modify_texture = {
+				name = "glow_2"
+				rotate_uv = 0
+			}
+		}
+
+		state = {
+			name = "b"
+			next = "a"
+			duration = 7
+
+			modify_texture = {
+				name = "glow_1"
+				rotate_uv = 360
+			}
+
+			modify_texture = {
+				name = "glow_2"
+				rotate_uv = 360
+			}
+		}
+
+		modify_texture = {
+			name = "glow_1"
+			texture = "gfx/interface/component_masks/mask_glow.dds"
+			blend_mode = alphamultiply
+		}
+
+		modify_texture = {
+			name = "glow_2"
+			texture = "gfx/interface/component_masks/mask_glow.dds"
+			blend_mode = alphamultiply
+			mirror = horizontal
+		}
+	}
+}

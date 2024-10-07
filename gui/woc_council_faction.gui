@@ -1,0 +1,27 @@
+types vbox_woc_council_faction_layoutWindow 
+{
+	type vbox_woc_council_faction_layout = vbox
+	{
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			
+			visible = "[Or(And(Not(GetPlayer.HasRoyalCourt),AccessCouncilWindow.IsPlayerCouncilShown),And(Not(GetPlayer.GetLiege.HasRoyalCourt),AccessCouncilWindow.IsLiegeCouncilShown))]"
+
+			margin = { 0 0 }
+			margin_bottom = 5
+
+			spacing = 5
+
+			text_label_center = {
+				text = "WOC_NOT_ROYAL_COUNT"
+				default_format = "#low;italic"
+				using = Font_Size_Big
+			}
+		}
+
+		expand = {
+			layoutpolicy_vertical = growing
+		}
+	}
+}
